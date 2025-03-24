@@ -1,4 +1,4 @@
-package role;
+package com.academia.academia.role;
 
 
 import com.academia.academia.user.User;

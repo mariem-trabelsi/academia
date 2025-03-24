@@ -3,8 +3,7 @@ package com.academia.academia.controllers;
 import com.academia.academia.entities.Article;
 import com.academia.academia.services.ArticleService;
 import org.springframework.web.bind.annotation.*;
-
-        import java.util.List;
+import java.util.List;
 
 @RestController
 @RequestMapping("/articles")

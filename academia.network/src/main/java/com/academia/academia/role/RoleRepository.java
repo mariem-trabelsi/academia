@@ -1,4 +1,4 @@
-package role;
+package com.academia.academia.role;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
