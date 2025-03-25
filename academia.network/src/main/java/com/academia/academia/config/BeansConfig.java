@@ -41,11 +41,11 @@ public class BeansConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-/*
+
     @Bean
     public AuditorAware<String> auditorAware() {
         return new ApplicationAuditAware();
-    }*/
+    }
 
     @Bean
     public CorsFilter corsFilter() {
