@@ -3,16 +3,22 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { SinginComponent } from './pages/singin/singin.component';
+import { SingnupComponent } from './pages/singnup/singnup.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SinginComponent,
+    SingnupComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [HttpClient],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
