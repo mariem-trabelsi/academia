@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationRequest } from 'src/app/services/models';
 import { AuthenticationService } from 'src/app/services/services';
+import { TokenService } from 'src/app/services/token/token.service';
 
 @Component({
   selector: 'app-singin',
@@ -12,7 +13,7 @@ export class SinginComponent {
   authRequest: AuthenticationRequest = {email: '', password: ''};
   errorMsg: Array<string> = [];
 
-  constructor(private route : Router, private authService : AuthenticationService){
+  constructor(private route : Router, private authService : AuthenticationService, private tokenService : TokenService){
 
   }
 
@@ -24,8 +25,7 @@ export class SinginComponent {
     .subscribe({
       next: (res) => {
         console.log(res.token)
-       // suavgarder token
-        
+       this.tokenService.token = res.token ?? '';
       },
       error: (err) => {
         console.log(err);
