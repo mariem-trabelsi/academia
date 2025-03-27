@@ -1,0 +1,11 @@
+<h3>Articles list</h3>
+<div class="article-list">
+    <div class="article-card" *ngFor="let article of articles">
+      <img *ngIf="article.articleCover" [src]="article.articleCover" alt="Image de l'article">
+      <h2>{{ article.title }}</h2>
+      <p><strong>Auteur :</strong> {{ article.authorName }}</p>
+      <p><strong>Publié le :</strong> {{ article.createdDate | date }}</p>
+      <p>{{ article.content }}</p>
+    </div>
+</div>
+    

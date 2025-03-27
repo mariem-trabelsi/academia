@@ -30,7 +30,7 @@ public class BaseEntity {
     private Integer id;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
