@@ -2,24 +2,38 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { SinginComponent } from './pages/singin/singin.component';
 import { SingnupComponent } from './pages/singnup/singnup.component';
 import { FormsModule } from '@angular/forms';
+import { ActivateAccountComponent } from './pages/activate-account/activate-account.component';
+import { CodeInputModule } from 'angular-code-input';
+import { TokenInjectionInterceptor } from './services/interceptor/token-injection.interceptor';
+import { ArticleTestComponent } from './module/article/pages/article-test/article-test.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SinginComponent,
-    SingnupComponent
+    SingnupComponent,
+    ActivateAccountComponent,
+    ArticleTestComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CodeInputModule
   ],
-  providers: [HttpClient],
+  providers: [
+    HttpClient,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInjectionInterceptor,
+      multi: true
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

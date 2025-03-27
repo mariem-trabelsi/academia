@@ -36,7 +36,7 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
 
     //@Value("${application.mailing.frontend.activation-url}")
-    private String activationUrl ="http://localhost:8080/activation";
+    private String activationUrl ="http://localhost:4200/activate-account";
 
     public void register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
@@ -51,6 +51,7 @@ public class AuthenticationService {
                 .roles(List.of(userRole))
                 .build();
         userRepository.save(user);
+
         sendValidationEmail(user);
     }
 
@@ -72,7 +73,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    //@Transactional
+    @Transactional
     public void activateAccount(String token) throws MessagingException {
         Token savedToken = tokenRepository.findByToken(token)
                 // todo exception has to be defined

@@ -16,7 +16,6 @@ export class SinginComponent {
   constructor(private route : Router, private authService : AuthenticationService, private tokenService : TokenService){
 
   }
-
   login() {
     this.errorMsg = [];
     this.authService.authenticate({
@@ -24,8 +23,10 @@ export class SinginComponent {
     })
     .subscribe({
       next: (res) => {
-        console.log(res.token)
-       this.tokenService.token = res.token ?? '';
+       
+       this.tokenService.token = res.token as string;
+       console.log(this.tokenService.token)
+       this.route.navigate(['articles'])
       },
       error: (err) => {
         console.log(err);
@@ -40,7 +41,7 @@ export class SinginComponent {
 
 
   register(){
-    this.route.navigate(['register']);
+    this.route.navigate(['home']);
     console.log()
   }
 }
