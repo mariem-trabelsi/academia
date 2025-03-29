@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("auth")
+//@RestController
+//@RequestMapping("auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication")
-public class AuthenticationController {
+public class AuthenticationController {/*
 
     private final AuthenticationService service;
 
@@ -43,6 +43,6 @@ public class AuthenticationController {
     ) throws MessagingException {
         service.activateAccount(token);
     }
-
+*/
 
 }

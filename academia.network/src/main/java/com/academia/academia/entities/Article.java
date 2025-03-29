@@ -22,6 +22,6 @@ public class Article extends BaseEntity {
     private String articleCover;
     private String content;
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference  // Marque cette relation comme le côté "parent"
+    @JsonManagedReference
     private List<Feedback> feedbacks;
 }

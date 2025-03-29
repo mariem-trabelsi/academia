@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleControllerService } from '../../../../services/services/article-controller.service';
 import { Article } from '../../../../services/models/article';
+import {KeycloakService} from "../../../../services/keycloak/keycloak.service";
 
 @Component({
   selector: 'app-article-test',
@@ -11,10 +12,19 @@ import { Article } from '../../../../services/models/article';
 export class ArticleTestComponent implements OnInit {
   articles: Article[] = [];
 
-  constructor(private articleService: ArticleControllerService) {}
+  constructor(private articleService: ArticleControllerService,
+              private  keycloakService : KeycloakService
+  ) {}
 
   ngOnInit(): void {
     this.loadArticles();
+  }
+
+  async logout() {
+    await this.keycloakService.logout();
+  }
+  profile(){
+    this.keycloakService.manageAccount();
   }
 
   loadArticles(): void {

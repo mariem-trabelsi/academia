@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
-@Service
+//@Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService {/*
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -130,5 +130,5 @@ public class AuthenticationService {
         }
 
         return codeBuilder.toString();
-    }
+    }*/
 }
