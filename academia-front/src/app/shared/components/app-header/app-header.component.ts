@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { NotificationBadgeService } from '../../services/notification-badge.service';
 
 @Component({
   selector: 'app-header',
@@ -9,8 +10,12 @@ import { Router } from '@angular/router';
 export class AppHeaderComponent implements OnInit {
   currentModule: string = '';
   isDropdownOpen: boolean = false;
+  unreadNotificationCount: number = 0;
   
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private notificationBadgeService: NotificationBadgeService
+  ) { }
 
   ngOnInit(): void {
     // Get the current path to highlight the appropriate tab
@@ -22,9 +27,16 @@ export class AppHeaderComponent implements OnInit {
         this.currentModule = 'papers';
       } else if (url.includes('/network')) {
         this.currentModule = 'network';
+      } else if (url.includes('/notifications')) {
+        this.currentModule = 'notifications';
       } else {
         this.currentModule = '';
       }
+    });
+    
+    // Subscribe to unread notification count
+    this.notificationBadgeService.getUnreadCount().subscribe(count => {
+      this.unreadNotificationCount = count;
     });
   }
   

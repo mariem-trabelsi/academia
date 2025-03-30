@@ -1,0 +1,233 @@
+<div class="settings-page">
+  <div class="page-header">
+    <div class="header-content">
+      <a routerLink="/notifications" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Notifications</span>
+      </a>
+      <h1 class="page-title">Notification Settings</h1>
+    </div>
+  </div>
+
+  <div class="settings-container">
+    <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+      <div class="settings-section">
+        <h2 class="section-title">Email Notifications</h2>
+        <p class="section-description">
+          Choose which notifications you'd like to receive via email.
+        </p>
+
+        <div class="settings-group" formGroupName="emailSettings">
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Citations</h3>
+              <p>When your papers are cited in other publications</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="citations">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>New Followers</h3>
+              <p>When someone follows your research profile</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="newFollowers">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Comments</h3>
+              <p>When someone comments on your papers or discussions</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="comments">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>New Papers</h3>
+              <p>When researchers you follow publish new papers</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="newPapers">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Mentions</h3>
+              <p>When someone mentions you in a discussion</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="mentions">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Collaboration Invites</h3>
+              <p>When you receive collaboration invitations</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="collaborationInvites">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Messages</h3>
+              <p>When you receive new messages</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="messages">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Weekly Digest</h3>
+              <p>Get a summary of your activity and updates</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="digest">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="digest-frequency" *ngIf="settingsForm.get('emailSettings.digest')?.value">
+          <label class="frequency-label">Digest Frequency</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="digestFrequency" value="daily">
+              <span>Daily</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="digestFrequency" value="weekly">
+              <span>Weekly</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="digestFrequency" value="monthly">
+              <span>Monthly</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="section-title">In-App Notifications</h2>
+        <p class="section-description">
+          Choose which notifications you'd like to see in the app.
+        </p>
+
+        <div class="settings-group" formGroupName="inAppSettings">
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Citations</h3>
+              <p>When your papers are cited in other publications</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="citations">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>New Followers</h3>
+              <p>When someone follows your research profile</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="newFollowers">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Comments</h3>
+              <p>When someone comments on your papers or discussions</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="comments">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>New Papers</h3>
+              <p>When researchers you follow publish new papers</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="newPapers">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Mentions</h3>
+              <p>When someone mentions you in a discussion</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="mentions">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Collaboration Invites</h3>
+              <p>When you receive collaboration invitations</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="collaborationInvites">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Messages</h3>
+              <p>When you receive new messages</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" formControlName="messages">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="save-btn" 
+          [disabled]="saveStatus === 'saving' || saveStatus === 'saved'"
+          [class.saving]="saveStatus === 'saving'"
+          [class.saved]="saveStatus === 'saved'">
+          <span *ngIf="saveStatus === 'idle'">Save Changes</span>
+          <span *ngIf="saveStatus === 'saving'">
+            <i class="fas fa-spinner fa-spin"></i> Saving...
+          </span>
+          <span *ngIf="saveStatus === 'saved'">
+            <i class="fas fa-check"></i> Saved!
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

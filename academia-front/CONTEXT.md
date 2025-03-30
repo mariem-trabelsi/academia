@@ -33,15 +33,7 @@
 - Messaging between researchers
 - Research groups/communities
 
-### 4. Analytics and Metrics
-- Paper view/download statistics
-- Citation tracking
-- Profile view analytics
-- Author impact metrics
-- Research interest trends
-- Geographical distribution of readers
-
-### 5. Notifications and Alerts
+### 4. Notifications and Alerts
 - New paper alerts from followed authors
 - Citation notifications
 - Comment and discussion alerts
@@ -49,7 +41,7 @@
 - Research update notifications
 - Collaboration invitations
 
-### 6. Discussion and Feedback
+### 5. Discussion and Feedback
 - Paper commenting system
 - Q&A sections on papers
 - Academic discussions
@@ -58,7 +50,7 @@
 - **Star rating system (0-5) for articles**
 - **Comments section for each article**
 
-### 7. Administrative Features
+### 6. Administrative Features
 - Content moderation tools
 - Copyright violation handling
 - User management
@@ -95,7 +87,6 @@
 - Published papers
 - Research interests
 - Network visualization
-- Analytics summary
 - Contact information
 
 ### 4. Search Interface

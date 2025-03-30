@@ -48,6 +48,10 @@ const routes: Routes = [
       loadChildren: () => import('./module/social-network/social-network.module').then(m => m.SocialNetworkModule)
     },
     {
+      path: 'notifications',
+      loadChildren: () => import('./module/notifications/notifications.module').then(m => m.NotificationsModule)
+    },
+    {
       path: '',
       redirectTo: 'discover',
       pathMatch: 'full'

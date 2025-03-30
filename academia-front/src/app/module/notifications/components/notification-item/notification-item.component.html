@@ -1,0 +1,44 @@
+<div 
+  class="notification-item" 
+  [class.unread]="!notification.isRead"
+  [routerLink]="notification.actionLink"
+  @fadeSlide>
+  
+  <div class="notification-icon">
+    <i [class]="getIconForType(notification.type)" [ngClass]="getIconColorClass(notification.type)"></i>
+  </div>
+  
+  <div class="notification-content">
+    <div class="notification-header">
+      <h4 class="notification-title">{{ notification.title }}</h4>
+      <span class="notification-time">{{ getTimeAgo(notification.timestamp) }}</span>
+    </div>
+    
+    <p class="notification-message">{{ notification.message }}</p>
+    
+    <div class="notification-sender" *ngIf="notification.sender">
+      <div 
+        class="profile-image-container" 
+        [class.fallback]="!notification.sender.avatar || imageLoadError"
+        [style.background-color]="(imageLoadError || !notification.sender.avatar) ? getAvatarColor(notification.sender.name) : null">
+        <img 
+          *ngIf="!imageLoadError && notification.sender.avatar"
+          [src]="notification.sender.avatar" 
+          [alt]="notification.sender.name"
+          (error)="handleImageError($event)">
+        <span *ngIf="imageLoadError || !notification.sender.avatar">{{ getInitials(notification.sender.name) }}</span>
+      </div>
+      <span>{{ notification.sender.name }}</span>
+    </div>
+  </div>
+  
+  <div class="notification-actions">
+    <button 
+      class="mark-read-btn" 
+      *ngIf="!notification.isRead"
+      (click)="handleMarkAsRead($event)" 
+      title="Mark as read">
+      <i class="fas fa-check"></i>
+    </button>
+  </div>
+</div> 

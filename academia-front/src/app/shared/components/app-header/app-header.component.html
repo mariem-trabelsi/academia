@@ -34,9 +34,9 @@
       </div>
       
       <div class="notifications">
-        <a href="#" class="notification-icon">
+        <a routerLink="/notifications" class="notification-icon">
           <i class="fas fa-bell"></i>
-          <span class="notification-badge">3</span>
+          <span class="notification-badge" *ngIf="unreadNotificationCount > 0">{{ unreadNotificationCount }}</span>
         </a>
       </div>
       
