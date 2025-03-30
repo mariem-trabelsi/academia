@@ -31,6 +31,17 @@ const routes: Routes = [
   loadChildren: () => import('./module/article/article.module').then(m => m.ArticleModule)
 },
 
+{
+  path: 'papers',
+  loadChildren: () => import('./module/paper/paper.module').then(m => m.PaperModule)
+},
+
+{
+  path: '',
+  redirectTo: 'papers',
+  pathMatch: 'full'
+}
+
 ];
 
 @NgModule({

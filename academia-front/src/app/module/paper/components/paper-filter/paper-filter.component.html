@@ -1,0 +1,54 @@
+<div class="filter-container">
+  <div class="search-bar">
+    <form (submit)="searchByKeyword($event)">
+      <div class="search-input-container">
+        <input 
+          type="text" 
+          [(ngModel)]="filter.keyword" 
+          name="keyword" 
+          placeholder="Search papers by title, abstract, or keywords" 
+          class="search-input">
+        <button type="submit" class="search-button">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
+    <button class="filter-toggle" (click)="toggleFilters()">
+      <i class="fas fa-filter"></i>
+      <span>Filter</span>
+      <i class="fas" [class.fa-chevron-down]="!isFiltersVisible" [class.fa-chevron-up]="isFiltersVisible"></i>
+    </button>
+  </div>
+  
+  <div class="filter-panel" [class.visible]="isFiltersVisible">
+    <div class="filter-group">
+      <label>Domain</label>
+      <select [(ngModel)]="filter.domain" name="domain">
+        <option [value]="undefined">All Domains</option>
+        <option *ngFor="let domain of domains" [value]="domain">{{domain}}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Author Name</label>
+      <input type="text" [(ngModel)]="filter.authorName" name="authorName" placeholder="Search by author">
+    </div>
+    
+    <div class="filter-date">
+      <div class="filter-group">
+        <label>From Date</label>
+        <input type="date" [(ngModel)]="filter.dateFrom" name="dateFrom">
+      </div>
+      
+      <div class="filter-group">
+        <label>To Date</label>
+        <input type="date" [(ngModel)]="filter.dateTo" name="dateTo">
+      </div>
+    </div>
+    
+    <div class="filter-actions">
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+      <button class="btn-apply" (click)="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+</div>
