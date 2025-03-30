@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Paper, PaperComment } from '../../models/paper';
 import { PaperService } from '../../services/paper.service';
+import { DiscussionService } from '../../../discussion-feedback/services/discussion.service';
+import { Comment, CommentFilter } from '../../../discussion-feedback/models/comment.model';
+import { Rating } from '../../../discussion-feedback/models/rating.model';
 
 @Component({
   selector: 'app-paper-detail',
@@ -11,15 +14,22 @@ import { PaperService } from '../../services/paper.service';
 export class PaperDetailComponent implements OnInit {
   paper: Paper | undefined;
   loading = true;
-  newComment = '';
+  showDeleteConfirmation = false;
+  
+  // New Discussion & Feedback properties
+  paperRating: Rating | undefined;
+  paperComments: Comment[] = [];
   newRating = 0;
   isRatingSubmitted = false;
-  showDeleteConfirmation = false;
+  isLoadingComments = false;
+  isSubmittingComment = false;
+  commentSortBy: 'newest' | 'oldest' | 'popular' = 'newest';
   
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private paperService: PaperService
+    private paperService: PaperService,
+    private discussionService: DiscussionService
   ) { }
 
   ngOnInit(): void {
@@ -37,6 +47,11 @@ export class PaperDetailComponent implements OnInit {
       next: (paper) => {
         this.paper = paper;
         this.loading = false;
+        
+        // Load discussion data after paper loads
+        if (paper?.id) {
+          this.loadDiscussionData(paper.id.toString());
+        }
       },
       error: (error) => {
         console.error('Error loading paper:', error);
@@ -45,64 +60,50 @@ export class PaperDetailComponent implements OnInit {
       }
     });
   }
+  
+  loadDiscussionData(paperId: string): void {
+    // Load rating data
+    this.discussionService.getRating(paperId).subscribe({
+      next: (rating) => {
+        this.paperRating = rating;
+        this.newRating = rating.value;
+        this.isRatingSubmitted = rating.value > 0;
+      }
+    });
+    
+    // Load comments
+    this.loadComments(paperId);
+  }
+  
+  loadComments(paperId: string, filter?: CommentFilter): void {
+    this.isLoadingComments = true;
+    
+    this.discussionService.getComments(paperId, filter).subscribe({
+      next: (comments) => {
+        this.paperComments = comments;
+        this.isLoadingComments = false;
+      },
+      error: (error) => {
+        console.error('Error loading comments:', error);
+        this.isLoadingComments = false;
+      }
+    });
+  }
 
   navigateToList(): void {
     this.router.navigate(['/papers']);
   }
-
-  getRatingStars(rating: number = 0, interactive = false): number[] {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating - fullStars >= 0.5;
-    
-    const stars = [];
-    
-    // Add full stars
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(1);
-    }
-    
-    // Add half star if needed
-    if (hasHalfStar) {
-      stars.push(0.5);
-    }
-    
-    // Fill the rest with empty stars
-    while (stars.length < 5) {
-      stars.push(0);
-    }
-    
-    return stars;
-  }
-
-  submitComment(): void {
-    if (!this.paper || !this.newComment.trim()) return;
-    
-    const comment: Omit<PaperComment, 'id' | 'createdDate'> = {
-      authorName: 'Current User',
-      authorId: 'currentUser123',
-      content: this.newComment.trim()
-    };
-    
-    // Don't keep a local reference to comments that could get out of sync
-    this.paperService.addComment(this.paper.id!, comment).subscribe({
-      next: (newComment) => {
-        // Reload the paper to get fresh data with the new comment
-        this.loadPaper();
-        this.newComment = '';
-      },
-      error: (error) => {
-        console.error('Error adding comment:', error);
-      }
-    });
+  
+  setRating(rating: number): void {
+    this.newRating = rating;
   }
 
   submitRating(): void {
     if (!this.paper || this.newRating === 0 || this.isRatingSubmitted) return;
     
-    this.paperService.ratePaper(this.paper.id!, this.newRating).subscribe({
-      next: (updatedPaper) => {
-        this.paper!.rating = updatedPaper.rating;
-        this.paper!.ratingCount = updatedPaper.ratingCount;
+    this.discussionService.submitRating(this.paper.id!.toString(), this.newRating).subscribe({
+      next: (updatedRating) => {
+        this.paperRating = updatedRating;
         this.isRatingSubmitted = true;
       },
       error: (error) => {
@@ -111,10 +112,27 @@ export class PaperDetailComponent implements OnInit {
     });
   }
 
-  setRating(rating: number): void {
-    if (!this.isRatingSubmitted) {
-      this.newRating = rating;
-    }
+  submitComment(comment: Omit<Comment, 'id' | 'createdDate'>): void {
+    if (!this.paper) return;
+    
+    this.isSubmittingComment = true;
+    this.discussionService.addComment(this.paper.id!.toString(), comment).subscribe({
+      next: () => {
+        // Reload comments to get the updated list
+        this.loadComments(this.paper!.id!.toString(), { sortBy: this.commentSortBy });
+        this.isSubmittingComment = false;
+      },
+      error: (error) => {
+        console.error('Error adding comment:', error);
+        this.isSubmittingComment = false;
+      }
+    });
+  }
+  
+  onCommentSortChange(filter: CommentFilter): void {
+    if (!this.paper) return;
+    this.commentSortBy = filter.sortBy || 'newest';
+    this.loadComments(this.paper.id!.toString(), filter);
   }
 
   editPaper(): void {

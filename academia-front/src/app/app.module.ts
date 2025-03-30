@@ -12,6 +12,7 @@ import { CodeInputModule } from 'angular-code-input';
 import { TokenInjectionInterceptor } from './services/interceptor/token-injection.interceptor';
 import { ArticleTestComponent } from './module/article/pages/article-test/article-test.component';
 import { SharedModule } from './shared/shared.module';
+import { DiscussionFeedbackModule } from './module/discussion-feedback/discussion-feedback.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SharedModule } from './shared/shared.module';
     HttpClientModule,
     FormsModule,
     CodeInputModule,
-    SharedModule
+    SharedModule,
+    DiscussionFeedbackModule
   ],
   providers: [
     HttpClient,

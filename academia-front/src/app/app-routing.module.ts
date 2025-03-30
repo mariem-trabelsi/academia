@@ -52,6 +52,10 @@ const routes: Routes = [
       loadChildren: () => import('./module/notifications/notifications.module').then(m => m.NotificationsModule)
     },
     {
+      path: 'feedback',
+      loadChildren: () => import('./module/discussion-feedback/discussion-feedback.module').then(m => m.DiscussionFeedbackModule)
+    },
+    {
       path: '',
       redirectTo: 'discover',
       pathMatch: 'full'

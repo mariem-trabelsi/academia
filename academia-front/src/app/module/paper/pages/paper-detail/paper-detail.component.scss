@@ -295,83 +295,73 @@
   }
 }
 
-.rating-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.current-rating {
-  display: flex;
-  align-items: center;
+.paper-rating {
+  margin-bottom: 32px;
   
-  .stars {
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .user-rating-container {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 24px;
     display: flex;
-    color: #ffc107;
-    margin-right: 12px;
+    flex-direction: column;
+    align-items: center;
     
-    .star {
-      margin-right: 4px;
+    .user-rating-prompt {
+      font-size: 16px;
+      font-weight: 500;
+      color: #4b5563;
+      margin-bottom: 12px;
     }
-  }
-  
-  .rating-value {
-    font-weight: 500;
-    margin-right: 8px;
-  }
-  
-  .rating-count {
-    color: #777;
-    font-size: 0.9rem;
-  }
-}
-
-.user-rating {
-  .rating-stars {
-    display: flex;
-    margin-bottom: 12px;
     
-    .rating-star {
-      color: #ffc107;
-      font-size: 1.5rem;
-      margin-right: 8px;
+    app-star-rating {
+      margin-bottom: 16px;
+    }
+    
+    .btn-submit-rating {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: background-color 0.2s ease;
       
-      &:hover {
-        transform: scale(1.2);
+      &:hover:not(:disabled) {
+        background-color: #2563eb;
+      }
+      
+      &:disabled {
+        background-color: #93c5fd;
+        cursor: not-allowed;
       }
     }
   }
   
-  .btn-submit-rating {
-    padding: 6px 12px;
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  .rating-submitted {
+    background-color: #ecfdf5;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    margin-top: 24px;
     
-    &:hover:not(:disabled) {
-      background-color: #1976d2;
-    }
-    
-    &:disabled {
-      background-color: #bdbdbd;
-      cursor: not-allowed;
+    p {
+      color: #065f46;
+      font-weight: 500;
+      margin: 0;
     }
   }
 }
 
-.rating-submitted {
-  padding: 12px;
-  background-color: #e8f5e9;
-  border-radius: 4px;
-  
-  p {
-    color: #2e7d32;
-    margin: 0;
+.paper-comments {
+  h2 {
+    margin-bottom: 20px;
   }
 }
 

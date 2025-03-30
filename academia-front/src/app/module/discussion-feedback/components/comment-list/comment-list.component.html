@@ -1,0 +1,96 @@
+<div class="comment-list-container">
+  <div class="comment-list-header">
+    <h3 class="section-title">
+      <i class="fas fa-comments"></i>
+      Comments <span *ngIf="comments.length > 0">({{ comments.length }})</span>
+    </h3>
+    
+    <div class="sort-options">
+      <button class="sort-button" (click)="toggleSortOptions()">
+        <i class="fas fa-sort"></i>
+        <span>Sort by: {{ sortBy | titlecase }}</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      
+      <div class="sort-dropdown" *ngIf="showSortOptions">
+        <button 
+          class="sort-option" 
+          [class.active]="sortBy === 'newest'"
+          (click)="changeSortOption('newest')">
+          <i class="fas fa-clock"></i>
+          Newest
+        </button>
+        <button 
+          class="sort-option" 
+          [class.active]="sortBy === 'oldest'"
+          (click)="changeSortOption('oldest')">
+          <i class="fas fa-history"></i>
+          Oldest
+        </button>
+        <button 
+          class="sort-option" 
+          [class.active]="sortBy === 'popular'"
+          (click)="changeSortOption('popular')">
+          <i class="fas fa-fire"></i>
+          Popular
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="loading-indicator" *ngIf="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Loading comments...</span>
+  </div>
+  
+  <div class="empty-comments" *ngIf="!loading && comments.length === 0">
+    <i class="far fa-comment-dots"></i>
+    <p>No comments yet. Be the first to share your thoughts!</p>
+  </div>
+  
+  <div class="comment-list" *ngIf="!loading && comments.length > 0">
+    <div 
+      class="comment-item" 
+      *ngFor="let comment of comments"
+      @commentAnimation>
+      
+      <div class="comment-author-avatar" *ngIf="comment.authorAvatar">
+        <img [src]="comment.authorAvatar" [alt]="comment.authorName">
+      </div>
+      
+      <div 
+        class="comment-author-avatar fallback" 
+        *ngIf="!comment.authorAvatar"
+        [style.background-color]="getAvatarColor(comment.authorName)">
+        <span>{{ getInitials(comment.authorName) }}</span>
+      </div>
+      
+      <div class="comment-content">
+        <div class="comment-header">
+          <div class="comment-author-name">{{ comment.authorName }}</div>
+          <div class="comment-time">{{ getRelativeTime(comment.createdDate) }}</div>
+        </div>
+        
+        <div class="comment-text">
+          {{ comment.content }}
+        </div>
+        
+        <div class="comment-actions">
+          <button class="action-btn" (click)="handleReply(comment)">
+            <i class="fas fa-reply"></i>
+            Reply
+          </button>
+          
+          <div class="like-button" *ngIf="comment.likes !== undefined">
+            <button 
+              class="action-btn" 
+              [class.liked]="comment.isLikedByUser">
+              <i [class]="comment.isLikedByUser ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
+              {{ comment.likes }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

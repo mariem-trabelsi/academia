@@ -7,6 +7,7 @@ import { PaperDetailComponent } from './pages/paper-detail/paper-detail.componen
 import { PaperFormComponent } from './pages/paper-form/paper-form.component';
 import { PaperCardComponent } from './components/paper-card/paper-card.component';
 import { PaperFilterComponent } from './components/paper-filter/paper-filter.component';
+import { DiscussionFeedbackModule } from '../discussion-feedback/discussion-feedback.module';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { PaperFilterComponent } from './components/paper-filter/paper-filter.com
     CommonModule,
     PaperRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DiscussionFeedbackModule
   ]
 })
 export class PaperModule { }

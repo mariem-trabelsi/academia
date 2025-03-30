@@ -1,0 +1,25 @@
+<div 
+  class="star-rating" 
+  [class.read-only]="readOnly"
+  [class.small]="size === 'small'"
+  [class.medium]="size === 'medium'"
+  [class.large]="size === 'large'">
+  
+  <div class="stars-container">
+    <span 
+      *ngFor="let star of stars" 
+      class="star"
+      [class.clickable]="!readOnly"
+      (mouseenter)="setHoverRating(star)" 
+      (mouseleave)="clearHoverRating()"
+      (click)="setRating(star)">
+      <i 
+        [class]="getStarClass(star)"
+        [@starAnimation]="isAnimated && animationState === star ? star : 0"></i>
+    </span>
+  </div>
+  
+  <div class="rating-value" *ngIf="showRatingValue">
+    {{ getValueToDisplay() }}
+  </div>
+</div> 

@@ -87,65 +87,42 @@
       
       <div class="paper-rating">
         <h2>Rate this Paper</h2>
-        <div class="rating-container">
-          <div class="current-rating" *ngIf="paper.rating">
-            <div class="stars">
-              <span *ngFor="let star of getRatingStars(paper.rating)" class="star">
-                <i *ngIf="star === 1" class="fas fa-star"></i>
-                <i *ngIf="star === 0.5" class="fas fa-star-half-alt"></i>
-                <i *ngIf="star === 0" class="far fa-star"></i>
-              </span>
-            </div>
-            <span class="rating-value">{{paper.rating.toFixed(1)}}/5</span>
-            <span class="rating-count">({{paper.ratingCount}} ratings)</span>
-          </div>
-          
-          <div class="user-rating" *ngIf="!isRatingSubmitted">
-            <div class="rating-stars">
-              <span *ngFor="let star of [1,2,3,4,5]" 
-                   class="rating-star" 
-                   (mouseenter)="setRating(star)" 
-                   (click)="submitRating()">
-                <i [class]="star <= newRating ? 'fas fa-star' : 'far fa-star'"></i>
-              </span>
-            </div>
-            <button class="btn-submit-rating" [disabled]="newRating === 0" (click)="submitRating()">Submit Rating</button>
-          </div>
-          
-          <div class="rating-submitted" *ngIf="isRatingSubmitted">
-            <p>Thank you for rating this paper!</p>
-          </div>
+        <app-rating-summary [rating]="paperRating" *ngIf="paperRating"></app-rating-summary>
+        
+        <div class="user-rating-container" *ngIf="!isRatingSubmitted">
+          <div class="user-rating-prompt">Share your rating:</div>
+          <app-star-rating 
+            [currentRating]="newRating" 
+            [readOnly]="false"
+            [size]="'large'"
+            [isAnimated]="true"
+            [showRatingValue]="true"
+            (ratingChange)="setRating($event)">
+          </app-star-rating>
+          <button class="btn-submit-rating" [disabled]="newRating === 0" (click)="submitRating()">Submit Rating</button>
+        </div>
+        
+        <div class="rating-submitted" *ngIf="isRatingSubmitted">
+          <p>Thank you for rating this paper!</p>
         </div>
       </div>
       
       <div class="paper-comments">
-        <h2>Comments</h2>
+        <h2>Discussion</h2>
         
-        <div class="comment-form">
-          <textarea 
-            [(ngModel)]="newComment" 
-            placeholder="Add your comment..."
-            rows="3"></textarea>
-          <button class="btn-submit-comment" 
-                  [disabled]="!newComment.trim()" 
-                  (click)="submitComment()">
-            Add Comment
-          </button>
-        </div>
+        <app-comment-form 
+          [contentId]="paper.id!.toString()" 
+          [placeholder]="'Share your thoughts on this paper...'"
+          [isSubmitting]="isSubmittingComment"
+          (commentSubmit)="submitComment($event)">
+        </app-comment-form>
         
-        <div class="comment-list" *ngIf="paper.comments && paper.comments.length > 0">
-          <div class="comment-item" *ngFor="let comment of paper.comments">
-            <div class="comment-header">
-              <span class="comment-author">{{comment.authorName}}</span>
-              <span class="comment-date">{{comment.createdDate | date:'medium'}}</span>
-            </div>
-            <div class="comment-content">{{comment.content}}</div>
-          </div>
-        </div>
-        
-        <div class="no-comments" *ngIf="!paper.comments || paper.comments.length === 0">
-          <p>No comments yet. Be the first to comment!</p>
-        </div>
+        <app-comment-list 
+          [comments]="paperComments" 
+          [loading]="isLoadingComments"
+          [sortBy]="commentSortBy"
+          (sortChange)="onCommentSortChange($event)">
+        </app-comment-list>
       </div>
     </div>
   </div>
