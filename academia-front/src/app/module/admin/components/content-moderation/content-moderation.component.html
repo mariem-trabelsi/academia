@@ -1,0 +1,119 @@
+<div class="content-moderation-container">
+  <div class="moderation-header">
+    <h2>Content Moderation</h2>
+    <p class="subtitle">Review and manage reported content</p>
+  </div>
+  
+  <div class="moderation-list">
+    <div class="no-items" *ngIf="moderationItems.length === 0">
+      There are no items requiring moderation.
+    </div>
+    
+    <div class="moderation-item" *ngFor="let item of moderationItems" @itemAnimation>
+      <div class="item-header">
+        <div class="item-type">
+          <span class="type-icon">{{ getTypeIcon(item.type) }}</span>
+          <span class="type-label">{{ getTypeLabel(item.type) }}</span>
+        </div>
+        <div class="item-status">
+          <span class="status-badge" [ngClass]="getStatusClass(item.status)">
+            {{ item.status }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="item-content">
+        <p>{{ truncateContent(item.content) }}</p>
+      </div>
+      
+      <div class="item-info">
+        <div class="info-row">
+          <span class="info-label">Author:</span>
+          <span class="info-value">{{ item.authorName }}</span>
+        </div>
+        <div class="info-row" *ngIf="item.reportedBy">
+          <span class="info-label">Reported by:</span>
+          <span class="info-value">{{ item.reportedBy }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Date:</span>
+          <span class="info-value">{{ item.reportDate | date:'MMM d, y' }}</span>
+        </div>
+        <div class="info-row" *ngIf="item.reason">
+          <span class="info-label">Reason:</span>
+          <span class="info-value">{{ item.reason }}</span>
+        </div>
+      </div>
+      
+      <div class="item-actions" *ngIf="item.status === 'pending'">
+        <button class="btn-view" (click)="viewItemDetails(item)">Review</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Moderation Details Modal -->
+  <div class="moderation-modal" *ngIf="selectedItem" @modalAnimation>
+    <div class="modal-backdrop" (click)="closeItemDetails()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Content Review</h3>
+        <button class="btn-close" (click)="closeItemDetails()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="content-type">
+          <span class="type-icon large-icon">{{ getTypeIcon(selectedItem.type) }}</span>
+          <span class="type-name">{{ getTypeLabel(selectedItem.type) }}</span>
+        </div>
+        
+        <div class="content-full">
+          <h4>Content</h4>
+          <div class="content-text">
+            {{ selectedItem.content }}
+          </div>
+        </div>
+        
+        <div class="content-meta">
+          <h4>Details</h4>
+          <div class="meta-info">
+            <div class="info-row">
+              <span class="info-label">Author:</span>
+              <span class="info-value">{{ selectedItem.authorName }}</span>
+            </div>
+            <div class="info-row" *ngIf="selectedItem.reportedBy">
+              <span class="info-label">Reported by:</span>
+              <span class="info-value">{{ selectedItem.reportedBy }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Date:</span>
+              <span class="info-value">{{ selectedItem.reportDate | date:'MMM d, y' }}</span>
+            </div>
+            <div class="info-row" *ngIf="selectedItem.reason">
+              <span class="info-label">Reason:</span>
+              <span class="info-value">{{ selectedItem.reason }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="moderation-actions">
+          <div class="notes-section">
+            <h4>Moderation Notes</h4>
+            <textarea 
+              placeholder="Add notes about this decision (optional)" 
+              [(ngModel)]="moderationNotes"
+            ></textarea>
+          </div>
+          
+          <div class="action-buttons">
+            <button class="btn-approve" (click)="approveContent(selectedItem)">
+              Approve Content
+            </button>
+            <button class="btn-reject" (click)="rejectContent(selectedItem)">
+              Reject Content
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="system-statistics-container">
+  <div class="statistics-header">
+    <h2>System Statistics</h2>
+    <p class="subtitle">Platform usage metrics and trends</p>
+  </div>
+  
+  <div class="statistics-grid">
+    <div class="statistic-card" *ngFor="let stat of statistics" @cardAnimation>
+      <div class="card-header">
+        <div class="card-title">{{ stat.name }}</div>
+        <div class="card-period">{{ getPeriodLabel(stat.period) }}</div>
+      </div>
+      
+      <div class="card-value">{{ stat.value }}</div>
+      
+      <div class="card-trend">
+        <span class="trend-value" [ngClass]="getTrendClass(stat.trend)">
+          <span class="trend-icon">{{ getTrendIcon(stat.trend) }}</span>
+          {{ getChangePrefix(stat.trend) }}{{ stat.change }}
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="chart-section">
+    <div class="section-header">
+      <h3>Activity Overview</h3>
+      <p class="subtitle">This chart would display real activity metrics in a production environment</p>
+    </div>
+    
+    <div class="mock-chart">
+      <div class="chart-placeholder">
+        <div class="chart-bars">
+          <div class="chart-bar" style="height: 30%;"></div>
+          <div class="chart-bar" style="height: 50%;"></div>
+          <div class="chart-bar" style="height: 70%;"></div>
+          <div class="chart-bar" style="height: 60%;"></div>
+          <div class="chart-bar" style="height: 80%;"></div>
+          <div class="chart-bar" style="height: 90%;"></div>
+          <div class="chart-bar" style="height: 75%;"></div>
+        </div>
+        <div class="chart-message">Interactive charts would be implemented in production</div>
+      </div>
+    </div>
+  </div>
+</div>

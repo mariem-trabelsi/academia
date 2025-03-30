@@ -1,0 +1,404 @@
+.user-management-container {
+  width: 100%;
+}
+
+.user-header {
+  margin-bottom: 1.5rem;
+  
+  h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #666;
+    font-size: 0.95rem;
+  }
+}
+
+.user-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-container {
+  flex: 1;
+  min-width: 250px;
+  
+  .search-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    
+    &:focus {
+      outline: none;
+      border-color: #4a86e8;
+      box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.2);
+    }
+  }
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .filter-label {
+    font-weight: 500;
+    color: #666;
+  }
+  
+  .filter-options {
+    display: flex;
+    
+    button {
+      padding: 0.5rem 0.8rem;
+      background-color: #f5f7fa;
+      border: 1px solid #ddd;
+      color: #666;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:first-child {
+        border-radius: 4px 0 0 4px;
+      }
+      
+      &:last-child {
+        border-radius: 0 4px 4px 0;
+      }
+      
+      &:not(:last-child) {
+        border-right: none;
+      }
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+      
+      &.active {
+        background-color: #4a86e8;
+        color: white;
+        border-color: #4a86e8;
+      }
+    }
+  }
+}
+
+.users-list {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.list-header {
+  display: grid;
+  grid-template-columns: 2.5fr 2fr 1fr 1fr 0.8fr 0.8fr;
+  padding: 1rem;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #e1e4e8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.user-item {
+  display: grid;
+  grid-template-columns: 2.5fr 2fr 1fr 1fr 0.8fr 0.8fr;
+  padding: 1rem;
+  border-bottom: 1px solid #eaedf0;
+  align-items: center;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f9fafc;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.item-user {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    &.user-initials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+  }
+  
+  .user-name {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.item-email {
+  color: #666;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.item-status {
+  .status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  
+  .status-active {
+    background-color: #e6f7ee;
+    color: #28a745;
+  }
+  
+  .status-suspended {
+    background-color: #fff8e6;
+    color: #f5a623;
+  }
+  
+  .status-inactive {
+    background-color: #f6f6f6;
+    color: #888;
+  }
+}
+
+.item-papers {
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+}
+
+.item-actions {
+  .btn-manage {
+    padding: 0.4rem 0.8rem;
+    background-color: #f0f5ff;
+    color: #4a86e8;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: #4a86e8;
+      color: white;
+    }
+  }
+}
+
+.no-users {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
+
+// Modal Styles
+.user-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #eaedf0;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+  }
+  
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 70px);
+}
+
+.user-profile {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    &.profile-initials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+  }
+  
+  .profile-info {
+    flex: 1;
+    
+    h4 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    
+    .info-row {
+      display: flex;
+      margin-bottom: 0.5rem;
+    }
+    
+    .info-label {
+      width: 100px;
+      font-weight: 500;
+      color: #666;
+    }
+    
+    .info-value {
+      color: #333;
+    }
+  }
+}
+
+.user-actions {
+  h5 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #444;
+    border-bottom: 1px solid #eaedf0;
+    padding-bottom: 0.5rem;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    
+    button {
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-activate {
+      background-color: #28a745;
+      color: white;
+      
+      &:hover {
+        background-color: darken(#28a745, 5%);
+      }
+    }
+    
+    .btn-suspend {
+      background-color: #f5a623;
+      color: white;
+      
+      &:hover {
+        background-color: darken(#f5a623, 5%);
+      }
+    }
+    
+    .btn-deactivate {
+      background-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: darken(#6c757d, 5%);
+      }
+    }
+  }
+}
