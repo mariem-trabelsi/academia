@@ -37,8 +37,13 @@ const routes: Routes = [
 },
 
 {
+  path: 'discover',
+  loadChildren: () => import('./module/content-discovery/content-discovery.module').then(m => m.ContentDiscoveryModule)
+},
+
+{
   path: '',
-  redirectTo: 'papers',
+  redirectTo: 'discover',
   pathMatch: 'full'
 }
 

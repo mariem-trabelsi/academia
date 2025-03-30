@@ -1,10 +1,16 @@
 <div class="paper-list-container">
   <div class="header">
     <h1>Research Papers</h1>
-    <button class="btn-new" (click)="createNewPaper()">
-      <i class="fas fa-plus"></i>
-      New Paper
-    </button>
+    <div class="header-actions">
+      <a routerLink="/discover" class="btn-discover">
+        <i class="fas fa-compass"></i>
+        Discover Papers
+      </a>
+      <button class="btn-new" (click)="createNewPaper()">
+        <i class="fas fa-plus"></i>
+        New Paper
+      </button>
+    </div>
   </div>
   
   <app-paper-filter [filter]="filter" (filterChange)="onFilterChange($event)"></app-paper-filter>

@@ -1,0 +1,60 @@
+<div class="topic-filter">
+  <div class="filter-header" (click)="toggleFilter()">
+    <div class="filter-title">
+      <i class="fas fa-filter"></i>
+      <span>Filter Research</span>
+    </div>
+    <div class="toggle-icon">
+      <i class="fas" [class.fa-chevron-down]="!isExpanded" [class.fa-chevron-up]="isExpanded"></i>
+    </div>
+  </div>
+  
+  <div class="filter-body" [class.expanded]="isExpanded">
+    <div class="filter-row">
+      <div class="filter-column">
+        <div class="filter-group">
+          <label>Domain</label>
+          <select [(ngModel)]="filter.domain">
+            <option [value]="undefined">All Domains</option>
+            <option *ngFor="let domain of domains" [value]="domain">{{ domain }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filter-column">
+        <div class="filter-group">
+          <label>Author Name</label>
+          <input type="text" [(ngModel)]="filter.authorName" placeholder="Search by author name">
+        </div>
+      </div>
+      
+      <div class="filter-column">
+        <div class="filter-group">
+          <label>Time Period</label>
+          <select [(ngModel)]="filter.dateRange">
+            <option [value]="undefined">Any Time</option>
+            <option *ngFor="let range of dateRanges" [value]="range.value">{{ range.label }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="keywords-section">
+      <label>Popular Keywords</label>
+      <div class="keywords-container">
+        <button 
+          *ngFor="let keyword of popularKeywords" 
+          class="keyword-tag" 
+          [class.selected]="isKeywordSelected(keyword)"
+          (click)="toggleKeyword(keyword)">
+          {{ keyword }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="filter-actions">
+      <button class="btn-clear" (click)="clearFilters()">Clear All</button>
+      <button class="btn-apply" (click)="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+</div> 
