@@ -1,0 +1,31 @@
+<div class="group-card" (click)="onView()">
+  <div class="group-image" [style.background-image]="group.coverImage ? 'url(' + group.coverImage + ')' : 'none'">
+    <div class="group-badge" *ngIf="group.isPrivate">Private</div>
+  </div>
+  
+  <div class="group-content">
+    <div class="group-name">{{ group.name }}</div>
+    
+    <div class="group-info">
+      <div class="member-count">
+        <i class="fas fa-users"></i>
+        {{ formatMemberCount(group.memberCount) }} members
+      </div>
+      <div class="admin-info">
+        <span>Admin: </span>
+        <span class="admin-name">{{ group.admin?.name }}</span>
+      </div>
+    </div>
+    
+    <div class="group-focus">
+      <div class="focus-tag" *ngFor="let focus of getTopFocus()">{{ focus }}</div>
+    </div>
+    
+    <button 
+      class="join-button" 
+      [class.member]="group.isMember" 
+      (click)="onJoin($event)">
+      {{ group.isMember ? 'Member' : 'Join Group' }}
+    </button>
+  </div>
+</div>

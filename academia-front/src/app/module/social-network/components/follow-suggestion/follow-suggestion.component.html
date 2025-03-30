@@ -1,0 +1,43 @@
+<div class="follow-suggestion" (click)="onView()">
+  <div class="researcher-header">
+    <div class="researcher-image">
+      <img [src]="researcher.profileImage || ''" alt="{{ researcher.name }}" (error)="researcher.profileImage = ''" />
+    </div>
+    
+    <div class="researcher-main-info">
+      <div class="researcher-name">{{ researcher.name }}</div>
+      <div class="researcher-title">{{ researcher.title }} at {{ researcher.institution }}</div>
+    </div>
+  </div>
+  
+  <div class="researcher-metrics">
+    <div class="metric">
+      <span class="metric-value">{{ researcher.publications }}</span>
+      <span class="metric-label">Papers</span>
+    </div>
+    <div class="metric">
+      <span class="metric-value">{{ researcher.citations }}</span>
+      <span class="metric-label">Citations</span>
+    </div>
+    <div class="metric">
+      <span class="metric-value">{{ researcher.followers }}</span>
+      <span class="metric-label">Followers</span>
+    </div>
+  </div>
+  
+  <div class="researcher-interests">
+    <span class="interest-tag" *ngFor="let interest of getTopInterests()">{{ interest }}</span>
+    <span class="more-interests" *ngIf="researcher.researchInterests.length > 2">+{{ researcher.researchInterests.length - 2 }} more</span>
+  </div>
+  
+  <div class="action-container">
+    <button class="follow-button" [class.following]="researcher.isFollowing" (click)="onFollow($event)">
+      <i [class]="researcher.isFollowing ? 'fas fa-check' : 'fas fa-user-plus'"></i>
+      {{ researcher.isFollowing ? 'Following' : 'Follow' }}
+    </button>
+    <button class="message-button" (click)="onMessage($event)">
+      <i class="fas fa-envelope"></i>
+      Message
+    </button>
+  </div>
+</div>

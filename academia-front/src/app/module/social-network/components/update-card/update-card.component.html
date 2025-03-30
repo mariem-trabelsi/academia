@@ -1,0 +1,45 @@
+<div class="update-card">
+  <div class="update-header">
+    <div class="researcher-info" (click)="onViewResearcher($event)">
+      <div class="researcher-avatar">
+        <img [src]="update.researcher.profileImage || ''" alt="{{ update.researcher.name }}" (error)="handleProfileImageError($event)" />
+      </div>
+      <div class="researcher-details">
+        <div class="researcher-name">{{ update.researcher.name }}</div>
+        <div class="researcher-title">{{ update.researcher.title }}</div>
+      </div>
+    </div>
+    <div class="update-type">
+      <span class="update-badge">
+        <i class="fas {{ getUpdateTypeIcon() }}"></i>
+        {{ getUpdateTypeLabel() }}
+      </span>
+      <span class="update-time">{{ formatDate(update.createdAt) }}</span>
+    </div>
+  </div>
+  
+  <div class="update-content">
+    <p class="update-text">{{ update.content }}</p>
+    
+    <div *ngIf="update.updateType === 'PAPER_PUBLISHED' && update.paperId && update.paperTitle" class="paper-preview">
+      <div class="paper-image" [style.background-image]="update.paperImage ? 'url(' + update.paperImage + ')' : 'none'"></div>
+      <div class="paper-info">
+        <a [routerLink]="['/papers', update.paperId]" class="paper-title">{{ update.paperTitle }}</a>
+        <button class="read-button" [routerLink]="['/papers', update.paperId]">
+          Read Paper <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="update-actions">
+    <button class="action-button" [class.active]="update.isLiked" (click)="onLike()">
+      <i class="fas" [ngClass]="update.isLiked ? 'fa-heart' : 'fa-heart-o'"></i>
+      <span>{{ update.likes }} {{ update.likes === 1 ? 'Like' : 'Likes' }}</span>
+    </button>
+    <button class="action-button" (click)="onComment()">
+      <i class="fas fa-comment"></i>
+      <span>{{ update.comments }} {{ update.comments === 1 ? 'Comment' : 'Comments' }}</span>
+    </button>
+  </div>
+</div> 

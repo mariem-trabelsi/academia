@@ -10,6 +10,7 @@ import { ActivateAccountComponent } from './pages/activate-account/activate-acco
 import { CodeInputModule } from 'angular-code-input';
 import { TokenInjectionInterceptor } from './services/interceptor/token-injection.interceptor';
 import { ArticleTestComponent } from './module/article/pages/article-test/article-test.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ArticleTestComponent } from './module/article/pages/article-test/articl
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    CodeInputModule
+    CodeInputModule,
+    SharedModule
   ],
   providers: [
     HttpClient,
