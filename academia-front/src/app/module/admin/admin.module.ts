@@ -10,6 +10,7 @@ import { ContentModerationComponent } from './components/content-moderation/cont
 import { SystemStatisticsComponent } from './components/system-statistics/system-statistics.component';
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
 import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
+import { DomainManagementComponent } from './components/domain-management/domain-management.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.
     ContentModerationComponent,
     SystemStatisticsComponent,
     AdminLayoutComponent,
-    AdminSidebarComponent
+    AdminSidebarComponent,
+    DomainManagementComponent
   ],
   imports: [
     CommonModule,

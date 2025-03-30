@@ -4,7 +4,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 interface SidebarItem {
   label: string;
   icon: string;
-  section: 'dashboard' | 'approval' | 'users' | 'moderation' | 'statistics' | 'settings';
+  section: 'dashboard' | 'approval' | 'users' | 'domains' | 'moderation' | 'statistics' | 'settings';
   active?: boolean;
 }
 
@@ -29,6 +29,7 @@ export class AdminSidebarComponent {
     { label: 'Dashboard', icon: '📊', section: 'dashboard', active: true },
     { label: 'Paper Approvals', icon: '📝', section: 'approval' },
     { label: 'User Management', icon: '👥', section: 'users' },
+    { label: 'Domain Management', icon: '🔖', section: 'domains' },
     { label: 'Content Moderation', icon: '🔍', section: 'moderation' },
     { label: 'Statistics', icon: '📈', section: 'statistics' },
     { label: 'Settings', icon: '⚙️', section: 'settings' },

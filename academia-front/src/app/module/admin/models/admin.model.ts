@@ -11,6 +11,16 @@ export interface PaperApproval {
   pdfUrl?: string;
 }
 
+export interface Domain {
+  id: number;
+  name: string;
+  description: string;
+  papersCount: number;
+  status: 'active' | 'inactive';
+  createdDate: Date;
+  lastModified?: Date;
+}
+
 export interface UserManagement {
   id: number;
   fullName: string;

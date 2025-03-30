@@ -5,7 +5,8 @@ import {
   UserManagement,
   ContentModeration,
   SystemStatistic,
-  DashboardSummary
+  DashboardSummary,
+  Domain
 } from '../models/admin.model';
 
 @Injectable({
@@ -268,6 +269,89 @@ export class AdminService {
 
   resolveModeration(itemId: number, action: 'approve' | 'reject', notes?: string): Observable<boolean> {
     // Mock successful moderation resolution
+    return of(true);
+  }
+
+  getDomainsList(): Observable<Domain[]> {
+    const mockDomains: Domain[] = [
+      {
+        id: 1,
+        name: 'Computer Science',
+        description: 'Research in computing, algorithms, artificial intelligence, and related fields',
+        papersCount: 247,
+        status: 'active',
+        createdDate: new Date('2022-01-15'),
+        lastModified: new Date('2023-02-21')
+      },
+      {
+        id: 2,
+        name: 'Biology',
+        description: 'Studies of living organisms, their structure, growth, evolution, and distribution',
+        papersCount: 189,
+        status: 'active',
+        createdDate: new Date('2022-01-18')
+      },
+      {
+        id: 3,
+        name: 'Physics',
+        description: 'Research on the natural science studying matter, motion, and behavior of energy',
+        papersCount: 156,
+        status: 'active',
+        createdDate: new Date('2022-01-20'),
+        lastModified: new Date('2023-01-05')
+      },
+      {
+        id: 4,
+        name: 'Mathematics',
+        description: 'Abstract science of numbers, quantity, and space',
+        papersCount: 132,
+        status: 'active',
+        createdDate: new Date('2022-02-03')
+      },
+      {
+        id: 5,
+        name: 'Psychology',
+        description: 'Scientific study of the mind and behavior',
+        papersCount: 98,
+        status: 'active',
+        createdDate: new Date('2022-02-10'),
+        lastModified: new Date('2023-03-01')
+      },
+      {
+        id: 6,
+        name: 'Ancient History',
+        description: 'Study of historical events from the beginning of writing until the Early Middle Ages',
+        papersCount: 45,
+        status: 'inactive',
+        createdDate: new Date('2022-03-15'),
+        lastModified: new Date('2023-02-28')
+      }
+    ];
+    
+    return of(mockDomains);
+  }
+
+  updateDomainStatus(domainId: number, status: 'active' | 'inactive'): Observable<boolean> {
+    // Mock successful domain status update
+    return of(true);
+  }
+
+  createDomain(domain: Partial<Domain>): Observable<Domain> {
+    // Mock successful domain creation
+    const newDomain: Domain = {
+      id: Math.floor(Math.random() * 1000) + 100,
+      name: domain.name || '',
+      description: domain.description || '',
+      papersCount: 0,
+      status: domain.status || 'active',
+      createdDate: new Date(),
+    };
+    
+    return of(newDomain);
+  }
+
+  updateDomain(domain: Domain): Observable<boolean> {
+    // Mock successful domain update
     return of(true);
   }
 }
