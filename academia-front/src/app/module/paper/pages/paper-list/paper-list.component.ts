@@ -43,7 +43,9 @@ export class PaperListComponent implements OnInit {
   }
 
   onDeleteRequest(id: number): void {
+    console.log('Delete requested for paper ID:', id);
     this.confirmingDeleteId = id;
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   }
 
   confirmDelete(): void {
@@ -65,6 +67,7 @@ export class PaperListComponent implements OnInit {
 
   cancelDelete(): void {
     this.confirmingDeleteId = null;
+    document.body.style.overflow = ''; // Restore scrolling
   }
 
   createNewPaper(): void {

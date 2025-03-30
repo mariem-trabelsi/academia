@@ -83,12 +83,11 @@ export class PaperDetailComponent implements OnInit {
       content: this.newComment.trim()
     };
     
+    // Don't keep a local reference to comments that could get out of sync
     this.paperService.addComment(this.paper.id!, comment).subscribe({
       next: (newComment) => {
-        if (!this.paper!.comments) {
-          this.paper!.comments = [];
-        }
-        this.paper!.comments.push(newComment);
+        // Reload the paper to get fresh data with the new comment
+        this.loadPaper();
         this.newComment = '';
       },
       error: (error) => {
@@ -127,10 +126,12 @@ export class PaperDetailComponent implements OnInit {
   confirmDelete(): void {
     console.log('Confirm delete called, showing modal');
     this.showDeleteConfirmation = true;
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   }
 
   cancelDelete(): void {
     this.showDeleteConfirmation = false;
+    document.body.style.overflow = ''; // Restore scrolling
   }
 
   deletePaper(): void {
@@ -139,14 +140,18 @@ export class PaperDetailComponent implements OnInit {
     this.paperService.deletePaper(this.paper.id!).subscribe({
       next: (success) => {
         if (success) {
+          this.showDeleteConfirmation = false;
+          document.body.style.overflow = ''; // Restore scrolling
           this.navigateToList();
         } else {
           this.showDeleteConfirmation = false;
+          document.body.style.overflow = ''; // Restore scrolling
         }
       },
       error: (error) => {
         console.error('Error deleting paper:', error);
         this.showDeleteConfirmation = false;
+        document.body.style.overflow = ''; // Restore scrolling
       }
     });
   }

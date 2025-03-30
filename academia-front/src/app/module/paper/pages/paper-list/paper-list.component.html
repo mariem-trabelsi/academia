@@ -25,10 +25,12 @@
       <app-paper-card [paper]="paper" (deleteRequest)="onDeleteRequest($event)"></app-paper-card>
     </div>
   </div>
-  
-  <!-- Delete Confirmation Modal -->
-  <div class="modal-overlay" *ngIf="confirmingDeleteId !== null">
-    <div class="modal">
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="confirmingDeleteId !== null">
+  <div class="modal-dialog">
+    <div class="modal-content">
       <div class="modal-header">
         <h3>Confirm Delete</h3>
       </div>

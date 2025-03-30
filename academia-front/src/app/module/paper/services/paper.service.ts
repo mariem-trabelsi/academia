@@ -204,7 +204,11 @@ export class PaperService {
 
   getPaperById(id: number): Observable<Paper | undefined> {
     const paper = this.mockPapers.find(p => p.id === id);
-    return of(paper).pipe(delay(300));
+    
+    // Return a deep copy to avoid reference issues
+    const paperCopy = paper ? this.deepCopy(paper) : undefined;
+    
+    return of(paperCopy).pipe(delay(300));
   }
 
   addPaper(paper: Paper): Observable<Paper> {
@@ -250,21 +254,30 @@ export class PaperService {
   }
 
   addComment(paperId: number, comment: Omit<PaperComment, 'id' | 'createdDate'>): Observable<PaperComment> {
-    const paper = this.mockPapers.find(p => p.id === paperId);
+    // Find the paper index
+    const paperIndex = this.mockPapers.findIndex(p => p.id === paperId);
     
-    if (paper) {
+    if (paperIndex !== -1) {
+      // Get a reference to the paper
+      const paper = this.mockPapers[paperIndex];
+      
+      // Create the new comment
       const newComment: PaperComment = {
         id: this.getNextCommentId(paper),
         ...comment,
         createdDate: new Date().toISOString()
       };
       
+      // Initialize comments array if needed
       if (!paper.comments) {
         paper.comments = [];
       }
       
+      // Add to the in-memory mock data 
       paper.comments.push(newComment);
-      return of(newComment).pipe(delay(500));
+      
+      // Return a deep copy to avoid reference issues
+      return of(this.deepCopy(newComment)).pipe(delay(500));
     }
     
     throw new Error('Paper not found');
@@ -304,5 +317,10 @@ export class PaperService {
       return 1;
     }
     return Math.max(...paper.comments.map(c => c.id || 0)) + 1;
+  }
+
+  // Helper for deep copying objects
+  private deepCopy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
   }
 }
