@@ -2,6 +2,7 @@ package com.academia.academia.services;
 
 import com.academia.academia.entities.Article;
 import com.academia.academia.repositories.ArticleRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,13 @@ public class ArticleService {
     public Article createArticle(Article article) {
         return articleRepository.save(article);
     }
+
+
+
+
+
+
+
 
     public void deleteArticle(Long id) {
         articleRepository.deleteById(id);

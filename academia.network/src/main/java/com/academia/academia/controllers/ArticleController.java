@@ -2,6 +2,8 @@ package com.academia.academia.controllers;
 
 import com.academia.academia.entities.Article;
 import com.academia.academia.services.ArticleService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -33,4 +35,5 @@ public class ArticleController {
     public void deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
     }
+
 }

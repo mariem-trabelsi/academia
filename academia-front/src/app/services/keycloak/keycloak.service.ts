@@ -23,18 +23,21 @@ export class KeycloakService {
  private _profile: UserProfile | undefined;
 
   get profile(): UserProfile | undefined {
+    console.log("user connecté :" , this._profile)
     return this._profile;
   }
 
   async init() {
     const authenticated = await this.keycloak.init({
       onLoad: 'login-required',
-      //onLoad: 'check-sso', 
+      //onLoad: 'check-sso',
     });
 
     if (authenticated) {
+
       this._profile = (await this.keycloak.loadUserProfile()) as UserProfile;
       this._profile.token = this.keycloak.token || '';
+
     }
   }
 
@@ -52,7 +55,7 @@ export class KeycloakService {
   }
 
 
- 
+
   hasRole(role: string): boolean {
     const roles = this.keycloak.tokenParsed?.realm_access?.roles || [];
     console.log('User roles:', roles);
