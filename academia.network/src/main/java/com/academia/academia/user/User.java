@@ -35,9 +35,9 @@ import static jakarta.persistence.FetchType.EAGER;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "_user")
-@EntityListeners(AuditingEntityListener.class)
+//@Entity
+//@Table(name = "_user")
+//@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
 
     @Id
@@ -57,10 +57,7 @@ public class User implements UserDetails, Principal {
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
 
-   /* @OneToMany(mappedBy = "owner")
-    private List<Book> books;
-    @OneToMany(mappedBy = "user")
-    private List<BookTransactionHistory> histories;*/
+
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -70,6 +67,7 @@ public class User implements UserDetails, Principal {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return  this.roles
@@ -77,6 +75,8 @@ public class User implements UserDetails, Principal {
                 .map(r -> new SimpleGrantedAuthority(r.getName()))
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public String getPassword() {

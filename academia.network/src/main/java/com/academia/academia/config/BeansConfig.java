@@ -22,7 +22,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class BeansConfig {
 
-    private final UserDetailsService userDetailsService;
+   /* private final UserDetailsService userDetailsService;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -40,7 +40,7 @@ public class BeansConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    }*/
 
     @Bean
     public AuditorAware<String> auditorAware() {

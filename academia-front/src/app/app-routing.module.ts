@@ -7,13 +7,18 @@ import { ArticleTestComponent } from './module/article/pages/article-test/articl
 import { AppLayoutComponent } from './shared/components/app-layout/app-layout.component';
 
 const routes: Routes = [
- { 
-   path :'login', 
+  {
+    path :'',
+    redirectTo: 'articles',
+    pathMatch : 'full'
+  },
+ {
+   path :'login',
    component :  SinginComponent,
  },
 
- { 
-  path:'register', 
+ {
+  path:'register',
   component: SingnupComponent
 },
 

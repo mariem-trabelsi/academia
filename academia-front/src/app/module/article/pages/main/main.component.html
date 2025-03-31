@@ -1,5 +1,11 @@
 <div class="d-flex flex-column gap-1">
-    
+
+
+  <nav>
+    <a routerLink="/home">🏠 Accueil</a>
+    <a routerLink="/articles">📰 Articles</a>
+    <a *ngIf="isAdmin" routerLink="/admin">⚙️ enaaa Adminnnnnnn</a>
+  </nav>
   
     <div class="pe-2 ps-2">
       <router-outlet></router-outlet>

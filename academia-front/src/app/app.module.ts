@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,6 +13,13 @@ import { TokenInjectionInterceptor } from './services/interceptor/token-injectio
 import { ArticleTestComponent } from './module/article/pages/article-test/article-test.component';
 import { SharedModule } from './shared/shared.module';
 import { DiscussionFeedbackModule } from './module/discussion-feedback/discussion-feedback.module';
+import { KeycloakService } from './services/keycloak/keycloak.service';
+
+
+export function keyclockFactory(kcService: KeycloakService) {
+  return () => kcService.init();
+}
+
 
 @NgModule({
   declarations: [
@@ -38,7 +45,14 @@ import { DiscussionFeedbackModule } from './module/discussion-feedback/discussio
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInjectionInterceptor,
       multi: true
-    },
+   },
+
+   {
+    provide: APP_INITIALIZER,
+    deps: [KeycloakService],
+    useFactory: keyclockFactory,
+    multi: true
+   }
   ],
   bootstrap: [AppComponent]
 })
