@@ -91,7 +91,7 @@ export class PaperDetailComponent implements OnInit {
   }
 
   navigateToList(): void {
-    this.router.navigate(['/papers']);
+    this.router.navigate(['/discover']);
   }
   
   setRating(rating: number): void {

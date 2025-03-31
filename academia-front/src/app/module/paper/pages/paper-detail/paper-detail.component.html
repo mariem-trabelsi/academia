@@ -7,14 +7,14 @@
   <div class="paper-not-found" *ngIf="!loading && !paper">
     <h2>Paper Not Found</h2>
     <p>The requested paper could not be found or has been removed.</p>
-    <button class="btn-back" (click)="navigateToList()">Back to Papers</button>
+    <button class="btn-back" (click)="navigateToList()">Back to Discovery</button>
   </div>
   
   <div class="paper-detail" *ngIf="!loading && paper">
     <div class="paper-header">
       <div class="back-button" (click)="navigateToList()">
         <i class="fas fa-arrow-left"></i>
-        <span>Back to Papers</span>
+        <span>Back to Discovery</span>
       </div>
       
       <div class="paper-actions">
