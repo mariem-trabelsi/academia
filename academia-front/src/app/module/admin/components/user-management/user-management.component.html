@@ -1,0 +1,170 @@
+<div class="user-management-container">
+  <div class="user-header">
+    <h2>User Management</h2>
+    <p class="subtitle">Manage user accounts and permissions</p>
+  </div>
+  
+  <div class="user-controls">
+    <div class="search-container">
+      <input 
+        type="text" 
+        placeholder="Search by name or email" 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      >
+    </div>
+    
+    <div class="filter-container">
+      <div class="filter-label">Status:</div>
+      <div class="filter-options">
+        <button 
+          [class.active]="statusFilter === 'all'"
+          (click)="onStatusFilterChange('all')"
+        >All</button>
+        <button 
+          [class.active]="statusFilter === 'active'"
+          (click)="onStatusFilterChange('active')"
+        >Active</button>
+        <button 
+          [class.active]="statusFilter === 'suspended'"
+          (click)="onStatusFilterChange('suspended')"
+        >Suspended</button>
+        <button 
+          [class.active]="statusFilter === 'inactive'"
+          (click)="onStatusFilterChange('inactive')"
+        >Inactive</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="users-list">
+    <div class="list-header">
+      <div class="header-user">User</div>
+      <div class="header-email">Email</div>
+      <div class="header-date">Registered</div>
+      <div class="header-status">Status</div>
+      <div class="header-papers">Papers</div>
+      <div class="header-actions">Actions</div>
+    </div>
+    
+    <div class="no-users" *ngIf="filteredUsers.length === 0">
+      No users match your search criteria.
+    </div>
+    
+    <div class="user-item" *ngFor="let user of filteredUsers" @itemAnimation>
+      <div class="item-user">
+        <div class="user-avatar" *ngIf="user.profileImageUrl">
+          <img [src]="user.profileImageUrl" [alt]="user.fullName" (error)="user.profileImageUrl = ''">
+        </div>
+        <div 
+          class="user-avatar user-initials" 
+          *ngIf="!user.profileImageUrl"
+          [style.background-color]="getRandomColor(user.id)"
+        >
+          {{ getInitials(user.fullName) }}
+        </div>
+        <div class="user-name">{{ user.fullName }}</div>
+      </div>
+      <div class="item-email">{{ user.email }}</div>
+      <div class="item-date">{{ user.registrationDate | date:'MMM d, y' }}</div>
+      <div class="item-status">
+        <span class="status-badge" [ngClass]="getStatusClass(user.status)">
+          {{ getStatusLabel(user.status) }}
+        </span>
+      </div>
+      <div class="item-papers">{{ user.papersCount }}</div>
+      <div class="item-actions">
+        <button class="btn-manage" (click)="viewUserDetails(user)">Manage</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- User Details Modal -->
+  <div class="user-details-modal" *ngIf="selectedUser" @modalAnimation>
+    <div class="modal-backdrop" (click)="closeUserDetails()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>User Management</h3>
+        <button class="btn-close" (click)="closeUserDetails()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="user-profile">
+          <div class="profile-image" *ngIf="selectedUser.profileImageUrl">
+            <img [src]="selectedUser.profileImageUrl" [alt]="selectedUser.fullName" (error)="selectedUser.profileImageUrl = ''">
+          </div>
+          <div 
+            class="profile-image profile-initials" 
+            *ngIf="!selectedUser.profileImageUrl"
+            [style.background-color]="getRandomColor(selectedUser.id)"
+          >
+            {{ getInitials(selectedUser.fullName) }}
+          </div>
+          
+          <div class="profile-info">
+            <h4>{{ selectedUser.fullName }}</h4>
+            <div class="info-row">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ selectedUser.email }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Registered:</span>
+              <span class="info-value">{{ selectedUser.registrationDate | date:'MMM d, y' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Last Login:</span>
+              <span class="info-value">{{ selectedUser.lastLogin ? (selectedUser.lastLogin | date:'MMM d, y') : 'Never' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Role:</span>
+              <span class="info-value">{{ selectedUser.role === 'admin' ? 'Administrator' : 'User' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Papers:</span>
+              <span class="info-value">{{ selectedUser.papersCount }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Status:</span>
+              <span class="info-value">
+                <span class="status-badge" [ngClass]="getStatusClass(selectedUser.status)">
+                  {{ getStatusLabel(selectedUser.status) }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="user-actions">
+          <h5>Account Actions</h5>
+          
+          <div class="action-buttons">
+            <button 
+              class="btn-activate" 
+              *ngIf="selectedUser.status !== 'active'"
+              (click)="updateUserStatus(selectedUser.id, 'active')"
+            >
+              Activate Account
+            </button>
+            
+            <button 
+              class="btn-suspend" 
+              *ngIf="selectedUser.status !== 'suspended'"
+              (click)="updateUserStatus(selectedUser.id, 'suspended')"
+            >
+              Suspend Account
+            </button>
+            
+            <button 
+              class="btn-deactivate" 
+              *ngIf="selectedUser.status !== 'inactive'"
+              (click)="updateUserStatus(selectedUser.id, 'inactive')"
+            >
+              Deactivate Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

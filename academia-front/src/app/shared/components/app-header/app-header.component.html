@@ -1,0 +1,74 @@
+<header class="app-header">
+  <div class="header-container">
+    <div class="logo-container">
+      <a routerLink="/">
+        <img src="assets/images/logo.png" alt="Academia Logo" class="header-logo">
+        <h1 class="logo">Academia</h1>
+      </a>
+    </div>
+    
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li>
+          <a 
+            routerLink="/discover" 
+            [class.active]="currentModule === 'discover'">
+            <i class="fas fa-compass"></i> Discover
+          </a>
+        </li>
+        <li>
+          <a 
+            routerLink="/network" 
+            [class.active]="currentModule === 'network'">
+            <i class="fas fa-users"></i> Network
+          </a>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="user-section">
+      <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <button class="search-button">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+      
+      <div class="notifications">
+        <a routerLink="/notifications" class="notification-icon">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge" *ngIf="unreadNotificationCount > 0">{{ unreadNotificationCount }}</span>
+        </a>
+      </div>
+      
+      <div class="user-profile" (clickOutside)="closeDropdown()">
+        <div class="profile-dropdown" (click)="toggleDropdown($event)">
+          <div class="profile-image">
+            <img src="assets/images/profile-placeholder.jpg" alt="User Profile" 
+              (error)="handleImageError($event)" />
+          </div>
+          <span class="dropdown-arrow" [class.open]="isDropdownOpen">
+            <i class="fas fa-chevron-down"></i>
+          </span>
+          <div class="dropdown-menu" [class.open]="isDropdownOpen">
+            <div class="dropdown-header">
+              <div class="profile-info">
+                <div class="user-name">Dr. Jane Smith</div>
+                <div class="user-email">jane.smith@university.edu</div>
+              </div>
+            </div>
+            <ul>
+              <li><a routerLink="/network/researcher/1"><i class="fas fa-user"></i> My Profile</a></li>
+              <li><a routerLink="/network/messages"><i class="fas fa-envelope"></i> Messages</a></li>
+              <li><a routerLink="/papers"><i class="fas fa-folder"></i> My Papers</a></li>
+              <li><a routerLink="/papers/new"><i class="fas fa-upload"></i> Upload Paper</a></li>
+              <li class="divider"></li>
+              <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+              <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header> 

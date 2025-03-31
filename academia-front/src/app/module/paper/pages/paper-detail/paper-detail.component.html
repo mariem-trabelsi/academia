@@ -1,0 +1,147 @@
+<div class="paper-detail-container">
+  <div class="loading-indicator" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading paper details...</p>
+  </div>
+  
+  <div class="paper-not-found" *ngIf="!loading && !paper">
+    <h2>Paper Not Found</h2>
+    <p>The requested paper could not be found or has been removed.</p>
+    <button class="btn-back" (click)="navigateToList()">Back to Discovery</button>
+  </div>
+  
+  <div class="paper-detail" *ngIf="!loading && paper">
+    <div class="paper-header">
+      <div class="back-button" (click)="navigateToList()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Discovery</span>
+      </div>
+      
+      <div class="paper-actions">
+        <button class="btn-edit" (click)="editPaper()">
+          <i class="fas fa-edit"></i>
+          <span>Edit</span>
+        </button>
+        <button class="btn-delete" (click)="confirmDelete()">
+          <i class="fas fa-trash-alt"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="paper-cover" *ngIf="paper.coverImage" [style.background-image]="'url(' + paper.coverImage + ')'">
+      <div class="paper-domain">{{paper.domain}}</div>
+    </div>
+    
+    <div class="paper-content">
+      <h1 class="paper-title">{{paper.title}}</h1>
+      
+      <div class="paper-meta">
+        <div class="author-info">
+          <span class="author-label">Author:</span>
+          <a [routerLink]="['/network/researcher', 1]" class="author-name">{{paper.authorName}}</a>
+          <span class="author-affiliation" *ngIf="paper.authorAffiliation">({{paper.authorAffiliation}})</span>
+        </div>
+        
+        <div class="date-info">
+          <span class="date-label">Published:</span>
+          <span class="date-value">{{paper.createdDate | date:'mediumDate'}}</span>
+        </div>
+      </div>
+      
+      <div class="paper-keywords">
+        <span class="keyword" *ngFor="let keyword of paper.keywords">{{keyword}}</span>
+      </div>
+      
+      <div class="paper-abstract">
+        <h2>Abstract</h2>
+        <p>{{paper.abstract}}</p>
+      </div>
+      
+      <div class="paper-full-content">
+        <h2>Content</h2>
+        <div [innerHTML]="paper.content"></div>
+      </div>
+      
+      <div class="paper-attachments" *ngIf="paper.attachments && paper.attachments.length > 0">
+        <h2>Attachments</h2>
+        <div class="attachment-list">
+          <a *ngFor="let attachment of paper.attachments" 
+             [href]="attachment.fileUrl" 
+             class="attachment-item" 
+             target="_blank">
+            <i class="fas fa-paperclip"></i>
+            <span class="attachment-name">{{attachment.name}}</span>
+            <span class="attachment-type">{{attachment.fileType}}</span>
+          </a>
+        </div>
+      </div>
+      
+      <div class="paper-pdf" *ngIf="paper.pdfUrl">
+        <h2>Paper PDF</h2>
+        <a [href]="paper.pdfUrl" class="pdf-link" target="_blank">
+          <i class="fas fa-file-pdf"></i>
+          <span>Download PDF</span>
+        </a>
+      </div>
+      
+      <div class="paper-rating">
+        <h2>Rate this Paper</h2>
+        <app-rating-summary [rating]="paperRating" *ngIf="paperRating"></app-rating-summary>
+        
+        <div class="user-rating-container" *ngIf="!isRatingSubmitted">
+          <div class="user-rating-prompt">Share your rating:</div>
+          <app-star-rating 
+            [currentRating]="newRating" 
+            [readOnly]="false"
+            [size]="'large'"
+            [isAnimated]="true"
+            [showRatingValue]="true"
+            (ratingChange)="setRating($event)">
+          </app-star-rating>
+          <button class="btn-submit-rating" [disabled]="newRating === 0" (click)="submitRating()">Submit Rating</button>
+        </div>
+        
+        <div class="rating-submitted" *ngIf="isRatingSubmitted">
+          <p>Thank you for rating this paper!</p>
+        </div>
+      </div>
+      
+      <div class="paper-comments">
+        <h2>Discussion</h2>
+        
+        <app-comment-form 
+          [contentId]="paper.id!.toString()" 
+          [placeholder]="'Share your thoughts on this paper...'"
+          [isSubmitting]="isSubmittingComment"
+          (commentSubmit)="submitComment($event)">
+        </app-comment-form>
+        
+        <app-comment-list 
+          [comments]="paperComments" 
+          [loading]="isLoadingComments"
+          [sortBy]="commentSortBy"
+          (sortChange)="onCommentSortChange($event)">
+        </app-comment-list>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirmation">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this paper? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-confirm" (click)="deletePaper()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="rating-summary">
+  <div class="rating-overview">
+    <div class="average-rating">
+      <span class="rating-value">{{ rating.average.toFixed(1) }}</span>
+      <span class="max-rating">/5</span>
+    </div>
+    
+    <div class="rating-stars">
+      <app-star-rating
+        [currentRating]="rating.average"
+        [readOnly]="true"
+        [maxRating]="5"
+        [size]="'medium'">
+      </app-star-rating>
+    </div>
+    
+    <div class="rating-count">
+      <span>{{ rating.count }}</span> ratings
+    </div>
+  </div>
+  
+  <div class="rating-distribution" *ngIf="rating.distribution">
+    <div class="rating-bar" *ngFor="let bar of ratingCountBars">
+      <div class="bar-label">
+        <span class="star-count">{{ bar.value }}</span>
+        <i class="fas fa-star"></i>
+      </div>
+      
+      <div class="bar-container">
+        <div 
+          class="bar-fill" 
+          [style.width.%]="bar.percentage"
+          [@barAnimation]>
+        </div>
+      </div>
+      
+      <span class="bar-count">{{ bar.count }}</span>
+    </div>
+  </div>
+</div> 

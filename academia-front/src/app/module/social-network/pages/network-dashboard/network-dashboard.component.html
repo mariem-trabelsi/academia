@@ -1,0 +1,101 @@
+<div class="network-dashboard-container" *ngIf="!loading; else loadingTemplate">
+  <!-- Stats Header -->
+  <div class="stats-header">
+    <h1 class="page-title">Your Network</h1>
+    
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-value">{{networkStats?.totalFollowers}}</div>
+        <div class="stat-label">Followers</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-value">{{networkStats?.totalFollowing}}</div>
+        <div class="stat-label">Following</div>
+      </div>
+      
+      <div class="stat-item" [class.has-new]="(networkStats?.unreadMessages || 0) > 0" (click)="openMessages()">
+        <div class="stat-value">{{networkStats?.unreadMessages}}</div>
+        <div class="stat-label">Messages</div>
+      </div>
+      
+      <div class="stat-item" [class.has-new]="(networkStats?.pendingCollaborations || 0) > 0">
+        <div class="stat-value">{{networkStats?.pendingCollaborations}}</div>
+        <div class="stat-label">Collaborations</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="network-content">
+    <!-- Feed Column -->
+    <div class="feed-column">
+      <h2 class="section-title">Research Updates</h2>
+      
+      <div class="updates-list">
+        <ng-container *ngFor="let update of networkFeed">
+          <app-update-card
+            [update]="update"
+            (like)="likeUpdate(update)"
+            (viewResearcher)="viewResearcher(update.researcher.id)">
+          </app-update-card>
+        </ng-container>
+      </div>
+      
+      <!-- Load More Button -->
+      <div class="load-more-container" *ngIf="hasMoreUpdates">
+        <button class="load-more-button" (click)="loadMoreUpdates()" [disabled]="loadingMore">
+          <span *ngIf="!loadingMore">Load More</span>
+          <span *ngIf="loadingMore" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Sidebar Column -->
+    <div class="sidebar-column">
+      <!-- Suggested Researchers -->
+      <div class="sidebar-section">
+        <div class="section-header">
+          <h3 class="sidebar-title">Suggested Researchers</h3>
+          <a href="#" class="section-action">See All</a>
+        </div>
+        
+        <div class="section-content">
+          <ng-container *ngFor="let researcher of suggestedResearchers">
+            <app-follow-suggestion
+              [researcher]="researcher"
+              (follow)="followResearcher(researcher)"
+              (view)="viewResearcher(researcher.id)"
+              (message)="messageResearcher(researcher.id)">
+            </app-follow-suggestion>
+          </ng-container>
+        </div>
+      </div>
+      
+      <!-- Research Groups -->
+      <div class="sidebar-section">
+        <div class="section-header">
+          <h3 class="sidebar-title">Research Groups</h3>
+          <a href="#" class="section-action">See All</a>
+        </div>
+        
+        <div class="section-content">
+          <ng-container *ngFor="let group of researchGroups">
+            <app-group-card
+              [group]="group"
+              (join)="joinGroup(group)"
+              (view)="viewGroup(group.id)">
+            </app-group-card>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading your network...</p>
+  </div>
+</ng-template> 

@@ -1,0 +1,40 @@
+<div class="admin-layout" [class.sidebar-collapsed]="sidebarCollapsed" @fadeIn>
+  <div class="admin-header">
+    <div class="header-left">
+      <button class="toggle-sidebar-btn" (click)="toggleSidebar()">
+        <span class="toggle-icon">☰</span>
+      </button>
+      <div class="admin-logo">
+        <span class="logo-text">Academia Admin</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="admin-user">
+        <span class="user-greeting">Welcome, Admin</span>
+        <a href="/" class="back-to-site">Back to site</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-content-wrapper">
+    <app-admin-sidebar 
+      [collapsed]="sidebarCollapsed"
+      (sectionChange)="handleSectionChange($event)"
+    ></app-admin-sidebar>
+    
+    <div class="admin-content" @slideIn>
+      <!-- Render content based on activeSection -->
+      <app-admin-dashboard *ngIf="activeSection === 'dashboard'"></app-admin-dashboard>
+      <app-paper-approval-queue *ngIf="activeSection === 'approval'"></app-paper-approval-queue>
+      <app-user-management *ngIf="activeSection === 'users'"></app-user-management>
+      <app-domain-management *ngIf="activeSection === 'domains'"></app-domain-management>
+      <app-content-moderation *ngIf="activeSection === 'moderation'"></app-content-moderation>
+      <app-system-statistics *ngIf="activeSection === 'statistics'"></app-system-statistics>
+      
+      <div *ngIf="activeSection === 'settings'" class="settings-placeholder">
+        <h2>Settings</h2>
+        <p>Settings panel would be implemented here.</p>
+      </div>
+    </div>
+  </div>
+</div>

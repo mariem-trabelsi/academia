@@ -1,0 +1,15 @@
+<div class="notification-filter">
+  <h3 class="filter-heading">Filter By</h3>
+  
+  <ul class="filter-list">
+    <li *ngFor="let filter of filters" 
+        [class.active]="selectedFilter === filter.id"
+        (click)="selectFilter(filter.id)">
+      <i [class]="filter.icon"></i>
+      <span>{{ filter.label }}</span>
+      <span class="filter-arrow" *ngIf="selectedFilter === filter.id">
+        <i class="fas fa-chevron-right"></i>
+      </span>
+    </li>
+  </ul>
+</div> 

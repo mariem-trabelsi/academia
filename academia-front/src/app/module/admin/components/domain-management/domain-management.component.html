@@ -1,0 +1,196 @@
+<div class="domain-management-container">
+  <div class="management-header">
+    <h2>Domain Management</h2>
+    <p class="subtitle">Manage academic domains for paper organization</p>
+  </div>
+  
+  <div class="filter-controls">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search domains..." 
+        [(ngModel)]="searchQuery"
+        (input)="applyFilters()"
+      >
+    </div>
+    
+    <div class="filter-options">
+      <div class="filter-group">
+        <label>Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      
+      <button class="btn-clear-filters" *ngIf="searchQuery || statusFilter !== 'all'" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-add-domain" (click)="openAddDomainModal()">
+        Add Domain
+      </button>
+    </div>
+  </div>
+  
+  <div class="domains-list">
+    <div class="list-header">
+      <div class="header-name">Domain Name</div>
+      <div class="header-description">Description</div>
+      <div class="header-papers">Papers</div>
+      <div class="header-status">Status</div>
+      <div class="header-date">Created</div>
+      <div class="header-actions">Actions</div>
+    </div>
+    
+    <div class="no-domains" *ngIf="filteredDomains.length === 0">
+      No domains match your search criteria.
+    </div>
+    
+    <div class="domain-item" *ngFor="let domain of filteredDomains" @itemAnimation>
+      <div class="item-name">{{ domain.name }}</div>
+      <div class="item-description">{{ domain.description.length > 60 ? (domain.description | slice:0:60) + '...' : domain.description }}</div>
+      <div class="item-papers">{{ domain.papersCount }}</div>
+      <div class="item-status">
+        <span class="status-badge" [ngClass]="getStatusClass(domain.status)">
+          {{ getStatusLabel(domain.status) }}
+        </span>
+      </div>
+      <div class="item-date">{{ domain.createdDate | date:'MMM d, y' }}</div>
+      <div class="item-actions">
+        <button class="btn-manage" (click)="viewDomainDetails(domain)">Manage</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Domain Details Modal -->
+  <div class="domain-details-modal" *ngIf="selectedDomain" @modalAnimation>
+    <div class="modal-backdrop" (click)="closeDomainDetails()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Domain Details</h3>
+        <button class="btn-close" (click)="closeDomainDetails()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="domain-info">
+          <h4>{{ selectedDomain.name }}</h4>
+          <div class="info-row">
+            <span class="info-label">Description:</span>
+            <span class="info-value">{{ selectedDomain.description }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Created:</span>
+            <span class="info-value">{{ selectedDomain.createdDate | date:'MMM d, y' }}</span>
+          </div>
+          <div class="info-row" *ngIf="selectedDomain.lastModified">
+            <span class="info-label">Last Modified:</span>
+            <span class="info-value">{{ selectedDomain.lastModified | date:'MMM d, y' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Papers:</span>
+            <span class="info-value">{{ selectedDomain.papersCount }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Status:</span>
+            <span class="info-value">
+              <span class="status-badge" [ngClass]="getStatusClass(selectedDomain.status)">
+                {{ getStatusLabel(selectedDomain.status) }}
+              </span>
+            </span>
+          </div>
+        </div>
+        
+        <div class="domain-actions">
+          <h5>Domain Actions</h5>
+          
+          <div class="action-buttons">
+            <button 
+              class="btn-edit" 
+              (click)="openEditDomainModal(selectedDomain)"
+            >
+              Edit Domain
+            </button>
+            
+            <button 
+              class="btn-activate" 
+              *ngIf="selectedDomain.status !== 'active'"
+              (click)="updateDomainStatus(selectedDomain, 'active')"
+            >
+              Activate Domain
+            </button>
+            
+            <button 
+              class="btn-deactivate" 
+              *ngIf="selectedDomain.status !== 'inactive'"
+              [disabled]="selectedDomain.papersCount > 0"
+              (click)="updateDomainStatus(selectedDomain, 'inactive')"
+              [title]="selectedDomain.papersCount > 0 ? 'Cannot deactivate domains with papers' : ''"
+            >
+              Deactivate Domain
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add/Edit Domain Modal -->
+  <div class="add-domain-modal" *ngIf="showAddDomainModal" @modalAnimation>
+    <div class="modal-backdrop" (click)="closeAddDomainModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ isEditMode ? 'Edit Domain' : 'Add New Domain' }}</h3>
+        <button class="btn-close" (click)="closeAddDomainModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <form [formGroup]="domainForm" (ngSubmit)="submitDomainForm()">
+          <div class="form-group">
+            <label for="domainName">Domain Name</label>
+            <input 
+              type="text" 
+              id="domainName" 
+              formControlName="name" 
+              placeholder="e.g. Computer Science"
+            >
+            <div *ngIf="domainForm.get('name')?.invalid && domainForm.get('name')?.touched" class="error-message">
+              Domain name is required (minimum 2 characters)
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="domainDescription">Description</label>
+            <textarea 
+              id="domainDescription" 
+              formControlName="description" 
+              placeholder="Provide a description of this academic domain"
+              rows="4"
+            ></textarea>
+            <div *ngIf="domainForm.get('description')?.invalid && domainForm.get('description')?.touched" class="error-message">
+              Description is required (minimum 10 characters)
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="domainStatus">Status</label>
+            <select id="domainStatus" formControlName="status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="closeAddDomainModal()">Cancel</button>
+            <button type="submit" class="btn-submit" [disabled]="domainForm.invalid">
+              {{ isEditMode ? 'Update Domain' : 'Create Domain' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> 

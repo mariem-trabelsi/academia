@@ -1,0 +1,102 @@
+<div class="paper-approval-container">
+  <div class="approval-header">
+    <h2>Paper Approval Queue</h2>
+    <p class="subtitle">Review and approve submitted academic papers</p>
+  </div>
+
+  <div class="approval-list">
+    <div class="list-header">
+      <div class="header-title">Title</div>
+      <div class="header-author">Author</div>
+      <div class="header-domain">Domain</div>
+      <div class="header-date">Submitted</div>
+      <div class="header-status">Status</div>
+      <div class="header-actions">Actions</div>
+    </div>
+
+    <div class="no-papers" *ngIf="papers.length === 0">
+      There are no papers in the approval queue.
+    </div>
+
+    <div class="paper-item" *ngFor="let paper of papers" @itemAnimation>
+      <div class="item-title">{{ paper.title }}</div>
+      <div class="item-author">{{ paper.authorName }}</div>
+      <div class="item-domain">{{ paper.domain }}</div>
+      <div class="item-date">{{ paper.submissionDate | date:'MMM d, y' }}</div>
+      <div class="item-status">
+        <span class="status-badge" [ngClass]="getStatusClass(paper.status)">
+          {{ paper.status }}
+        </span>
+      </div>
+      <div class="item-actions">
+        <button class="btn-view" (click)="viewPaperDetails(paper)">View</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paper Details Modal -->
+  <div class="paper-details-modal" *ngIf="selectedPaper">
+    <div class="modal-backdrop" (click)="closePaperDetails()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Paper Review</h3>
+        <button class="btn-close" (click)="closePaperDetails()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="paper-cover" *ngIf="selectedPaper.coverImageUrl">
+          <img [src]="selectedPaper.coverImageUrl" alt="Paper cover">
+        </div>
+        
+        <div class="paper-info">
+          <h4>{{ selectedPaper.title }}</h4>
+          <div class="info-row">
+            <span class="info-label">Author:</span>
+            <span class="info-value">{{ selectedPaper.authorName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Domain:</span>
+            <span class="info-value">{{ selectedPaper.domain }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Submitted:</span>
+            <span class="info-value">{{ selectedPaper.submissionDate | date:'MMM d, y' }}</span>
+          </div>
+        </div>
+        
+        <div class="paper-abstract">
+          <h5>Abstract</h5>
+          <p>{{ selectedPaper.abstract }}</p>
+        </div>
+        
+        <div class="paper-documents">
+          <h5>Documents</h5>
+          <a *ngIf="selectedPaper.pdfUrl" [href]="selectedPaper.pdfUrl" class="document-link" target="_blank">
+            <span class="pdf-icon">📄</span> View PDF
+          </a>
+        </div>
+        
+        <div class="approval-actions">
+          <div class="action-section">
+            <button class="btn-approve" (click)="approvePaper(selectedPaper)" [disabled]="selectedPaper.status !== 'pending'">
+              Approve Paper
+            </button>
+          </div>
+          
+          <div class="action-section">
+            <textarea 
+              placeholder="Provide a reason for rejection" 
+              [(ngModel)]="rejectionReason"
+              [disabled]="selectedPaper.status !== 'pending'"
+            ></textarea>
+            <button class="btn-reject" 
+              (click)="rejectPaper(selectedPaper)" 
+              [disabled]="!rejectionReason || selectedPaper.status !== 'pending'">
+              Reject Paper
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

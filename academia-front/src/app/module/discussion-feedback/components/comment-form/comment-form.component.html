@@ -1,0 +1,29 @@
+<div class="comment-form" @formAnimation>
+  <div class="form-control">
+    <textarea 
+      [(ngModel)]="commentContent"
+      [placeholder]="placeholder"
+      [maxlength]="maxLength"
+      rows="4"
+      (keydown)="onKeyDown($event)"></textarea>
+    
+    <div class="character-count" [class]="getCharCountClass()">
+      {{ getRemainingChars() }} characters remaining
+    </div>
+  </div>
+  
+  <div class="form-actions">
+    <div class="hint">
+      <i class="fas fa-info-circle"></i>
+      <span>Press Ctrl+Enter to submit</span>
+    </div>
+    
+    <button 
+      class="submit-btn" 
+      [disabled]="!isCommentValid() || isSubmitting" 
+      (click)="submitComment()">
+      <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+      <span>{{ buttonText }}</span>
+    </button>
+  </div>
+</div> 

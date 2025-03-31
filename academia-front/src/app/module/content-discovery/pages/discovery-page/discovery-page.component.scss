@@ -1,0 +1,223 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.discovery-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.discovery-header {
+  margin-bottom: 2rem;
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 700;
+    opacity: 0;
+    animation: fade-in 0.6s ease-out forwards;
+  }
+  
+  .subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-top: 0;
+    opacity: 0;
+    animation: fade-in 0.6s ease-out 0.2s forwards;
+  }
+  
+  .action-links {
+    margin-top: 1rem;
+    opacity: 0;
+    animation: fade-in 0.6s ease-out 0.3s forwards;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    
+    .manage-papers-link, .network-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      
+      i {
+        margin-right: 0.5rem;
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    .manage-papers-link {
+      background-color: #f8f9fa;
+      border: 1px solid #e1e4e8;
+      color: #3498db;
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+    
+    .network-link {
+      background-color: #3f51b5;
+      color: white;
+      border: 1px solid #3949ab;
+      
+      &:hover {
+        background-color: #303f9f;
+      }
+    }
+  }
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #7f8c8d;
+    font-size: 1rem;
+  }
+}
+
+.discovery-content {
+  opacity: 0;
+  animation: fade-in 0.8s ease-out forwards;
+  
+  .tabs-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #e1e4e8;
+    background-color: #f8f9fa;
+    
+    @media (max-width: 576px) {
+      flex-wrap: wrap;
+    }
+    
+    .tab-button {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #7f8c8d;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      
+      &:hover {
+        color: #3498db;
+      }
+      
+      &.active {
+        color: #3498db;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background-color: #3498db;
+          animation: slide-in 0.3s ease-out;
+        }
+      }
+      
+      @media (max-width: 576px) {
+        flex: 0 0 50%;
+      }
+    }
+  }
+  
+  .tab-content {
+    padding: 2rem;
+    
+    @media (max-width: 576px) {
+      padding: 1.5rem 1rem;
+    }
+    
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+      color: #2c3e50;
+    }
+    
+    .section-description {
+      color: #7f8c8d;
+      margin-bottom: 1.5rem;
+    }
+  }
+}
+
+.paper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Animations
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+} 

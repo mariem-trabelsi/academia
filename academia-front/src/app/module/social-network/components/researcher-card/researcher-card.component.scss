@@ -1,0 +1,126 @@
+.researcher-card {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 15px;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.researcher-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-right: 15px;
+  background-color: #f5f5f5;
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  // Fallback for missing avatar image
+  img:not([src]), img[src=""], img[src="null"] {
+    display: none;
+  }
+  
+  &:not(:has(img[src])), &:has(img[src=""]), &:has(img[src="null"]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &::after {
+      content: '\f007';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.researcher-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.researcher-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.researcher-title,
+.researcher-institution {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.researcher-stats {
+  display: flex;
+  margin-top: 5px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  
+  .count {
+    font-weight: 600;
+    font-size: 14px;
+    color: #3f51b5;
+    margin-right: 4px;
+  }
+  
+  .label {
+    font-size: 13px;
+    color: #999;
+  }
+}
+
+.follow-button {
+  background-color: #f0f2ff;
+  color: #3f51b5;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    background-color: #e0e4ff;
+  }
+  
+  &.following {
+    background-color: #3f51b5;
+    color: white;
+    
+    &:hover {
+      background-color: #f44336;
+    }
+  }
+} 

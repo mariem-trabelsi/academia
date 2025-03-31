@@ -1,0 +1,159 @@
+<div class="form-container">
+  <div class="loading-indicator" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading paper data...</p>
+  </div>
+  
+  <div class="paper-form" *ngIf="!loading">
+    <div class="form-header">
+      <h1>{{ isEditMode ? 'Edit Paper' : 'Create New Paper' }}</h1>
+      <div class="form-actions">
+        <button class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button class="btn-submit" [disabled]="paperForm.invalid || submitting" (click)="onSubmit()">
+          <i class="fas" [class.fa-save]="!submitting" [class.fa-spinner]="submitting" [class.fa-spin]="submitting"></i>
+          {{ isEditMode ? 'Update' : 'Publish' }}
+        </button>
+      </div>
+    </div>
+    
+    <form [formGroup]="paperForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="title" class="required">Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          formControlName="title" 
+          placeholder="Enter paper title"
+          [class.invalid]="paperForm.get('title')?.invalid && paperForm.get('title')?.touched">
+        <div class="error-message" *ngIf="paperForm.get('title')?.invalid && paperForm.get('title')?.touched">
+          <span *ngIf="paperForm.get('title')?.errors?.['required']">Title is required</span>
+          <span *ngIf="paperForm.get('title')?.errors?.['minlength']">Title must be at least 5 characters</span>
+          <span *ngIf="paperForm.get('title')?.errors?.['maxlength']">Title cannot exceed 200 characters</span>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="authorName" class="required">Author Name</label>
+          <input 
+            type="text" 
+            id="authorName" 
+            formControlName="authorName" 
+            placeholder="Enter author name"
+            [class.invalid]="paperForm.get('authorName')?.invalid && paperForm.get('authorName')?.touched">
+          <div class="error-message" *ngIf="paperForm.get('authorName')?.invalid && paperForm.get('authorName')?.touched">
+            <span *ngIf="paperForm.get('authorName')?.errors?.['required']">Author name is required</span>
+            <span *ngIf="paperForm.get('authorName')?.errors?.['minlength']">Author name must be at least 2 characters</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="authorAffiliation">Affiliation</label>
+          <input 
+            type="text" 
+            id="authorAffiliation" 
+            formControlName="authorAffiliation" 
+            placeholder="Enter institution/organization">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="abstract" class="required">Abstract</label>
+        <textarea 
+          id="abstract" 
+          formControlName="abstract" 
+          rows="4" 
+          placeholder="Enter paper abstract"
+          [class.invalid]="paperForm.get('abstract')?.invalid && paperForm.get('abstract')?.touched"></textarea>
+        <div class="error-message" *ngIf="paperForm.get('abstract')?.invalid && paperForm.get('abstract')?.touched">
+          <span *ngIf="paperForm.get('abstract')?.errors?.['required']">Abstract is required</span>
+          <span *ngIf="paperForm.get('abstract')?.errors?.['minlength']">Abstract must be at least 50 characters</span>
+          <span *ngIf="paperForm.get('abstract')?.errors?.['maxlength']">Abstract cannot exceed 1000 characters</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="content" class="required">Content</label>
+        <textarea 
+          id="content" 
+          formControlName="content" 
+          rows="10" 
+          placeholder="Enter paper content"
+          [class.invalid]="paperForm.get('content')?.invalid && paperForm.get('content')?.touched"></textarea>
+        <div class="error-message" *ngIf="paperForm.get('content')?.invalid && paperForm.get('content')?.touched">
+          <span *ngIf="paperForm.get('content')?.errors?.['required']">Content is required</span>
+          <span *ngIf="paperForm.get('content')?.errors?.['minlength']">Content must be at least 100 characters</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="domain" class="required">Domain/Field</label>
+        <select 
+          id="domain" 
+          formControlName="domain"
+          [class.invalid]="paperForm.get('domain')?.invalid && paperForm.get('domain')?.touched">
+          <option [ngValue]="''">Select a domain</option>
+          <option *ngFor="let domain of domains" [ngValue]="domain">{{ domain }}</option>
+        </select>
+        <div class="error-message" *ngIf="paperForm.get('domain')?.invalid && paperForm.get('domain')?.touched">
+          <span *ngIf="paperForm.get('domain')?.errors?.['required']">Domain is required</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Keywords</label>
+        <div class="keywords-input">
+          <input 
+            type="text" 
+            [(ngModel)]="newKeyword" 
+            [ngModelOptions]="{standalone: true}" 
+            placeholder="Enter keyword and press Enter"
+            (keyup.enter)="addKeyword()">
+          <button type="button" class="btn-add-keyword" (click)="addKeyword()" [disabled]="!newKeyword.trim()">
+            <i class="fas fa-plus"></i> Add
+          </button>
+        </div>
+        
+        <div class="keywords-list" *ngIf="keywordsFormArray.length > 0">
+          <div class="keyword" *ngFor="let keyword of keywordsFormArray.controls; let i = index">
+            <span>{{ keyword.value }}</span>
+            <button type="button" class="btn-remove-keyword" (click)="removeKeyword(i)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="coverImage">Cover Image URL</label>
+          <input 
+            type="text" 
+            id="coverImage" 
+            formControlName="coverImage" 
+            placeholder="Enter cover image URL">
+        </div>
+        
+        <div class="form-group">
+          <label for="pdfUrl">PDF URL</label>
+          <input 
+            type="text" 
+            id="pdfUrl" 
+            formControlName="pdfUrl" 
+            placeholder="Enter PDF URL">
+        </div>
+      </div>
+      
+      <div class="form-actions-bottom">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button 
+          type="submit" 
+          class="btn-submit" 
+          [disabled]="paperForm.invalid || submitting">
+          <i class="fas" [class.fa-save]="!submitting" [class.fa-spinner]="submitting" [class.fa-spin]="submitting"></i>
+          {{ isEditMode ? 'Update Paper' : 'Publish Paper' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

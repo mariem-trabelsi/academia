@@ -1,0 +1,118 @@
+<div class="researcher-profile-container" *ngIf="!loading && researcher; else loadingTemplate">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="cover-image" [style.background-image]="researcher.coverImage ? 'url(' + researcher.coverImage + ')' : 'none'">
+      <div class="profile-image">
+        <img [src]="researcher.profileImage || ''" alt="{{ researcher.name }}" (error)="researcher.profileImage = ''" />
+      </div>
+    </div>
+    
+    <div class="profile-info">
+      <h1 class="researcher-name">{{ researcher.name }}</h1>
+      <p class="researcher-title">{{ researcher.title }} at {{ researcher.institution }}</p>
+      
+      <div class="researcher-stats">
+        <div class="stat">
+          <div class="stat-value">{{ researcher.publications }}</div>
+          <div class="stat-label">Publications</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">{{ researcher.citations }}</div>
+          <div class="stat-label">Citations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">{{ researcher.followers }}</div>
+          <div class="stat-label">Followers</div>
+        </div>
+      </div>
+      
+      <div class="profile-actions">
+        <button class="btn-follow" (click)="followResearcher()">
+          <i class="fas" [class.fa-user-plus]="!researcher.isFollowing" [class.fa-user-check]="researcher.isFollowing"></i>
+          {{ researcher.isFollowing ? 'Following' : 'Follow' }}
+        </button>
+        <button class="btn-message" (click)="messageResearcher()">
+          <i class="fas fa-envelope"></i> Message
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <!-- Tabs -->
+    <div class="profile-tabs">
+      <div class="tab" [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">About</div>
+      <div class="tab" [class.active]="activeTab === 'publications'" (click)="setActiveTab('publications')">Publications</div>
+      <div class="tab" [class.active]="activeTab === 'groups'" (click)="setActiveTab('groups')">Groups</div>
+      <div class="tab" [class.active]="activeTab === 'network'" (click)="setActiveTab('network')">Network</div>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- About Tab -->
+      <div *ngIf="activeTab === 'about'" class="about-content">
+        <div class="bio-section">
+          <h3>Biography</h3>
+          <p>{{ researcher.bio }}</p>
+        </div>
+        
+        <div class="interests-section">
+          <h3>Research Interests</h3>
+          <div class="interest-tags">
+            <span class="interest-tag" *ngFor="let interest of researcher.researchInterests">
+              {{ interest }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="education-section">
+          <h3>Education</h3>
+          <div class="education-item" *ngFor="let edu of researcher.education">
+            <div class="edu-degree">{{ edu.degree }}</div>
+            <div class="edu-institution">{{ edu.institution }}</div>
+            <div class="edu-year">{{ edu.year }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Publications Tab -->
+      <div *ngIf="activeTab === 'publications'" class="publications-content">
+        <div class="publication-card" *ngFor="let publication of publications">
+          <div class="publication-title">
+            <a [routerLink]="['/papers', publication.id]">{{publication.title}}</a>
+          </div>
+          <p class="pub-authors">{{ publication.authors }}</p>
+          <p class="pub-journal">{{ publication.journal }} ({{ publication.year }})</p>
+          <div class="pub-metrics">
+            <span><i class="fas fa-quote-right"></i> {{ publication.citations }} citations</span>
+            <span><i class="fas fa-download"></i> {{ publication.downloads }} downloads</span>
+          </div>
+          <div class="pub-abstract" *ngIf="publication.showAbstract">
+            <p>{{ publication.abstract }}</p>
+          </div>
+          <button class="btn-abstract" (click)="publication.showAbstract = !publication.showAbstract">
+            {{ publication.showAbstract ? 'Hide Abstract' : 'Show Abstract' }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Other tabs content would be implemented similarly -->
+      <div *ngIf="activeTab === 'groups'" class="groups-content">
+        <p class="coming-soon">Groups section coming soon</p>
+      </div>
+      
+      <div *ngIf="activeTab === 'network'" class="network-content">
+        <p class="coming-soon">Network section coming soon</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading researcher profile...</p>
+  </div>
+</ng-template> 

@@ -1,0 +1,29 @@
+<div class="researcher-card" (click)="onView()">
+  <div class="researcher-avatar">
+    <img [src]="researcher.profileImage || ''" alt="{{ researcher.name }}" (error)="researcher.profileImage = ''" />
+  </div>
+  
+  <div class="researcher-info">
+    <div class="researcher-name">{{ researcher.name }}</div>
+    <div class="researcher-title">{{ researcher.title }}</div>
+    <div class="researcher-institution">{{ researcher.institution }}</div>
+    
+    <div class="researcher-stats">
+      <div class="stat">
+        <span class="count">{{ researcher.publications }}</span>
+        <span class="label">publications</span>
+      </div>
+      <div class="stat">
+        <span class="count">{{ formatFollowerCount(researcher.followers) }}</span>
+        <span class="label">followers</span>
+      </div>
+    </div>
+  </div>
+  
+  <button 
+    class="follow-button" 
+    [class.following]="researcher.isFollowing" 
+    (click)="onFollow($event)">
+    {{ researcher.isFollowing ? 'Following' : 'Follow' }}
+  </button>
+</div> 

@@ -1,0 +1,33 @@
+<div class="paper-card" (click)="viewPaper()">
+  <div class="cover-image" [style.background-image]="paper.coverImage ? 'url(' + paper.coverImage + ')' : 'none'">
+    <div class="domain-badge">{{paper.domain}}</div>
+  </div>
+  <div class="paper-content">
+    <h3 class="paper-title">{{paper.title}}</h3>
+    <div class="paper-meta">
+      <div class="author">By {{paper.authorName}}</div>
+      <div class="date">{{paper.createdDate | date:'mediumDate'}}</div>
+    </div>
+    <p class="paper-abstract">{{paper.abstract | slice:0:150}}{{paper.abstract.length > 150 ? '...' : ''}}</p>
+    <div class="paper-footer">
+      <div class="rating">
+        <div class="stars">
+          <span *ngFor="let star of getRatingStars()" class="star">
+            <i *ngIf="star === 1" class="fas fa-star"></i>
+            <i *ngIf="star === 0.5" class="fas fa-star-half-alt"></i>
+            <i *ngIf="star === 0" class="far fa-star"></i>
+          </span>
+        </div>
+        <span class="rating-count" *ngIf="paper.ratingCount">{{paper.ratingCount}} reviews</span>
+      </div>
+      <div class="actions">
+        <button class="btn-edit" (click)="editPaper($event)" title="Edit paper">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-delete" (click)="deletePaper($event)" title="Delete paper">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

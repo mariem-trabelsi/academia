@@ -1,0 +1,20 @@
+<div class="admin-sidebar" [class.collapsed]="collapsed" @fadeIn>
+  <div class="sidebar-menu">
+    <a 
+      *ngFor="let item of sidebarItems" 
+      href="javascript:void(0)" 
+      class="sidebar-item"
+      [class.active]="item.active"
+      (click)="onItemClick(item)"
+    >
+      <span class="item-icon">{{ item.icon }}</span>
+      <span class="item-label" [class.hidden]="collapsed">{{ item.label }}</span>
+    </a>
+  </div>
+  
+  <div class="sidebar-footer" [class.hidden]="collapsed">
+    <div class="help-link">
+      <a href="#help">Need help?</a>
+    </div>
+  </div>
+</div>

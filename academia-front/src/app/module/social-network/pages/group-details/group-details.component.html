@@ -1,0 +1,119 @@
+<div class="group-details-container" *ngIf="!loading && group; else loadingTemplate">
+  <!-- Group Header -->
+  <div class="group-header">
+    <div class="cover-image" [style.background-image]="group.coverImage ? 'url(' + group.coverImage + ')' : 'none'">
+      <div class="group-badge" *ngIf="group.isPrivate">
+        <i class="fas fa-lock"></i> Private Group
+      </div>
+    </div>
+    
+    <div class="group-info">
+      <h1 class="group-name">{{ group.name }}</h1>
+      <p class="group-description">{{ group.description }}</p>
+      
+      <div class="group-meta">
+        <div class="meta-item">
+          <i class="fas fa-users"></i>
+          <span>{{ formatMemberCount(group.memberCount || 0) }} members</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-university"></i>
+          <span>{{ group.institution }}</span>
+        </div>
+        <div class="meta-item" *ngIf="group.admin">
+          <i class="fas fa-user-shield"></i>
+          <span>Admin: {{ group.admin.name }}</span>
+        </div>
+      </div>
+      
+      <div class="group-actions">
+        <button class="btn-join" (click)="joinGroup()">
+          <i class="fas" [class.fa-user-plus]="!group.isMember" [class.fa-user-check]="group.isMember"></i>
+          {{ group.isMember ? 'Leave Group' : 'Join Group' }}
+        </button>
+        <button class="btn-share">
+          <i class="fas fa-share-alt"></i> Share
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Group Content -->
+  <div class="group-content">
+    <!-- Tabs -->
+    <div class="group-tabs">
+      <div class="tab" [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">About</div>
+      <div class="tab" [class.active]="activeTab === 'members'" (click)="setActiveTab('members')">Members</div>
+      <div class="tab" [class.active]="activeTab === 'discussions'" (click)="setActiveTab('discussions')">Discussions</div>
+      <div class="tab" [class.active]="activeTab === 'resources'" (click)="setActiveTab('resources')">Resources</div>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- About Tab -->
+      <div *ngIf="activeTab === 'about'" class="about-content">
+        <div class="details-section">
+          <h3>Group Details</h3>
+          <p>{{ group.detailedDescription }}</p>
+        </div>
+        
+        <div class="focus-section">
+          <h3>Research Focus</h3>
+          <div class="focus-tags">
+            <span class="focus-tag" *ngFor="let focus of group.researchFocus">
+              {{ focus }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="rules-section" *ngIf="group.rules && group.rules.length > 0">
+          <h3>Group Rules</h3>
+          <ul class="rules-list">
+            <li *ngFor="let rule of group.rules">{{ rule }}</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Members Tab -->
+      <div *ngIf="activeTab === 'members'" class="members-content">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search members...">
+        </div>
+        
+        <div class="member-list">
+          <div class="member-card" *ngFor="let member of members">
+            <div class="member-avatar">
+              <img [src]="member.profileImage" alt="{{ member.name }}">
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">{{ member.name }}</h3>
+              <p class="member-title">{{ member.title }}</p>
+              <p class="member-institution">{{ member.institution }}</p>
+            </div>
+            <div class="member-role" *ngIf="member.isAdmin">
+              <span class="admin-badge">Admin</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Other tabs content would be implemented similarly -->
+      <div *ngIf="activeTab === 'discussions'" class="discussions-content">
+        <p class="coming-soon">Discussions section coming soon</p>
+      </div>
+      
+      <div *ngIf="activeTab === 'resources'" class="resources-content">
+        <p class="coming-soon">Resources section coming soon</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading group details...</p>
+  </div>
+</ng-template> 
