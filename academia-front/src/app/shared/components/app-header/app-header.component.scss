@@ -24,6 +24,14 @@
     
     a {
       text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .header-logo {
+      height: 48px;
+      width: auto;
+      margin-right: 10px;
     }
     
     .logo {
@@ -336,6 +344,10 @@
     
     .logo-container {
       flex: 1;
+      
+      .header-logo {
+        height: 36px;
+      }
     }
     
     .main-nav {

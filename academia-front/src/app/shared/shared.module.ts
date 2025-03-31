@@ -4,12 +4,14 @@ import { RouterModule } from '@angular/router';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { AppLayoutComponent } from './components/app-layout/app-layout.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { AppFooterComponent } from './components/app-footer/app-footer.component';
 
 @NgModule({
   declarations: [
     AppHeaderComponent,
     AppLayoutComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    AppFooterComponent
   ],
   imports: [
     CommonModule,
@@ -18,7 +20,8 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
   exports: [
     AppHeaderComponent,
     AppLayoutComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    AppFooterComponent
   ]
 })
 export class SharedModule { } 
