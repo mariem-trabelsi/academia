@@ -8,23 +8,24 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Article } from '../../models/article';
 
-export interface DeleteArticle$Params {
+export interface GetMyArticles$Params {
 }
 
-export function deleteArticle(http: HttpClient, rootUrl: string, params?: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, deleteArticle.PATH, 'delete');
+export function getMyArticles(http: HttpClient, rootUrl: string, params?: GetMyArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+  const rb = new RequestBuilder(rootUrl, getMyArticles.PATH, 'get');
   if (params) {
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Array<Article>>;
     })
   );
 }
 
-deleteArticle.PATH = '/articles/{id}';
+getMyArticles.PATH = '/articles/my';

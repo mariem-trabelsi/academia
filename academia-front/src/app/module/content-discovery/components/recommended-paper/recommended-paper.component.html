@@ -1,14 +1,14 @@
-<div class="paper-card">
-  <div class="cover-image" [style.background-image]="paper.coverImage ? 'url(' + paper.coverImage + ')' : 'none'">
-    <div class="domain-badge">{{paper.domain}}</div>
+<div class="article-card">
+  <div class="cover-image" [style.background-image]="article.articleCover ? 'url(' + article.articleCover + ')' : 'none'">
+    <div class="domain-badge">Cybersecurity</div>
   </div>
-  <div class="paper-content">
-    <h3 class="paper-title">{{paper.title}}</h3>
-    <div class="author">By {{paper.authorName}}</div>
-    <p class="paper-abstract">{{paper.abstract | slice:0:120}}{{paper.abstract.length > 120 ? '...' : ''}}</p>
-    <div class="paper-footer">
+  <div class="article-content">
+    <h3 class="article-title">{{article.title}}</h3>
+    <div class="author">By {{article.authorName}}</div>
+    <p class="article-abstract">{{article.abstract_ | slice:0:120}}{{article.abstract_ && article.abstract_.length > 120 ? '...' : ''}}</p>
+    <div class="article-footer">
       <div class="metadata">
-        <div class="date">{{paper.createdDate | date:'mediumDate'}}</div>
+        <div class="date">{{article.createdDate | date:'mediumDate'}}</div>
         <div class="rating">
           <div class="stars">
             <span *ngFor="let star of getRatingStars()" class="star">
@@ -17,7 +17,7 @@
               <i *ngIf="star === 0" class="far fa-star"></i>
             </span>
           </div>
-          <span class="rating-count" *ngIf="paper.ratingCount">({{paper.ratingCount}})</span>
+        <!--  <span class="rating-count" *ngIf="article.ratingCount">({{article.ratingCount}})</span>-->
         </div>
       </div>
       <button class="read-more">
@@ -26,4 +26,4 @@
       </button>
     </div>
   </div>
-</div> 
+</div>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Paper } from '../../../paper/models/paper';
+import {Article} from "../../../../services/models/article";
 
 @Component({
   selector: 'app-trending-list',
@@ -9,36 +10,37 @@ import { Paper } from '../../../paper/models/paper';
 export class TrendingListComponent {
   @Input() papers: Paper[] = [];
   @Output() paperClick = new EventEmitter<number>();
-  
+  @Input() articles!: Article[];
+
   viewPaper(id: number | undefined): void {
     if (id !== undefined) {
       this.paperClick.emit(id);
     }
   }
-  
+
   getRatingStars(rating: number | undefined): number[] {
     if (!rating) return [0, 0, 0, 0, 0];
-    
+
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating - fullStars >= 0.5;
-    
+
     const stars = [];
-    
+
     // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(1);
     }
-    
+
     // Add half star if needed
     if (hasHalfStar) {
       stars.push(0.5);
     }
-    
+
     // Fill the rest with empty stars
     while (stars.length < 5) {
       stars.push(0);
     }
-    
+
     return stars;
   }
-} 
+}

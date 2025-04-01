@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationBadgeService } from '../../services/notification-badge.service';
+import { KeycloakService } from 'src/app/services/keycloak/keycloak.service';
 
 @Component({
   selector: 'app-header',
@@ -11,11 +12,16 @@ export class AppHeaderComponent implements OnInit {
   currentModule: string = '';
   isDropdownOpen: boolean = false;
   unreadNotificationCount: number = 0;
+  name = this.keycloakService.profile?.firstName+' '+this.keycloakService.profile?.lastName;
+  username= this.keycloakService.profile?.username;
   
   constructor(
     private router: Router,
-    private notificationBadgeService: NotificationBadgeService
-  ) { }
+    private notificationBadgeService: NotificationBadgeService,
+    private  keycloakService : KeycloakService
+  ) { 
+    this.keycloakService.profile;
+  }
 
   ngOnInit(): void {
     // Get the current path to highlight the appropriate tab
@@ -38,6 +44,14 @@ export class AppHeaderComponent implements OnInit {
     this.notificationBadgeService.getUnreadCount().subscribe(count => {
       this.unreadNotificationCount = count;
     });
+  }
+
+  async logout() {
+    await this.keycloakService.logout();
+  }
+
+  profile(){
+    this.keycloakService.manageAccount();
   }
   
   // Toggle user dropdown

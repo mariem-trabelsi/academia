@@ -8,14 +8,20 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Article } from '../../models/article';
 
-export interface GetArticleById$Params {
+export interface UploadArticleCover$Params {
+  'article-id': number;
+      body?: {
+'file': Blob;
+}
 }
 
-export function getArticleById(http: HttpClient, rootUrl: string, params?: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
-  const rb = new RequestBuilder(rootUrl, getArticleById.PATH, 'get');
+export function uploadArticleCover(http: HttpClient, rootUrl: string, params: UploadArticleCover$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+  const rb = new RequestBuilder(rootUrl, uploadArticleCover.PATH, 'post');
   if (params) {
+    rb.path('article-id', params['article-id'], {});
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
@@ -23,9 +29,10 @@ export function getArticleById(http: HttpClient, rootUrl: string, params?: GetAr
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Article>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-getArticleById.PATH = '/articles/{id}';
+uploadArticleCover.PATH = '/articles/file/{article-id}';

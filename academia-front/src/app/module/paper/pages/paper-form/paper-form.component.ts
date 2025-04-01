@@ -3,7 +3,9 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Paper, PaperDomain } from '../../models/paper';
 import { PaperService } from '../../services/paper.service';
-
+import {ArticleControllerService} from "../../../../services/services/article-controller.service";
+import {Article} from "../../../../services/models/article";
+import {KeycloakService} from "../../../../services/keycloak/keycloak.service";
 @Component({
   selector: 'app-paper-form',
   templateUrl: './paper-form.component.html',
@@ -17,27 +19,29 @@ export class PaperFormComponent implements OnInit {
   submitting = false;
   domains: string[] = [];
   newKeyword = '';
-  
+  name = this.keycloackService.profile?.firstName+' '+this.keycloackService.profile?.lastName;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private paperService: PaperService
+    private paperService: PaperService,
+    private articleService: ArticleControllerService,
+    private keycloackService : KeycloakService
   ) {
     this.paperForm = this.createForm();
   }
-  
+
   ngOnInit(): void {
     this.loadDomains();
     this.checkEditMode();
   }
-  
+
   createForm(): FormGroup {
     return this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       abstract: ['', [Validators.required, Validators.minLength(50), Validators.maxLength(1000)]],
-      content: ['', [Validators.required, Validators.minLength(100)]],
-      authorName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      authorName: [this.name, [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       authorAffiliation: [''],
       coverImage: [''],
       pdfUrl: [''],
@@ -45,28 +49,28 @@ export class PaperFormComponent implements OnInit {
       keywords: this.fb.array([])
     });
   }
-  
+
   get keywordsFormArray(): FormArray {
     return this.paperForm.get('keywords') as FormArray;
   }
-  
+
   addKeyword(): void {
     if (this.newKeyword.trim() && !this.keywordsFormArray.value.includes(this.newKeyword.trim())) {
       this.keywordsFormArray.push(this.fb.control(this.newKeyword.trim()));
       this.newKeyword = '';
     }
   }
-  
+
   removeKeyword(index: number): void {
     this.keywordsFormArray.removeAt(index);
   }
-  
+
   loadDomains(): void {
     this.paperService.getPaperDomains().subscribe(domains => {
       this.domains = domains;
     });
   }
-  
+
   checkEditMode(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -77,7 +81,7 @@ export class PaperFormComponent implements OnInit {
       this.loading = false;
     }
   }
-  
+
   loadPaper(id: number): void {
     this.paperService.getPaperById(id).subscribe({
       next: (paper) => {
@@ -95,75 +99,93 @@ export class PaperFormComponent implements OnInit {
       }
     });
   }
-  
+
   populateForm(paper: Paper): void {
     // Clear existing keywords array
     while (this.keywordsFormArray.length) {
       this.keywordsFormArray.removeAt(0);
     }
-    
+
     // Add each keyword
     if (paper.keywords) {
       paper.keywords.forEach(keyword => {
         this.keywordsFormArray.push(this.fb.control(keyword));
       });
     }
-    
+
     // Set form values
     this.paperForm.patchValue({
       title: paper.title,
       abstract: paper.abstract,
-      content: paper.content,
-      authorName: paper.authorName,
+      authorName: this.isEditMode ? paper.authorName : this.name,
       authorAffiliation: paper.authorAffiliation || '',
       coverImage: paper.coverImage || '',
       pdfUrl: paper.pdfUrl || '',
       domain: paper.domain
     });
   }
-  
+
   onSubmit(): void {
     if (this.paperForm.invalid) {
       this.markFormGroupTouched(this.paperForm);
       return;
     }
-    
+
     this.submitting = true;
     const formData = this.paperForm.value;
-    
-    const paper: Paper = {
-      title: formData.title,
-      abstract: formData.abstract,
-      content: formData.content,
-      authorName: formData.authorName,
-      authorAffiliation: formData.authorAffiliation,
-      coverImage: formData.coverImage,
-      pdfUrl: formData.pdfUrl,
-      domain: formData.domain,
-      keywords: formData.keywords
-    };
-    
-    if (this.isEditMode && this.paperId) {
-      paper.id = this.paperId;
-      this.updatePaper(paper);
+
+
+    if (!this.isEditMode) {
+      const article: Article = {
+        title: formData.title,
+        abstract_ : formData.abstract,
+        authorName: this.name,
+        articleCover: formData.coverImage,
+        isbn: formData.isbn,
+        affiliation: formData.affiliation,
+        filePath: formData.pdfUrl,
+        domain : formData.domain,
+
+      };
+
+      this.createArticle(article);
     } else {
-      this.createPaper(paper);
+
+      const paper: Paper = {
+        title: formData.title,
+        abstract: formData.abstract,
+        content: formData.content,
+        authorName: this.name,
+        authorAffiliation: formData.authorAffiliation,
+        coverImage: formData.coverImage,
+        pdfUrl: formData.pdfUrl,
+        domain: formData.domain,
+        keywords: formData.keywords
+      };
+
+      if (this.paperId) {
+        paper.id = this.paperId;
+        this.updatePaper(paper);
+      }
     }
   }
-  
-  createPaper(paper: Paper): void {
-    this.paperService.addPaper(paper).subscribe({
-      next: (newPaper) => {
+
+  createArticle(article: Article): void {
+    this.articleService.createArticle({ body: article }).subscribe({
+      next: (newArticle) => {
         this.submitting = false;
-        this.router.navigate(['/papers', newPaper.id]);
+
+        //this.router.navigate(['/discover', newArticle.id]);
+        this.router.navigate(['/discover']);
       },
       error: (error) => {
-        console.error('Error creating paper:', error);
+        console.error('Error creating article:', error);
         this.submitting = false;
       }
     });
   }
-  
+
+
   updatePaper(paper: Paper): void {
     this.paperService.updatePaper(paper).subscribe({
       next: (updatedPaper) => {
@@ -176,7 +198,7 @@ export class PaperFormComponent implements OnInit {
       }
     });
   }
-  
+
   cancel(): void {
     if (this.isEditMode && this.paperId) {
       this.router.navigate(['/papers', this.paperId]);
@@ -184,12 +206,12 @@ export class PaperFormComponent implements OnInit {
       this.router.navigate(['/papers']);
     }
   }
-  
+
   // Helper to mark all controls as touched for validation display
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
-      
+
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }

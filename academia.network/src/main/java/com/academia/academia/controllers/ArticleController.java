@@ -4,6 +4,7 @@ import com.academia.academia.entities.Article;
 import com.academia.academia.services.ArticleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -34,6 +35,14 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     public void deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<Article>> getMyArticles() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        List<Article> userArticles = articleService.getArticlesByCreatedBy(currentUsername);
+        return ResponseEntity.ok(userArticles);
     }
 
 }
