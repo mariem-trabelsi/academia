@@ -16,11 +16,7 @@ const routes: Routes = [
   path: '',
   component: AppLayoutComponent,
   children: [
-    {
-      path: 'articles',
-      loadChildren: () => import('./module/article/article.module').then(m => m.ArticleModule)
-    },
-
+  
     {
       path: 'papers',
       loadChildren: () => import('./module/paper/paper.module').then(m => m.PaperModule)
