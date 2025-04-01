@@ -22,7 +22,20 @@ import { animate, style, transition, trigger } from '@angular/animations';
     ]),
   ],
 })
-export class UserManagementComponent implements OnInit {
+export class UserManagementComponent {
+  
+  keycloakUrl = 'http://localhost:9090/admin/master/console/#/academia/users';
+  activeTab: 'users' | 'keycloak' = 'users';
+
+  showUsersList() {
+    this.activeTab = 'users';
+  }
+
+  showKeycloak() {
+    this.activeTab = 'keycloak';
+  }
+  /*
+implements OnInit {
   users: UserManagement[] = [];
   filteredUsers: UserManagement[] = [];
   selectedUser: UserManagement | null = null;
@@ -113,5 +126,6 @@ export class UserManagementComponent implements OnInit {
       '#AB47BC', '#00ACC1', '#FF7043', '#9E9E9E'
     ];
     return colors[userId % colors.length];
-  }
+  }*/
+ 
 }

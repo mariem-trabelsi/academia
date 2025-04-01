@@ -8,6 +8,7 @@ interface SidebarItem {
   active?: boolean;
 }
 
+
 @Component({
   selector: 'app-admin-sidebar',
   templateUrl: './admin-sidebar.component.html',
@@ -24,6 +25,7 @@ interface SidebarItem {
 export class AdminSidebarComponent {
   @Input() collapsed = false;
   @Output() sectionChange = new EventEmitter<string>();
+  keycloakUrl = 'http://localhost:9090/admin/master/console/#/academia/users';
   
   sidebarItems: SidebarItem[] = [
     { label: 'Dashboard', icon: '📊', section: 'dashboard', active: true },
@@ -39,5 +41,10 @@ export class AdminSidebarComponent {
     this.sidebarItems.forEach(i => i.active = false);
     item.active = true;
     this.sectionChange.emit(item.section);
+    if (item.section === 'users') {
+      window.open(this.keycloakUrl, '_blank');
+    }
   }
+
+  
 }
