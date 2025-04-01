@@ -22,8 +22,6 @@ import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
 import { getMyArticles } from '../fn/article-controller/get-my-articles';
 import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
-import { uploadArticleCover } from '../fn/article-controller/upload-article-cover';
-import { UploadArticleCover$Params } from '../fn/article-controller/upload-article-cover';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleControllerService extends BaseService {
@@ -78,35 +76,6 @@ export class ArticleControllerService extends BaseService {
   createArticle(params: CreateArticle$Params, context?: HttpContext): Observable<Article> {
     return this.createArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<Article>): Article => r.body)
-    );
-  }
-
-  /** Path part for operation `uploadArticleCover()` */
-  static readonly UploadArticleCoverPath = '/articles/file/{article-id}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `uploadArticleCover()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  uploadArticleCover$Response(params: UploadArticleCover$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
-    return uploadArticleCover(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `uploadArticleCover$Response()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  uploadArticleCover(params: UploadArticleCover$Params, context?: HttpContext): Observable<{
-}> {
-    return this.uploadArticleCover$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
     );
   }
 

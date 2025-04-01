@@ -2,7 +2,6 @@ package com.academia.academia.services;
 
 import com.academia.academia.entities.Article;
 import com.academia.academia.entities.Domain;
-import com.academia.academia.file.FileStorageService;
 import com.academia.academia.repositories.ArticleRepository;
 import com.academia.academia.repositories.DomainRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,8 +22,6 @@ public class ArticleService {
     @Autowired
     private DomainRepository domainRepository;
 
-    @Autowired
-    private FileStorageService fileStorageService;
 
     public ArticleService(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
