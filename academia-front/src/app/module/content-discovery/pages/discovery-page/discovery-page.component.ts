@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DiscoveryService } from '../../services/discovery.service';
-import { Paper } from '../../../paper/models/paper';
-import { DiscoveryData, TopicFilter } from '../../models/discovery';
 import { Router } from '@angular/router';
+import { Article } from '../../../../services/models/article';
+import { ArticleControllerService } from '../../../../services/services/article-controller.service';
+import { TopicFilter } from '../../models/discovery';
 
 @Component({
   selector: 'app-discovery-page',
@@ -10,18 +10,14 @@ import { Router } from '@angular/router';
   styleUrls: ['./discovery-page.component.scss']
 })
 export class DiscoveryPageComponent implements OnInit {
-  discoveryData: DiscoveryData = {
-    recommendedPapers: [],
-    trendingPapers: [],
-    latestPapers: [],
-    relatedPapers: []
-  };
+
   filter: TopicFilter = {};
   loading = true;
   activeSection = 'recommended';
+  articles: Article[] = [];
 
   constructor(
-    private discoveryService: DiscoveryService,
+    private articleService: ArticleControllerService,
     private router: Router
   ) { }
 
@@ -31,13 +27,14 @@ export class DiscoveryPageComponent implements OnInit {
 
   loadDiscoveryData(): void {
     this.loading = true;
-    this.discoveryService.getDiscoveryData(this.filter).subscribe({
-      next: (data) => {
-        this.discoveryData = data;
+
+    this.articleService.getAllArticles().subscribe({
+      next: (data: Article[]) => {
+        this.articles = data;
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading discovery data:', error);
+        console.error('Erreur lors du chargement des articles:', error);
         this.loading = false;
       }
     });
@@ -57,4 +54,4 @@ export class DiscoveryPageComponent implements OnInit {
   setActiveSection(section: string): void {
     this.activeSection = section;
   }
-} 
+}

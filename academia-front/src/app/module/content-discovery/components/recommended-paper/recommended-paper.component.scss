@@ -9,11 +9,11 @@
   transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid #e1e4e8;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    
+
     .read-more {
       opacity: 1;
       transform: translateX(0);
@@ -34,7 +34,7 @@
   background-position: center;
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -51,7 +51,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     &::after {
       content: '\f15b';
       font-family: 'Font Awesome 5 Free';
@@ -102,13 +102,20 @@
   color: #7f8c8d;
   margin-bottom: 0.75rem;
 }
-
-.paper-abstract {
-  font-size: 0.9rem;
-  color: #5f6368;
+.article-abstract {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.5;
-  margin-bottom: 1rem;
-  flex-grow: 1;
+  max-height: 4.5em;
+}
+
+
+.article-abstract {
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .paper-footer {
@@ -131,18 +138,18 @@
 .rating {
   display: flex;
   align-items: center;
-  
+
   .stars {
     display: flex;
     color: #f1c40f;
     margin-right: 0.5rem;
-    
+
     .star {
       margin-right: 2px;
       font-size: 0.8rem;
     }
   }
-  
+
   .rating-count {
     font-size: 0.75rem;
     color: #95a5a6;
@@ -163,12 +170,12 @@
   transition: all 0.3s ease;
   opacity: 0.9;
   transform: translateX(5px);
-  
+
   span {
     margin-right: 0.25rem;
   }
-  
+
   &:hover {
     background-color: #2980b9;
   }
-} 
+}

@@ -12,11 +12,11 @@ ICI LE MENU
       <p><strong>Auteur :</strong> {{ article.authorName }}</p>
       <p><strong>Isbn:</strong> {{article.isbn}}</p>
       <p><strong>Publié le :</strong> {{ article.createdDate | date }}</p>
-      <p>{{ article.content }}</p>
+      <p>{{ article.abstract_ }}</p>
     </div>
 </div>
 
-
+<!--
 <h3>Ajouter un article</h3>
 <form (ngSubmit)="addArticle()">
 
@@ -25,7 +25,7 @@ ICI LE MENU
     <input id="title" type="text" [(ngModel)]="newArticle.title" name="title" required>
   </div>
 
-
+<
   <div>
     <label for="content">Contenu :</label>
     <textarea id="content" [(ngModel)]="newArticle.content" name="content" required></textarea>
@@ -39,3 +39,4 @@ ICI LE MENU
 
   <button type="submit">Ajouter</button>
 </form>
+-->

@@ -41,16 +41,16 @@ export class ArticleTestComponent implements OnInit {
     );
   }
 
-  newArticle: Article = {
+  /*newArticle: Article = {
     title: '',
     authorName: this.name,
     content: '',
     articleCover: '',
     isbn: '',
-  }
+  }*/
 
   addArticle(): void {
-    if (!this.newArticle.title || !this.newArticle.authorName || !this.newArticle.content) {
+  /*  if (!this.newArticle.title || !this.newArticle.authorName || !this.newArticle.content) {
       alert('Veuillez remplir tous les champs.');
       return;
     }
@@ -64,7 +64,7 @@ export class ArticleTestComponent implements OnInit {
       (error) => {
         console.error('Erreur lors de l\'ajout de l\'article', error);
       }
-    );
+    );*/
   }
 
 }

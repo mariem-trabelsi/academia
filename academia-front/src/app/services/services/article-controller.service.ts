@@ -20,6 +20,8 @@ import { getAllArticles } from '../fn/article-controller/get-all-articles';
 import { GetAllArticles$Params } from '../fn/article-controller/get-all-articles';
 import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
+import { getMyArticles } from '../fn/article-controller/get-my-articles';
+import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleControllerService extends BaseService {
@@ -86,7 +88,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticleById$Response(params: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+  getArticleById$Response(params?: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
     return getArticleById(this.http, this.rootUrl, params, context);
   }
 
@@ -96,7 +98,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticleById(params: GetArticleById$Params, context?: HttpContext): Observable<Article> {
+  getArticleById(params?: GetArticleById$Params, context?: HttpContext): Observable<Article> {
     return this.getArticleById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Article>): Article => r.body)
     );
@@ -111,7 +113,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteArticle$Response(params: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  deleteArticle$Response(params?: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return deleteArticle(this.http, this.rootUrl, params, context);
   }
 
@@ -121,9 +123,34 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteArticle(params: DeleteArticle$Params, context?: HttpContext): Observable<void> {
+  deleteArticle(params?: DeleteArticle$Params, context?: HttpContext): Observable<void> {
     return this.deleteArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getMyArticles()` */
+  static readonly GetMyArticlesPath = '/articles/my';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getMyArticles()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getMyArticles$Response(params?: GetMyArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getMyArticles(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getMyArticles$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getMyArticles(params?: GetMyArticles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getMyArticles$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }
 

@@ -6,7 +6,7 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { AuthenticationService } from './services/authentication.service';
+import { DomainControllerService } from './services/domain-controller.service';
 import { ArticleControllerService } from './services/article-controller.service';
 import { FeedbackControllerService } from './services/feedback-controller.service';
 
@@ -18,7 +18,7 @@ import { FeedbackControllerService } from './services/feedback-controller.servic
   exports: [],
   declarations: [],
   providers: [
-    AuthenticationService,
+    DomainControllerService,
     ArticleControllerService,
     FeedbackControllerService,
     ApiConfiguration

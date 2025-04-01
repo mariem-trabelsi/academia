@@ -8,23 +8,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Domain } from '../../models/domain';
 
-export interface DeleteArticle$Params {
+export interface CreateDomain$Params {
+  arg0: string;
 }
 
-export function deleteArticle(http: HttpClient, rootUrl: string, params?: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, deleteArticle.PATH, 'delete');
+export function createDomain(http: HttpClient, rootUrl: string, params: CreateDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+  const rb = new RequestBuilder(rootUrl, createDomain.PATH, 'post');
   if (params) {
+    rb.query('arg0', params.arg0, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Domain>;
     })
   );
 }
 
-deleteArticle.PATH = '/articles/{id}';
+createDomain.PATH = '/domains';

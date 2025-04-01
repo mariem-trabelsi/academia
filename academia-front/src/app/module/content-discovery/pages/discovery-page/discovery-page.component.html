@@ -13,38 +13,38 @@
       </a>
     </div>
   </div>
-  
+
   <app-topic-filter [filter]="filter" (filterChange)="onFilterChange($event)"></app-topic-filter>
-  
+
   <div class="loading-indicator" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading personalized content...</p>
   </div>
-  
+
   <div class="discovery-content" *ngIf="!loading">
     <div class="tabs-container">
       <div class="tabs">
-        <button 
-          class="tab-button" 
-          [class.active]="activeSection === 'recommended'" 
+        <button
+          class="tab-button"
+          [class.active]="activeSection === 'recommended'"
           (click)="setActiveSection('recommended')">
           Recommended
         </button>
-        <button 
-          class="tab-button" 
-          [class.active]="activeSection === 'trending'" 
+        <button
+          class="tab-button"
+          [class.active]="activeSection === 'trending'"
           (click)="setActiveSection('trending')">
           Trending
         </button>
-        <button 
-          class="tab-button" 
-          [class.active]="activeSection === 'latest'" 
+        <button
+          class="tab-button"
+          [class.active]="activeSection === 'latest'"
           (click)="setActiveSection('latest')">
           Latest
         </button>
-        <button 
-          class="tab-button" 
-          [class.active]="activeSection === 'related'" 
+        <button
+          class="tab-button"
+          [class.active]="activeSection === 'related'"
           (click)="setActiveSection('related')">
           Related
         </button>
@@ -54,43 +54,43 @@
         <h2>Recommended for You</h2>
         <p class="section-description">Based on your interests and reading history</p>
         <div class="paper-grid">
-          <app-recommended-paper 
-            *ngFor="let paper of discoveryData.recommendedPapers" 
-            [paper]="paper" 
-            (click)="viewPaper(paper.id)">
+          <app-recommended-paper
+            *ngFor="let article of articles"
+            [article]="article"
+            (click)="viewPaper(article.id)">
           </app-recommended-paper>
         </div>
       </div>
-      
+
       <div class="tab-content" *ngIf="activeSection === 'trending'">
         <h2>Trending Papers</h2>
         <p class="section-description">Popular papers being read right now</p>
-        <app-trending-list [papers]="discoveryData.trendingPapers" (paperClick)="viewPaper($event)"></app-trending-list>
+        <app-trending-list [articles]="articles" (paperClick)="viewPaper($event)"></app-trending-list>
       </div>
-      
+
       <div class="tab-content" *ngIf="activeSection === 'latest'">
         <h2>Latest Research</h2>
         <p class="section-description">Recently published papers</p>
         <div class="paper-grid">
-          <app-recommended-paper 
-            *ngFor="let paper of discoveryData.latestPapers" 
-            [paper]="paper" 
-            (click)="viewPaper(paper.id)">
+          <app-recommended-paper
+            *ngFor="let article of articles"
+            [article]="article"
+            (click)="viewPaper(article.id)">
           </app-recommended-paper>
         </div>
       </div>
-      
+
       <div class="tab-content" *ngIf="activeSection === 'related'">
         <h2>Related to Your Research</h2>
         <p class="section-description">Papers related to your research interests</p>
         <div class="paper-grid">
-          <app-recommended-paper 
-            *ngFor="let paper of discoveryData.relatedPapers" 
-            [paper]="paper" 
-            (click)="viewPaper(paper.id)">
+          <app-recommended-paper
+            *ngFor="let article of articles"
+            [article]="article"
+            (click)="viewPaper(article.id)">
           </app-recommended-paper>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>
