@@ -1,6 +1,6 @@
 <div class="article-card">
   <div class="cover-image" [style.background-image]="article.articleCover ? 'url(' + article.articleCover + ')' : 'none'">
-    <div class="domain-badge">Cybersecurity</div>
+    <div class="domain-badge">{{article.domain?.name}}</div>
   </div>
   <div class="article-content">
     <h3 class="article-title">{{article.title}}</h3>

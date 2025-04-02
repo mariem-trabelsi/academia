@@ -31,6 +31,7 @@ export class DiscoveryPageComponent implements OnInit {
     this.articleService.getAllArticles().subscribe({
       next: (data: Article[]) => {
         this.articles = data;
+        console.log('Articles loaded:', this.articles);
         this.loading = false;
       },
       error: (error) => {

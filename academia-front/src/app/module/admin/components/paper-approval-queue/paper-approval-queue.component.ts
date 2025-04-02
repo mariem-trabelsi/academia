@@ -28,13 +28,11 @@ export class PaperApprovalQueueComponent implements OnInit {
   selectedArticle: Article | null = null;
 
 
-  constructor(private adminService: AdminService, private articleService: ArticleControllerService) {}
+  constructor(private articleService: ArticleControllerService) {}
 
   ngOnInit(): void {
     this.loadArticles();
   }
-
-
 
 
    viewArticleDetails(article: Article): void {
