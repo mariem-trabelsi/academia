@@ -20,6 +20,8 @@ import { deleteArticle } from '../fn/article-controller/delete-article';
 import { DeleteArticle$Params } from '../fn/article-controller/delete-article';
 import { getAllArticles } from '../fn/article-controller/get-all-articles';
 import { GetAllArticles$Params } from '../fn/article-controller/get-all-articles';
+import { getApprovedArticles } from '../fn/article-controller/get-approved-articles';
+import { GetApprovedArticles$Params } from '../fn/article-controller/get-approved-articles';
 import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
 import { getMyArticles } from '../fn/article-controller/get-my-articles';
@@ -177,6 +179,31 @@ export class ArticleControllerService extends BaseService {
    */
   getMyArticles(params?: GetMyArticles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getMyArticles$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  /** Path part for operation `getApprovedArticles()` */
+  static readonly GetApprovedArticlesPath = '/articles/approved';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getApprovedArticles()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getApprovedArticles$Response(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getApprovedArticles(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getApprovedArticles$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getApprovedArticles(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getApprovedArticles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }

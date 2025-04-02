@@ -5,9 +5,8 @@
 import { Article } from '../models/article';
 export interface Domain {
   articles?: Array<Article>;
+  description?: string;
   id?: number;
   name?: string;
-  description?: string;
   articleCount?: number;
-  
 }
