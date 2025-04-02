@@ -37,18 +37,33 @@ public class DomainController {
         return ResponseEntity.ok(articles);
     }
 
+
+
     @PostMapping
     public ResponseEntity<Domain> createDomain(@RequestBody Domain domain) {
-        Domain newDomain = domainService.createDomain(domain.getName());
+        if (domain.getName() == null || domain.getName().isEmpty()) {
+            throw new IllegalArgumentException("Domain name cannot be empty");
+        }
+        if (domain.getDescription() == null || domain.getDescription().isEmpty()) {
+            throw new IllegalArgumentException("Domain description cannot be empty");
+        }
+        Domain newDomain = domainService.createDomain(domain.getName(), domain.getDescription());
         return ResponseEntity.ok(newDomain);
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<Domain> updateDomainById(@PathVariable("id") Long id, @RequestBody Domain domain) {
-        Domain updatedDomain = domainService.updateDomainById(id, domain.getName(), domain.getArticles());
+        if (domain.getName() == null || domain.getName().isEmpty()) {
+            throw new IllegalArgumentException("Domain name cannot be empty");
+        }
+        if (domain.getDescription() == null || domain.getDescription().isEmpty()) {
+            throw new IllegalArgumentException("Domain description cannot be empty");
+        }
+        Domain updatedDomain = domainService.updateDomainById(id, domain.getName(), domain.getDescription(), domain.getArticles());
         return ResponseEntity.ok(updatedDomain);
     }
+
 
 
 

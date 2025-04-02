@@ -19,14 +19,20 @@ public class DomainService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    public Domain createDomain(String name) {
+    public Domain createDomain(String name, String description) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Domain name cannot be empty");
         }
+        if (description == null || description.isEmpty()) {
+            throw new IllegalArgumentException("Domain description cannot be empty");
+        }
+
         Domain domain = new Domain();
         domain.setName(name);
+        domain.setDescription(description);
         return domainRepository.save(domain);
     }
+
 
 
     public List<Domain> getAllDomains() {
@@ -49,7 +55,7 @@ public class DomainService {
         domainRepository.deleteById(id);
     }
 
-    public Domain updateDomainById(Long id, String newName, List<Article> articles) {
+    public Domain updateDomainById(Long id, String newName, String newDescription, List<Article> articles) {
         Optional<Domain> optionalDomain = domainRepository.findById(id);
         if (optionalDomain.isPresent()) {
             Domain domain = optionalDomain.get();
@@ -58,8 +64,13 @@ public class DomainService {
                 domain.setName(newName);
             }
 
+            if (newDescription != null) {
+                domain.setDescription(newDescription);
+            }
+
             if (articles != null) {
-                domain.setArticles(articles);
+                domain.getArticles().clear(); // Supprime les anciens articles
+                domain.getArticles().addAll(articles); // Ajoute les nouveaux articles
             }
 
             return domainRepository.save(domain);
@@ -67,5 +78,6 @@ public class DomainService {
             throw new RuntimeException("Domain not found");
         }
     }
+
 
 }

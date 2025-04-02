@@ -21,6 +21,8 @@ public class Domain{
 
     private String name;
 
+    private String description;
+
     @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Article> articles;
