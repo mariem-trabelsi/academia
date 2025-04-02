@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../../services/admin.service';
-import { Domain } from '../../models/admin.model';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomainControllerService } from 'src/app/services/services/domain-controller.service';
+import { Domain } from 'src/app/services/models/domain';
+
 
 @Component({
   selector: 'app-domain-management',
@@ -30,6 +31,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   ],
 })
 export class DomainManagementComponent implements OnInit {
+
   domains: Domain[] = [];
   filteredDomains: Domain[] = [];
   selectedDomain: Domain | null = null;
@@ -40,26 +42,28 @@ export class DomainManagementComponent implements OnInit {
   isEditMode: boolean = false;
 
   constructor(
-    private adminService: AdminService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private domainService: DomainControllerService
   ) {
     this.domainForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      status: ['active']
     });
   }
 
   ngOnInit(): void {
     this.loadDomains();
   }
-
+    
   loadDomains(): void {
-    this.adminService.getDomainsList().subscribe(domains => {
+    this.domainService.getAllDomains().subscribe(domains => {
       this.domains = domains;
       this.applyFilters();
+      this.getArticlesCountByDomain(); 
     });
   }
+  
+  
 
   applyFilters(): void {
     let filtered = [...this.domains];
@@ -67,15 +71,12 @@ export class DomainManagementComponent implements OnInit {
     if (this.searchQuery) {
       const search = this.searchQuery.toLowerCase();
       filtered = filtered.filter(domain => 
-        domain.name.toLowerCase().includes(search) || 
-        domain.description.toLowerCase().includes(search)
+        domain.name?.toLowerCase().includes(search) || 
+        domain.description?.toLowerCase().includes(search)
       );
     }
     
-    if (this.statusFilter !== 'all') {
-      filtered = filtered.filter(domain => domain.status === this.statusFilter);
-    }
-    
+  
     this.filteredDomains = filtered;
   }
 
@@ -95,20 +96,24 @@ export class DomainManagementComponent implements OnInit {
 
   openAddDomainModal(): void {
     this.isEditMode = false;
-    this.domainForm.reset({ status: 'active' });
     this.showAddDomainModal = true;
   }
 
+ 
+
   openEditDomainModal(domain: Domain): void {
+    console.log("Editing domain:", domain);
     this.isEditMode = true;
-    this.domainForm.setValue({
+    this.domainForm.patchValue({
       name: domain.name,
-      description: domain.description,
-      status: domain.status
+      description: domain.description || '',
+
     });
+    
     this.selectedDomain = domain;
-    this.showAddDomainModal = true;
+    this.showAddDomainModal = true; 
   }
+  
 
   closeAddDomainModal(): void {
     this.showAddDomainModal = false;
@@ -121,72 +126,62 @@ export class DomainManagementComponent implements OnInit {
     }
 
     const formValue = this.domainForm.value;
-    
+
     if (this.isEditMode && this.selectedDomain) {
       const updatedDomain: Domain = {
         ...this.selectedDomain,
         name: formValue.name,
         description: formValue.description,
-        status: formValue.status,
-        lastModified: new Date()
       };
-      
-      this.adminService.updateDomain(updatedDomain).subscribe(success => {
-        if (success) {
-          // In a real app, we would refresh from API
-          // For the mock, update locally
-          const index = this.domains.findIndex(d => d.id === updatedDomain.id);
+
+      if (updatedDomain.id !== undefined) {
+        this.domainService.updateDomainById({ id: updatedDomain.id, body: updatedDomain }).subscribe(updated => {
+          const index = this.domains.findIndex(d => d.id === updated.id);
           if (index !== -1) {
-            this.domains[index] = updatedDomain;
+            this.domains[index] = updated;
             this.applyFilters();
           }
+          this.getArticlesCountByDomain();
           this.closeAddDomainModal();
           this.closeDomainDetails();
-        }
-      });
+        });
+      }
     } else {
-      this.adminService.createDomain(formValue).subscribe(newDomain => {
-        // In a real app, we would refresh from API
-        // For the mock, update locally
+      this.domainService.createDomain({ body: formValue }).subscribe(newDomain => {
         this.domains.push(newDomain);
         this.applyFilters();
+        this.getArticlesCountByDomain();
         this.closeAddDomainModal();
       });
     }
   }
 
-  updateDomainStatus(domain: Domain, status: 'active' | 'inactive'): void {
-    this.adminService.updateDomainStatus(domain.id, status).subscribe(success => {
-      if (success) {
-        // In a real app, we would refresh from API
-        // For the mock, update locally
-        const index = this.domains.findIndex(d => d.id === domain.id);
-        if (index !== -1) {
-          this.domains[index] = {
-            ...domain,
-            status,
-            lastModified: new Date()
-          };
+  deleteDomain(domain: Domain): void {
+    if (domain.id !== undefined) {
+  
+        this.domainService.deleteDomainById({ id: domain.id }).subscribe(() => {
+          this.domains = this.domains.filter(d => d.id !== domain.id);
           this.applyFilters();
-        }
-        this.closeDomainDetails();
+          this.closeDomainDetails();
+          alert(`Domain "${domain.name}" deleted successfully.`);
+        }, error => {
+          alert(`An error occurred while deleting the domain "${domain.name}". Please try again.`);
+        });
+      
+    }
+  }
+
+ 
+
+  getArticlesCountByDomain(): void {
+    this.domains.forEach(domain => {
+      if (domain.id !== undefined) {
+        this.domainService.getArticlesByDomain({ id: domain.id }).subscribe(articles => {
+          domain.articleCount = articles.length;
+          this.applyFilters();
+        });
       }
     });
   }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'active': return 'Active';
-      case 'inactive': return 'Inactive';
-      default: return status;
-    }
-  }
-
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'active': return 'status-active';
-      case 'inactive': return 'status-inactive';
-      default: return '';
-    }
-  }
-} 
+  
+}

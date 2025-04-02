@@ -7,4 +7,7 @@ export interface Domain {
   articles?: Array<Article>;
   id?: number;
   name?: string;
+  description?: string;
+  articleCount?: number;
+  
 }

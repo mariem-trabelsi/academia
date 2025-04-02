@@ -8,8 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByCreatedBy(String createdBy);
     List<Article> findByDomain(Domain domain);
+    Optional<Article> findById(Long id);
+
 }

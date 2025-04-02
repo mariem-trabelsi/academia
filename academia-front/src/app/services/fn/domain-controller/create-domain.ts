@@ -11,13 +11,13 @@ import { RequestBuilder } from '../../request-builder';
 import { Domain } from '../../models/domain';
 
 export interface CreateDomain$Params {
-  arg0: string;
+      body: Domain
 }
 
 export function createDomain(http: HttpClient, rootUrl: string, params: CreateDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
   const rb = new RequestBuilder(rootUrl, createDomain.PATH, 'post');
   if (params) {
-    rb.query('arg0', params.arg0, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

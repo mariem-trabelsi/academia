@@ -47,6 +47,13 @@ public class ArticleService {
         return articleRepository.findByCreatedBy(username);
     }
 
+    public Article approveArticle(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Article not found"));
+
+        article.setApproved(true);
+        return articleRepository.save(article);
+    }
 
 
 }

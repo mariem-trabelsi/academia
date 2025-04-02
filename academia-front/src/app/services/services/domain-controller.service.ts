@@ -37,7 +37,7 @@ export class DomainControllerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `updateDomainById()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   updateDomainById$Response(params: UpdateDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
     return updateDomainById(this.http, this.rootUrl, params, context);
@@ -47,7 +47,7 @@ export class DomainControllerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `updateDomainById$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   updateDomainById(params: UpdateDomainById$Params, context?: HttpContext): Observable<Domain> {
     return this.updateDomainById$Response(params, context).pipe(
@@ -64,7 +64,7 @@ export class DomainControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteDomainById$Response(params?: DeleteDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  deleteDomainById$Response(params: DeleteDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return deleteDomainById(this.http, this.rootUrl, params, context);
   }
 
@@ -74,7 +74,7 @@ export class DomainControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteDomainById(params?: DeleteDomainById$Params, context?: HttpContext): Observable<void> {
+  deleteDomainById(params: DeleteDomainById$Params, context?: HttpContext): Observable<void> {
     return this.deleteDomainById$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
@@ -112,7 +112,7 @@ export class DomainControllerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `createDomain()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   createDomain$Response(params: CreateDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
     return createDomain(this.http, this.rootUrl, params, context);
@@ -122,7 +122,7 @@ export class DomainControllerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `createDomain$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   createDomain(params: CreateDomain$Params, context?: HttpContext): Observable<Domain> {
     return this.createDomain$Response(params, context).pipe(
@@ -131,7 +131,7 @@ export class DomainControllerService extends BaseService {
   }
 
   /** Path part for operation `getArticlesByDomain()` */
-  static readonly GetArticlesByDomainPath = '/domains/{domainId}/articles';
+  static readonly GetArticlesByDomainPath = '/domains/{id}/articles';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -139,7 +139,7 @@ export class DomainControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticlesByDomain$Response(params?: GetArticlesByDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+  getArticlesByDomain$Response(params: GetArticlesByDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
     return getArticlesByDomain(this.http, this.rootUrl, params, context);
   }
 
@@ -149,7 +149,7 @@ export class DomainControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticlesByDomain(params?: GetArticlesByDomain$Params, context?: HttpContext): Observable<Array<Article>> {
+  getArticlesByDomain(params: GetArticlesByDomain$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getArticlesByDomain$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );

@@ -14,71 +14,73 @@
       <div class="header-actions">Actions</div>
     </div>
 
-    <div class="no-papers" *ngIf="papers.length === 0">
+    <div class="no-papers" *ngIf="articles.length === 0">
       There are no papers in the approval queue.
     </div>
 
-    <div class="paper-item" *ngFor="let paper of papers" @itemAnimation>
-      <div class="item-title">{{ paper.title }}</div>
-      <div class="item-author">{{ paper.authorName }}</div>
-      <div class="item-domain">{{ paper.domain }}</div>
-      <div class="item-date">{{ paper.submissionDate | date:'MMM d, y' }}</div>
+    <div class="paper-item" *ngFor="let article of articles" @itemAnimation>
+      <div class="item-title">{{ article.title }}</div>
+      <div class="item-author">{{ article.authorName }}</div>
+      <div class="item-domain">{{ article?.domain?.name }}</div>
+      <div class="item-date">{{ article.createdDate | date:'MMM d, y' }}</div>
       <div class="item-status">
-        <span class="status-badge" [ngClass]="getStatusClass(paper.status)">
-          {{ paper.status }}
+        <span class="status-badge" [ngClass]=" getStatusClass(article.approved)">
+          {{ article.approved ? 'Approved' : 'Pending' }}
         </span>
       </div>
       <div class="item-actions">
-        <button class="btn-view" (click)="viewPaperDetails(paper)">View</button>
+        <button class="btn-view" (click)="viewArticleDetails(article)">View</button>
       </div>
     </div>
-  </div>
+
+
+   
 
   <!-- Paper Details Modal -->
-  <div class="paper-details-modal" *ngIf="selectedPaper">
-    <div class="modal-backdrop" (click)="closePaperDetails()"></div>
+  <div class="paper-details-modal" *ngIf="selectedArticle">
+    <div class="modal-backdrop" (click)="closeArticleDetails()"></div>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Paper Review</h3>
-        <button class="btn-close" (click)="closePaperDetails()">&times;</button>
+        <button class="btn-close" (click)="closeArticleDetails()">&times;</button>
       </div>
       
       <div class="modal-body">
-        <div class="paper-cover" *ngIf="selectedPaper.coverImageUrl">
-          <img [src]="selectedPaper.coverImageUrl" alt="Paper cover">
+        <div class="paper-cover" *ngIf="selectedArticle.articleCover">
+          <img [src]="selectedArticle.articleCover" alt="Paper cover">
         </div>
         
         <div class="paper-info">
-          <h4>{{ selectedPaper.title }}</h4>
+          <h4>{{ selectedArticle.title }}</h4>
           <div class="info-row">
             <span class="info-label">Author:</span>
-            <span class="info-value">{{ selectedPaper.authorName }}</span>
+            <span class="info-value">{{ selectedArticle.authorName }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Domain:</span>
-            <span class="info-value">{{ selectedPaper.domain }}</span>
+            <span class="info-value">{{ selectedArticle.domain?.name }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Submitted:</span>
-            <span class="info-value">{{ selectedPaper.submissionDate | date:'MMM d, y' }}</span>
+            <span class="info-value">{{ selectedArticle.createdDate | date:'MMM d, y' }}</span>
           </div>
         </div>
         
         <div class="paper-abstract">
           <h5>Abstract</h5>
-          <p>{{ selectedPaper.abstract }}</p>
+          <p>{{ selectedArticle.abstract_ }}</p>
         </div>
         
         <div class="paper-documents">
           <h5>Documents</h5>
-          <a *ngIf="selectedPaper.pdfUrl" [href]="selectedPaper.pdfUrl" class="document-link" target="_blank">
+          <a *ngIf="selectedArticle.filePath" [href]="selectedArticle.filePath" class="document-link" target="_blank">
             <span class="pdf-icon">📄</span> View PDF
           </a>
         </div>
         
         <div class="approval-actions">
           <div class="action-section">
-            <button class="btn-approve" (click)="approvePaper(selectedPaper)" [disabled]="selectedPaper.status !== 'pending'">
+            <button class="btn-approve" (click)="approveArticle(selectedArticle)">
               Approve Paper
             </button>
           </div>
@@ -87,11 +89,11 @@
             <textarea 
               placeholder="Provide a reason for rejection" 
               [(ngModel)]="rejectionReason"
-              [disabled]="selectedPaper.status !== 'pending'"
+              
             ></textarea>
             <button class="btn-reject" 
-              (click)="rejectPaper(selectedPaper)" 
-              [disabled]="!rejectionReason || selectedPaper.status !== 'pending'">
+              (click)="rejectArticle(selectedArticle)" 
+             >
               Reject Paper
             </button>
           </div>

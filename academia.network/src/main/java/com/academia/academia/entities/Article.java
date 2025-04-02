@@ -1,5 +1,6 @@
 package com.academia.academia.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,6 @@ public class Article extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "domain_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Domain domain;
 }

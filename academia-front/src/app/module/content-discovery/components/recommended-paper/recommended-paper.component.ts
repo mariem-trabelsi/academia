@@ -10,12 +10,6 @@ import { Article } from 'src/app/services/models';
 export class RecommendedPaperComponent {
   @Input() article!: Article;
 
-
-  constructor(private articleService: ArticleControllerService,) {}
-
-
-
-
   getRatingStars(): number[] {
     /*
     if (!this.paper.rating) return [0, 0, 0, 0, 0];

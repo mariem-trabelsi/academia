@@ -10,12 +10,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { Article } from '../../models/article';
 
-export interface GetArticlesByDomain$Params {
+export interface ApproveArticle$Params {
   id: number;
 }
 
-export function getArticlesByDomain(http: HttpClient, rootUrl: string, params: GetArticlesByDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
-  const rb = new RequestBuilder(rootUrl, getArticlesByDomain.PATH, 'get');
+export function approveArticle(http: HttpClient, rootUrl: string, params: ApproveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+  const rb = new RequestBuilder(rootUrl, approveArticle.PATH, 'put');
   if (params) {
     rb.path('id', params.id, {});
   }
@@ -25,9 +25,9 @@ export function getArticlesByDomain(http: HttpClient, rootUrl: string, params: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Article>>;
+      return r as StrictHttpResponse<Article>;
     })
   );
 }
 
-getArticlesByDomain.PATH = '/domains/{id}/articles';
+approveArticle.PATH = '/articles/{id}/approve';
