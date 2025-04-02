@@ -11,6 +11,19 @@ export interface PaperApproval {
   pdfUrl?: string;
 }
 
+
+export interface ArticleApproval {
+  id: number;
+  title: string;
+  abstract: string;
+  authorName: string;
+  domain: string;
+  submissionDate: Date;
+  status: 'pending' | 'approved' | 'rejected';
+  coverImageUrl?: string;
+  pdfUrl?: string;
+}
+
 export interface Domain {
   id: number;
   name: string;

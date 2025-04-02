@@ -23,9 +23,11 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public Article getArticleById(@PathVariable Long id) {
-        return articleService.getArticleById(id);
+    public ResponseEntity<Article> getArticleById(@PathVariable("id") Long id) {
+        Article article = articleService.getArticleById(id);
+        return ResponseEntity.ok(article);
     }
+
 
     @PostMapping
     public Article createArticle(@RequestBody Article article) {
@@ -44,5 +46,13 @@ public class ArticleController {
         List<Article> userArticles = articleService.getArticlesByCreatedBy(currentUsername);
         return ResponseEntity.ok(userArticles);
     }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<Article> approveArticle(@PathVariable("id") Long id) {
+        Article updatedArticle = articleService.approveArticle(id);
+        return ResponseEntity.ok(updatedArticle);
+    }
+
+
 
 }

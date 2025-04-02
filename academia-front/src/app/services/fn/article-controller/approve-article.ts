@@ -10,12 +10,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { Article } from '../../models/article';
 
-export interface GetArticleById$Params {
+export interface ApproveArticle$Params {
   id: number;
 }
 
-export function getArticleById(http: HttpClient, rootUrl: string, params: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
-  const rb = new RequestBuilder(rootUrl, getArticleById.PATH, 'get');
+export function approveArticle(http: HttpClient, rootUrl: string, params: ApproveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+  const rb = new RequestBuilder(rootUrl, approveArticle.PATH, 'put');
   if (params) {
     rb.path('id', params.id, {});
   }
@@ -30,4 +30,4 @@ export function getArticleById(http: HttpClient, rootUrl: string, params: GetArt
   );
 }
 
-getArticleById.PATH = '/articles/{id}';
+approveArticle.PATH = '/articles/{id}/approve';

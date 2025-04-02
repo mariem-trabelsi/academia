@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../../services/admin.service';
 import { PaperApproval } from '../../models/admin.model';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { ArticleControllerService } from 'src/app/services/services';
+import { Article } from 'src/app/services/models';
+import { ApproveArticle$Params } from 'src/app/services/fn/article-controller/approve-article';
 
 @Component({
   selector: 'app-paper-approval-queue',
@@ -20,51 +23,71 @@ export class PaperApprovalQueueComponent implements OnInit {
   papers: PaperApproval[] = [];
   selectedPaper: PaperApproval | null = null;
   rejectionReason: string = '';
-  
-  constructor(private adminService: AdminService) {}
+
+  articles: Article[] = [];
+  selectedArticle: Article | null = null;
+
+
+  constructor(private adminService: AdminService, private articleService: ArticleControllerService) {}
 
   ngOnInit(): void {
-    this.loadPapers();
+    this.loadArticles();
   }
 
-  loadPapers(): void {
-    this.adminService.getPaperApprovalQueue().subscribe(papers => {
-      this.papers = papers;
-    });
-  }
 
-  viewPaperDetails(paper: PaperApproval): void {
-    this.selectedPaper = paper;
+
+
+   viewArticleDetails(article: Article): void {
+    this.selectedArticle = article;
     this.rejectionReason = '';
   }
 
-  closePaperDetails(): void {
-    this.selectedPaper = null;
-    this.rejectionReason = '';
-  }
 
-  approvePaper(paper: PaperApproval): void {
-    this.adminService.approvePaper(paper.id).subscribe(() => {
-      this.loadPapers();
-      this.closePaperDetails();
+
+
+
+
+
+
+
+  loadArticles(): void {
+    this.articleService.getAllArticles().subscribe(articles => {
+      this.articles = articles;
     });
   }
 
-  rejectPaper(paper: PaperApproval): void {
+
+
+  closeArticleDetails(): void {
+    this.selectedArticle = null;
+    this.rejectionReason = '';
+  }
+
+  approveArticle(article: Article): void {
+    if (article.id === undefined) {
+      console.error('Article ID is undefined');
+      return;
+    }
+    const params: ApproveArticle$Params = { id: article.id };
+    this.articleService.approveArticle(params).subscribe(() => {
+      this.loadArticles();
+      this.closeArticleDetails();
+    });
+  }
+
+  rejectArticle(article: Article): void {
     if (this.rejectionReason) {
-      this.adminService.rejectPaper(paper.id, this.rejectionReason).subscribe(() => {
-        this.loadPapers();
-        this.closePaperDetails();
-      });
+      article.approved = false;
+      this.loadArticles();
+      this.closeArticleDetails();
     }
   }
 
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'pending': return 'status-pending';
-      case 'approved': return 'status-approved';
-      case 'rejected': return 'status-rejected';
-      default: return '';
-    }
+  getStatusClass(approved: boolean | undefined): string {
+    if (approved === true)  return 'status-approved';
+    if (approved === false) return 'status-pending';
+    return 'status-pending';
   }
 }
+
+

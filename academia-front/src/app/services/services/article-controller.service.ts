@@ -11,6 +11,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { approveArticle } from '../fn/article-controller/approve-article';
+import { ApproveArticle$Params } from '../fn/article-controller/approve-article';
 import { Article } from '../models/article';
 import { createArticle } from '../fn/article-controller/create-article';
 import { CreateArticle$Params } from '../fn/article-controller/create-article';
@@ -27,6 +29,31 @@ import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
 export class ArticleControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `approveArticle()` */
+  static readonly ApproveArticlePath = '/articles/{id}/approve';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `approveArticle()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  approveArticle$Response(params: ApproveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+    return approveArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `approveArticle$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  approveArticle(params: ApproveArticle$Params, context?: HttpContext): Observable<Article> {
+    return this.approveArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Article>): Article => r.body)
+    );
   }
 
   /** Path part for operation `getAllArticles()` */
@@ -88,7 +115,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticleById$Response(params?: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+  getArticleById$Response(params: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
     return getArticleById(this.http, this.rootUrl, params, context);
   }
 
@@ -98,7 +125,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getArticleById(params?: GetArticleById$Params, context?: HttpContext): Observable<Article> {
+  getArticleById(params: GetArticleById$Params, context?: HttpContext): Observable<Article> {
     return this.getArticleById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Article>): Article => r.body)
     );
