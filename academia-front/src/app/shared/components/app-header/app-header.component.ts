@@ -18,7 +18,7 @@ export class AppHeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private notificationBadgeService: NotificationBadgeService,
-    private  keycloakService : KeycloakService
+  public  keycloakService : KeycloakService
   ) { 
     this.keycloakService.profile;
   }

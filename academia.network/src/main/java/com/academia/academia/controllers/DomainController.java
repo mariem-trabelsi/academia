@@ -1,6 +1,5 @@
 package com.academia.academia.controllers;
 
-
 import com.academia.academia.entities.Domain;
 import com.academia.academia.entities.Article;
 import com.academia.academia.services.DomainService;
@@ -17,24 +16,33 @@ public class DomainController {
     @Autowired
     private DomainService domainService;
 
-    // Créer un domaine
     @PostMapping
     public ResponseEntity<Domain> createDomain(@RequestParam String name) {
         Domain domain = domainService.createDomain(name);
         return ResponseEntity.ok(domain);
     }
 
-    // Récupérer tous les domaines
     @GetMapping
     public ResponseEntity<List<Domain>> getAllDomains() {
         List<Domain> domains = domainService.getAllDomains();
         return ResponseEntity.ok(domains);
     }
 
-    // Récupérer les articles d'un domaine spécifique
     @GetMapping("/{domainId}/articles")
     public ResponseEntity<List<Article>> getArticlesByDomain(@PathVariable Long domainId) {
         List<Article> articles = domainService.getArticlesByDomain(domainId);
         return ResponseEntity.ok(articles);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDomainById(@PathVariable Long id) {
+        domainService.deleteDomainById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Domain> updateDomainById(@PathVariable Long id, @RequestParam String name) {
+        Domain updatedDomain = domainService.updateDomainById(id, name);
+        return ResponseEntity.ok(updatedDomain);
     }
 }

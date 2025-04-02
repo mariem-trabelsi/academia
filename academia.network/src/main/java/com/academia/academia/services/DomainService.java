@@ -19,19 +19,16 @@ public class DomainService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    // Créer un domaine
     public Domain createDomain(String name) {
         Domain domain = new Domain();
         domain.setName(name);
         return domainRepository.save(domain);
     }
 
-    // Récupérer tous les domaines
     public List<Domain> getAllDomains() {
         return domainRepository.findAll();
     }
 
-    // Récupérer tous les articles d'un domaine spécifique
     public List<Article> getArticlesByDomain(Long domainId) {
         Optional<Domain> domain = domainRepository.findById(domainId);
         if (domain.isPresent()) {
@@ -40,5 +37,22 @@ public class DomainService {
             throw new RuntimeException("Domain not found");
         }
     }
-}
 
+    public void deleteDomainById(Long id) {
+        if (!domainRepository.existsById(id)) {
+            throw new RuntimeException("Domain not found");
+        }
+        domainRepository.deleteById(id);
+    }
+
+    public Domain updateDomainById(Long id, String newName) {
+        Optional<Domain> optionalDomain = domainRepository.findById(id);
+        if (optionalDomain.isPresent()) {
+            Domain domain = optionalDomain.get();
+            domain.setName(newName);
+            return domainRepository.save(domain);
+        } else {
+            throw new RuntimeException("Domain not found");
+        }
+    }
+}

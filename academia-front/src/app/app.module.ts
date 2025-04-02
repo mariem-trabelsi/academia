@@ -7,7 +7,6 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 import { FormsModule } from '@angular/forms';
 import { CodeInputModule } from 'angular-code-input';
 import { TokenInjectionInterceptor } from './services/interceptor/token-injection.interceptor';
-import { ArticleTestComponent } from './module/article/pages/article-test/article-test.component';
 import { SharedModule } from './shared/shared.module';
 import { DiscussionFeedbackModule } from './module/discussion-feedback/discussion-feedback.module';
 import { KeycloakService } from './services/keycloak/keycloak.service';
@@ -21,7 +20,6 @@ export function keyclockFactory(kcService: KeycloakService) {
 @NgModule({
   declarations: [
     AppComponent,
-    ArticleTestComponent
   ],
   imports: [
     BrowserModule,

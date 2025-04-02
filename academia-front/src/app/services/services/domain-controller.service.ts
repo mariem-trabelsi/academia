@@ -14,16 +14,70 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { Article } from '../models/article';
 import { createDomain } from '../fn/domain-controller/create-domain';
 import { CreateDomain$Params } from '../fn/domain-controller/create-domain';
+import { deleteDomainById } from '../fn/domain-controller/delete-domain-by-id';
+import { DeleteDomainById$Params } from '../fn/domain-controller/delete-domain-by-id';
 import { Domain } from '../models/domain';
 import { getAllDomains } from '../fn/domain-controller/get-all-domains';
 import { GetAllDomains$Params } from '../fn/domain-controller/get-all-domains';
 import { getArticlesByDomain } from '../fn/domain-controller/get-articles-by-domain';
 import { GetArticlesByDomain$Params } from '../fn/domain-controller/get-articles-by-domain';
+import { updateDomainById } from '../fn/domain-controller/update-domain-by-id';
+import { UpdateDomainById$Params } from '../fn/domain-controller/update-domain-by-id';
 
 @Injectable({ providedIn: 'root' })
 export class DomainControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `updateDomainById()` */
+  static readonly UpdateDomainByIdPath = '/domains/{id}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateDomainById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateDomainById$Response(params: UpdateDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
+    return updateDomainById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateDomainById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateDomainById(params: UpdateDomainById$Params, context?: HttpContext): Observable<Domain> {
+    return this.updateDomainById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Domain>): Domain => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteDomainById()` */
+  static readonly DeleteDomainByIdPath = '/domains/{id}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteDomainById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteDomainById$Response(params?: DeleteDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteDomainById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteDomainById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteDomainById(params?: DeleteDomainById$Params, context?: HttpContext): Observable<void> {
+    return this.deleteDomainById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
   }
 
   /** Path part for operation `getAllDomains()` */

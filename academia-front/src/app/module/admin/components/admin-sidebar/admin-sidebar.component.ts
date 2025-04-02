@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { KeycloakService } from 'src/app/services/keycloak/keycloak.service';
 
 interface SidebarItem {
   label: string;
@@ -7,6 +8,7 @@ interface SidebarItem {
   section: 'dashboard' | 'approval' | 'users' | 'domains' | 'moderation' | 'statistics' | 'settings';
   active?: boolean;
 }
+
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -24,6 +26,9 @@ interface SidebarItem {
 export class AdminSidebarComponent {
   @Input() collapsed = false;
   @Output() sectionChange = new EventEmitter<string>();
+  keycloakUrl = 'http://localhost:9090/admin/master/console/#/academia/users';
+
+  constructor(private keycloakService: KeycloakService) {}
   
   sidebarItems: SidebarItem[] = [
     { label: 'Dashboard', icon: '📊', section: 'dashboard', active: true },
@@ -38,6 +43,16 @@ export class AdminSidebarComponent {
   onItemClick(item: SidebarItem): void {
     this.sidebarItems.forEach(i => i.active = false);
     item.active = true;
-    this.sectionChange.emit(item.section);
+    
+    if (item.section === 'users') {
+      window.location.href = this.keycloakUrl;
+    }
+     else if (item.section === 'settings') {
+    this.keycloakService.manageAccount();
+    
+    } else {
+      this.sectionChange.emit(item.section);
+    }
+
   }
 }
