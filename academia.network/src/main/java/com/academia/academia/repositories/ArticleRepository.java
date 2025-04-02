@@ -14,5 +14,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByCreatedBy(String createdBy);
     List<Article> findByDomain(Domain domain);
     Optional<Article> findById(Long id);
+    public List<Article> findByApprovedTrueOrderByCreatedDateDesc();
 
 }

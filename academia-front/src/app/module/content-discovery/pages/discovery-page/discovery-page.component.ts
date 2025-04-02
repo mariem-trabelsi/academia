@@ -28,14 +28,15 @@ export class DiscoveryPageComponent implements OnInit {
   loadDiscoveryData(): void {
     this.loading = true;
 
-    this.articleService.getAllArticles().subscribe({
-      next: (data: Article[]) => {
-        this.articles = data;
-        console.log('Articles loaded:', this.articles);
+    const params = { id: 1 };
+    this.articleService.approveArticle(params).subscribe({
+      next: (data: Article) => {
+        this.articles = [data];
+        console.log('Approved article loaded:', this.articles);
         this.loading = false;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des articles:', error);
+        console.error('Erreur lors du chargement des articles approuvés:', error);
         this.loading = false;
       }
     });

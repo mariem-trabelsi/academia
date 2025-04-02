@@ -2,9 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomainControllerService } from 'src/app/services/services/domain-controller.service';
-import { Domain } from 'src/app/services/models/domain';
+//import { Domain } from 'src/app/services/models/domain';
+import { Article } from 'src/app/services/models/article';
 
-
+interface Domain {
+  articles?: Array<Article>;
+  description?: string;
+  id?: number;
+  name?: string;
+  articleCount?: number;
+}// hne belani amlat interface admin hardcoded khater articleCount mahiech mawjouda f backend 
 @Component({
   selector: 'app-domain-management',
   templateUrl: './domain-management.component.html',

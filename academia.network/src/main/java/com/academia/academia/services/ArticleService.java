@@ -55,5 +55,10 @@ public class ArticleService {
         return articleRepository.save(article);
     }
 
+    public List<Article> getArticlesApproved() {
+        return articleRepository.findByApprovedTrueOrderByCreatedDateDesc();
+    }
+
+
 
 }

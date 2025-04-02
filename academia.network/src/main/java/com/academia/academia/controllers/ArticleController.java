@@ -52,7 +52,10 @@ public class ArticleController {
         Article updatedArticle = articleService.approveArticle(id);
         return ResponseEntity.ok(updatedArticle);
     }
-
-
+    @GetMapping("/approved")
+    public ResponseEntity<List<Article>> getApprovedArticles() {
+        List<Article> notApprovedArticles = articleService.getArticlesApproved();
+        return ResponseEntity.ok(notApprovedArticles);
+    }
 
 }
