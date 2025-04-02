@@ -20,10 +20,14 @@ public class DomainService {
     private ArticleRepository articleRepository;
 
     public Domain createDomain(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Domain name cannot be empty");
+        }
         Domain domain = new Domain();
         domain.setName(name);
         return domainRepository.save(domain);
     }
+
 
     public List<Domain> getAllDomains() {
         return domainRepository.findAll();
@@ -45,14 +49,23 @@ public class DomainService {
         domainRepository.deleteById(id);
     }
 
-    public Domain updateDomainById(Long id, String newName) {
+    public Domain updateDomainById(Long id, String newName, List<Article> articles) {
         Optional<Domain> optionalDomain = domainRepository.findById(id);
         if (optionalDomain.isPresent()) {
             Domain domain = optionalDomain.get();
-            domain.setName(newName);
+
+            if (newName != null) {
+                domain.setName(newName);
+            }
+
+            if (articles != null) {
+                domain.setArticles(articles);
+            }
+
             return domainRepository.save(domain);
         } else {
             throw new RuntimeException("Domain not found");
         }
     }
+
 }

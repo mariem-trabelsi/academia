@@ -2,6 +2,7 @@ package com.academia.academia.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class Domain{
 
     private String name;
 
-    @OneToMany(mappedBy = "domain")
-    @JsonBackReference
+    @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Article> articles;
 }

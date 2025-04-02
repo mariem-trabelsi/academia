@@ -11,11 +11,13 @@ import { RequestBuilder } from '../../request-builder';
 import { Article } from '../../models/article';
 
 export interface GetArticlesByDomain$Params {
+  id: number;
 }
 
-export function getArticlesByDomain(http: HttpClient, rootUrl: string, params?: GetArticlesByDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+export function getArticlesByDomain(http: HttpClient, rootUrl: string, params: GetArticlesByDomain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
   const rb = new RequestBuilder(rootUrl, getArticlesByDomain.PATH, 'get');
   if (params) {
+    rb.path('id', params.id, {});
   }
 
   return http.request(
@@ -28,4 +30,4 @@ export function getArticlesByDomain(http: HttpClient, rootUrl: string, params?: 
   );
 }
 
-getArticlesByDomain.PATH = '/domains/{domainId}/articles';
+getArticlesByDomain.PATH = '/domains/{id}/articles';

@@ -11,13 +11,15 @@ import { RequestBuilder } from '../../request-builder';
 import { Domain } from '../../models/domain';
 
 export interface UpdateDomainById$Params {
-  arg1: string;
+  id: number;
+      body: Domain
 }
 
 export function updateDomainById(http: HttpClient, rootUrl: string, params: UpdateDomainById$Params, context?: HttpContext): Observable<StrictHttpResponse<Domain>> {
   const rb = new RequestBuilder(rootUrl, updateDomainById.PATH, 'put');
   if (params) {
-    rb.query('arg1', params.arg1, {});
+    rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

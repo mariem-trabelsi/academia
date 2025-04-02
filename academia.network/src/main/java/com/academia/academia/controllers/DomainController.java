@@ -16,33 +16,40 @@ public class DomainController {
     @Autowired
     private DomainService domainService;
 
-    @PostMapping
-    public ResponseEntity<Domain> createDomain(@RequestParam String name) {
-        Domain domain = domainService.createDomain(name);
-        return ResponseEntity.ok(domain);
-    }
-
+//ok
     @GetMapping
     public ResponseEntity<List<Domain>> getAllDomains() {
         List<Domain> domains = domainService.getAllDomains();
         return ResponseEntity.ok(domains);
     }
 
-    @GetMapping("/{domainId}/articles")
-    public ResponseEntity<List<Article>> getArticlesByDomain(@PathVariable Long domainId) {
-        List<Article> articles = domainService.getArticlesByDomain(domainId);
-        return ResponseEntity.ok(articles);
-    }
-
+//ok
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDomainById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDomainById(@PathVariable("id") Long id) {
         domainService.deleteDomainById(id);
         return ResponseEntity.noContent().build();
     }
 
+//ok
+    @GetMapping("/{id}/articles")
+    public ResponseEntity<List<Article>> getArticlesByDomain(@PathVariable("id") Long domainId) {
+        List<Article> articles = domainService.getArticlesByDomain(domainId);
+        return ResponseEntity.ok(articles);
+    }
+
+    @PostMapping
+    public ResponseEntity<Domain> createDomain(@RequestBody Domain domain) {
+        Domain newDomain = domainService.createDomain(domain.getName());
+        return ResponseEntity.ok(newDomain);
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<Domain> updateDomainById(@PathVariable Long id, @RequestParam String name) {
-        Domain updatedDomain = domainService.updateDomainById(id, name);
+    public ResponseEntity<Domain> updateDomainById(@PathVariable("id") Long id, @RequestBody Domain domain) {
+        Domain updatedDomain = domainService.updateDomainById(id, domain.getName(), domain.getArticles());
         return ResponseEntity.ok(updatedDomain);
     }
+
+
+
 }
