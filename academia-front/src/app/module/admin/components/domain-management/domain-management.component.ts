@@ -107,6 +107,7 @@ export class DomainManagementComponent implements OnInit {
     this.domainForm.patchValue({
       name: domain.name,
       description: domain.description || '',
+
     });
     
     this.selectedDomain = domain;
@@ -140,6 +141,7 @@ export class DomainManagementComponent implements OnInit {
             this.domains[index] = updated;
             this.applyFilters();
           }
+          this.getArticlesCountByDomain();
           this.closeAddDomainModal();
           this.closeDomainDetails();
         });
@@ -148,6 +150,7 @@ export class DomainManagementComponent implements OnInit {
       this.domainService.createDomain({ body: formValue }).subscribe(newDomain => {
         this.domains.push(newDomain);
         this.applyFilters();
+        this.getArticlesCountByDomain();
         this.closeAddDomainModal();
       });
     }
