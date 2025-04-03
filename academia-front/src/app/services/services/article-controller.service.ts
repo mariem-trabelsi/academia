@@ -24,6 +24,8 @@ import { getApprovedArticles } from '../fn/article-controller/get-approved-artic
 import { GetApprovedArticles$Params } from '../fn/article-controller/get-approved-articles';
 import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
+import { getDomainName } from '../fn/article-controller/get-domain-name';
+import { GetDomainName$Params } from '../fn/article-controller/get-domain-name';
 import { getMyArticles } from '../fn/article-controller/get-my-articles';
 import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
 
@@ -155,6 +157,31 @@ export class ArticleControllerService extends BaseService {
   deleteArticle(params?: DeleteArticle$Params, context?: HttpContext): Observable<void> {
     return this.deleteArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getDomainName()` */
+  static readonly GetDomainNamePath = '/articles/{id}/domain';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getDomainName()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDomainName$Response(params: GetDomainName$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
+    return getDomainName(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getDomainName$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDomainName(params: GetDomainName$Params, context?: HttpContext): Observable<string> {
+    return this.getDomainName$Response(params, context).pipe(
+      map((r: StrictHttpResponse<string>): string => r.body)
     );
   }
 

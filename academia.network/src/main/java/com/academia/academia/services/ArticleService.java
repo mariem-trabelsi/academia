@@ -59,6 +59,14 @@ public class ArticleService {
         return articleRepository.findByApprovedTrueOrderByCreatedDateDesc();
     }
 
+    public String getDomainNameByArticleId(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new RuntimeException("Article not found"));
+        if (article.getDomain() != null) {
+            return article.getDomain().getName();
+        }
+        return "No domain assigned";
+    }
 
 
 }

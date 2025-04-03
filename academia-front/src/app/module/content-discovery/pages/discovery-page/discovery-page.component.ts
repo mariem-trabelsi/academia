@@ -27,12 +27,11 @@ export class DiscoveryPageComponent implements OnInit {
 
   loadDiscoveryData(): void {
     this.loading = true;
-
-    const params = { id: 1 };
-    this.articleService.approveArticle(params).subscribe({
-      next: (data: Article) => {
-        this.articles = [data];
-        console.log('Approved article loaded:', this.articles);
+    const params = {};
+    this.articleService.getApprovedArticles(params).subscribe({
+      next: (data: Article[]) => {
+        this.articles = data;
+        console.log('Approved articles loaded:', this.articles);
         this.loading = false;
       },
       error: (error) => {
@@ -41,6 +40,7 @@ export class DiscoveryPageComponent implements OnInit {
       }
     });
   }
+
 
   onFilterChange(filter: TopicFilter): void {
     this.filter = filter;

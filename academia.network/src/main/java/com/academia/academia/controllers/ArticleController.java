@@ -58,4 +58,10 @@ public class ArticleController {
         return ResponseEntity.ok(notApprovedArticles);
     }
 
+
+    @GetMapping("/{id}/domain")
+    public ResponseEntity<String> getDomainName(@PathVariable("id") Long id) {
+        String domainName = articleService.getDomainNameByArticleId(id);
+        return ResponseEntity.ok(domainName);
+    }
 }
