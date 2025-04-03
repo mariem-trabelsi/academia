@@ -40,4 +40,12 @@ public class Article extends BaseEntity {
     @JoinColumn(name = "domain_id")
     @JsonBackReference
     private Domain domain;
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
 }

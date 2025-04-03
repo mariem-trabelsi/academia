@@ -8,5 +8,4 @@ export interface Domain {
   description?: string;
   id?: number;
   name?: string;
-  articleCount?: number;
 }
