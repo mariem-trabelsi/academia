@@ -36,7 +36,20 @@ export class CommentListComponent {
   }
   
   getRelativeTime(dateStr: string | Date): string {
-    const date = new Date(dateStr);
+    // Safely parse the date - handle both Date objects and strings
+    let date: Date;
+    
+    try {
+      date = dateStr instanceof Date ? dateStr : new Date(dateStr);
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+    } catch (e) {
+      console.error('Error parsing date:', e);
+      return 'Invalid date';
+    }
+    
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
@@ -103,5 +116,13 @@ export class CommentListComponent {
     // Get a consistent index from the hash
     const index = Math.abs(hash) % colors.length;
     return colors[index];
+  }
+  
+  /**
+   * Track comments by their ID for ngFor optimization
+   * This helps Angular identify which items have changed and need to be re-rendered
+   */
+  trackByCommentId(index: number, comment: Comment): string | number {
+    return comment.id || index;
   }
 } 

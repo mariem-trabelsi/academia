@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { Observable, of, delay, map, catchError } from 'rxjs';
 import { Paper, PaperAttachment, PaperComment, PaperDomain, PaperFilter } from '../models/paper';
+import { ArticleControllerService } from '../../../services/services/article-controller.service';
+import { Article } from '../../../services/models/article';
 
 @Injectable({
   providedIn: 'root'
@@ -155,9 +157,10 @@ export class PaperService {
     }
   ];
 
-  constructor() { }
+  constructor(private articleService: ArticleControllerService) { }
 
   getPapers(filter?: PaperFilter): Observable<Paper[]> {
+    // In the future, this should be updated to use the real API as well
     // Apply filters if provided
     let filteredPapers = this.mockPapers;
     
@@ -203,12 +206,44 @@ export class PaperService {
   }
 
   getPaperById(id: number): Observable<Paper | undefined> {
-    const paper = this.mockPapers.find(p => p.id === id);
+    // Use the real API service to get the article by ID
+    return this.articleService.getArticleById({ id }).pipe(
+      map(article => this.convertArticleToPaper(article))
+    );
+  }
+
+  // Convert Article from API to Paper model
+  private convertArticleToPaper(article: Article): Paper | undefined {
+    if (!article) return undefined;
     
-    // Return a deep copy to avoid reference issues
-    const paperCopy = paper ? this.deepCopy(paper) : undefined;
+    // Calculate average rating if feedbacks exist
+    let rating = 0;
+    let ratingCount = 0;
     
-    return of(paperCopy).pipe(delay(300));
+    if (article.feedbacks && article.feedbacks.length > 0) {
+      const totalRating = article.feedbacks.reduce((sum, feedback) => sum + (feedback.note || 0), 0);
+      ratingCount = article.feedbacks.length;
+      rating = totalRating / ratingCount;
+    }
+    
+    return {
+      id: article.id,
+      title: article.title || 'Untitled',
+      abstract: article.abstract_ || '',
+      content: article.abstract_ || '', // No content field in API model, using abstract as fallback
+      authorName: article.authorName || 'Unknown',
+      authorAffiliation: article.affiliation,
+      coverImage: article.articleCover,
+      pdfUrl: article.filePath,
+      domain: article.domain?.name || 'Unknown',
+      keywords: [], // No keywords in API model
+      createdDate: article.createdDate,
+      lastModifiedDate: article.lastModifiedDate,
+      isApproved: article.approved,
+      rating,
+      ratingCount,
+      // Could convert feedbacks to comments if needed
+    };
   }
 
   addPaper(paper: Paper): Observable<Paper> {
@@ -244,13 +279,14 @@ export class PaperService {
   }
 
   deletePaper(id: number): Observable<boolean> {
-    const index = this.mockPapers.findIndex(p => p.id === id);
-    if (index !== -1) {
-      this.mockPapers.splice(index, 1);
-      return of(true).pipe(delay(500));
-    }
-    
-    return of(false).pipe(delay(500));
+    // Use the real API
+    return this.articleService.deleteArticle({ id }).pipe(
+      map(() => true),
+      catchError(error => {
+        console.error('Error deleting paper:', error);
+        return of(false);
+      })
+    );
   }
 
   addComment(paperId: number, comment: Omit<PaperComment, 'id' | 'createdDate'>): Observable<PaperComment> {

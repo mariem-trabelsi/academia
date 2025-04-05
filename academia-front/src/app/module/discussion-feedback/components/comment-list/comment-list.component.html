@@ -51,7 +51,7 @@
   <div class="comment-list" *ngIf="!loading && comments.length > 0">
     <div 
       class="comment-item" 
-      *ngFor="let comment of comments"
+      *ngFor="let comment of comments; trackBy: trackByCommentId"
       @commentAnimation>
       
       <div class="comment-author-avatar" *ngIf="comment.authorAvatar">

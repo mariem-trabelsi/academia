@@ -1,16 +1,16 @@
 <div class="paper-detail-container">
-  <div class="loading-indicator" *ngIf="loading">
+  <div class="loading-indicator" *ngIf="isLoading">
     <div class="spinner"></div>
     <p>Loading paper details...</p>
   </div>
   
-  <div class="paper-not-found" *ngIf="!loading && !paper">
+  <div class="paper-not-found" *ngIf="!isLoading && !paper">
     <h2>Paper Not Found</h2>
     <p>The requested paper could not be found or has been removed.</p>
     <button class="btn-back" (click)="navigateToList()">Back to Discovery</button>
   </div>
   
-  <div class="paper-detail" *ngIf="!loading && paper">
+  <div class="paper-detail" *ngIf="!isLoading && paper">
     <div class="paper-header">
       <div class="back-button" (click)="navigateToList()">
         <i class="fas fa-arrow-left"></i>
@@ -97,21 +97,14 @@
             [placeholder]="'Share your thoughts on this paper...'"
             [isSubmitting]="isSubmittingComment"
             [isFeedback]="true"
-            [buttonText]="'Submit Feedback'"
+            [buttonText]="'Submit Rating & Feedback'"
             (feedbackSubmit)="onFeedbackSubmitted($event)">
           </app-comment-form>
         </div>
       </div>
       
       <div class="paper-comments">
-        <h2>Discussion</h2>
-        
-        <app-comment-form 
-          [contentId]="paper.id!.toString()" 
-          [placeholder]="'Share your thoughts on this paper...'"
-          [isSubmitting]="isSubmittingComment"
-          (commentSubmit)="submitComment($event)">
-        </app-comment-form>
+        <h2>Feedbacks</h2>
         
         <app-comment-list 
           [comments]="paperComments" 
