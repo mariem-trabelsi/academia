@@ -1,4 +1,4 @@
-<div class="article-card">
+<div class="article-card" [routerLink]="['/papers', article.id]">
   <div class="cover-image" [style.background-image]="article.articleCover ? 'url(' + article.articleCover + ')' : 'none'">
     <div class="domain-badge">{{article.domain?.name}}</div>
   </div>

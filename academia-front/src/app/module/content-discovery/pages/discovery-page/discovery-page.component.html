@@ -56,8 +56,7 @@
         <div class="paper-grid">
           <app-recommended-paper
             *ngFor="let article of articles"
-            [article]="article"
-            (click)="viewPaper(article.id)">
+            [article]="article">
           </app-recommended-paper>
         </div>
       </div>
@@ -80,8 +79,7 @@
         <div class="paper-grid">
           <app-recommended-paper
             *ngFor="let article of articles"
-            [article]="article"
-            (click)="viewPaper(article.id)">
+            [article]="article">
           </app-recommended-paper>
         </div>
       </div>

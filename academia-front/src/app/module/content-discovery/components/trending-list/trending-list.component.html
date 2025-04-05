@@ -16,7 +16,7 @@
     </div>
     
     <div class="trending-grid" *ngIf="topArticles.length > 0">
-      <div *ngFor="let article of topArticles; let i = index" class="article-card" [routerLink]="['/discover', article.id]">
+      <div *ngFor="let article of topArticles; let i = index" class="article-card" [routerLink]="['/papers', article.id]">
         <div class="rank-badge">{{ i + 1 }}</div>
         <div class="cover-image" [style.background-image]="article.articleCover ? 'url(' + article.articleCover + ')' : 'none'">
           <div class="domain-badge">{{article.domain?.name}}</div>
