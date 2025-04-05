@@ -89,21 +89,17 @@
         <h2>Rate this Paper</h2>
         <app-rating-summary [rating]="paperRating" *ngIf="paperRating"></app-rating-summary>
         
-        <div class="user-rating-container" *ngIf="!isRatingSubmitted">
-          <div class="user-rating-prompt">Share your rating:</div>
-          <app-star-rating 
-            [currentRating]="newRating" 
-            [readOnly]="false"
-            [size]="'large'"
-            [isAnimated]="true"
-            [showRatingValue]="true"
-            (ratingChange)="setRating($event)">
-          </app-star-rating>
-          <button class="btn-submit-rating" [disabled]="newRating === 0" (click)="submitRating()">Submit Rating</button>
-        </div>
-        
-        <div class="rating-submitted" *ngIf="isRatingSubmitted">
-          <p>Thank you for rating this paper!</p>
+        <div class="feedback-container">
+          <h3>Leave your feedback</h3>
+          <app-comment-form 
+            [contentId]="paper.id!.toString()"
+            [articleId]="paper.id!"
+            [placeholder]="'Share your thoughts on this paper...'"
+            [isSubmitting]="isSubmittingComment"
+            [isFeedback]="true"
+            [buttonText]="'Submit Feedback'"
+            (feedbackSubmit)="onFeedbackSubmitted($event)">
+          </app-comment-form>
         </div>
       </div>
       

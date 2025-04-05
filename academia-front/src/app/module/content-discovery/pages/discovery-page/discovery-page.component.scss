@@ -187,11 +187,25 @@
 
 .paper-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
   
-  @media (max-width: 576px) {
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  // Staggered entrance animation for items
+  app-recommended-paper {
+    opacity: 0;
+    animation: fade-in 0.5s ease-out forwards;
+    
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
   }
 }
 

@@ -1,24 +1,55 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Paper } from '../../../paper/models/paper';
-import {Article} from "../../../../services/models/article";
+import { Component, OnInit } from '@angular/core';
+import { Article } from 'src/app/services/models/article';
+import { ArticleControllerService } from 'src/app/services/services/article-controller.service';
 
 @Component({
   selector: 'app-trending-list',
   templateUrl: './trending-list.component.html',
   styleUrls: ['./trending-list.component.scss']
 })
-export class TrendingListComponent {
-  @Input() papers: Paper[] = [];
-  @Output() paperClick = new EventEmitter<number>();
-  @Input() articles!: Article[];
+export class TrendingListComponent implements OnInit {
+  topArticles: Article[] = [];
+  loading: boolean = true;
+  error: string | null = null;
 
-  viewPaper(id: number | undefined): void {
-    if (id !== undefined) {
-      this.paperClick.emit(id);
-    }
+  constructor(private articleService: ArticleControllerService) { }
+
+  ngOnInit(): void {
+    this.loadTopArticles();
   }
 
-  getRatingStars(rating: number | undefined): number[] {
+  loadTopArticles(): void {
+    this.loading = true;
+    this.error = null;
+    
+    this.articleService.getTop5Articles().subscribe({
+      next: (articles) => {
+        this.topArticles = articles;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading top articles:', err);
+        this.error = 'Failed to load trending articles. Please try again later.';
+        this.loading = false;
+      }
+    });
+  }
+  
+  getArticleRating(article: Article): number {
+    // Check if article has feedbacks
+    if (!article.feedbacks || article.feedbacks.length === 0) {
+      return 0;
+    }
+    
+    // Calculate average rating from feedbacks
+    const totalRating = article.feedbacks.reduce((sum, feedback) => {
+      return sum + (feedback.note || 0);
+    }, 0);
+    
+    return totalRating / article.feedbacks.length;
+  }
+
+  getRatingStars(rating: number): number[] {
     if (!rating) return [0, 0, 0, 0, 0];
 
     const fullStars = Math.floor(rating);

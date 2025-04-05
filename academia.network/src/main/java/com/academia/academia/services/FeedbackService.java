@@ -1,7 +1,10 @@
 package com.academia.academia.services;
 
+import com.academia.academia.entities.Article;
 import com.academia.academia.entities.Feedback;
+import com.academia.academia.repositories.ArticleRepository;
 import com.academia.academia.repositories.FeedbackRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,9 @@ import java.util.Optional;
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
+    
+    @Autowired
+    private ArticleRepository articleRepository;
 
     @Autowired
     public FeedbackService(FeedbackRepository feedbackRepository) {
@@ -34,5 +40,14 @@ public class FeedbackService {
 
     public void deleteFeedback(Integer id) {
         feedbackRepository.deleteById(id);
+    }
+    
+    // Create a new feedback for an article
+    public Feedback createFeedback(Feedback feedback, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + articleId));
+        
+        feedback.setArticle(article);
+        return feedbackRepository.save(feedback);
     }
 }

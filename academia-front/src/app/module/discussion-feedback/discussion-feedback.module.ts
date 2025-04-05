@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { DiscussionFeedbackRoutingModule } from './discussion-feedback-routing.module';
@@ -11,9 +12,9 @@ import { RatingSummaryComponent } from './components/rating-summary/rating-summa
 
 @NgModule({
   declarations: [
-    StarRatingComponent,
-    CommentListComponent,
     CommentFormComponent,
+    CommentListComponent,
+    StarRatingComponent,
     RatingSummaryComponent
   ],
   imports: [
@@ -24,9 +25,9 @@ import { RatingSummaryComponent } from './components/rating-summary/rating-summa
     DiscussionFeedbackRoutingModule
   ],
   exports: [
-    StarRatingComponent,
-    CommentListComponent,
     CommentFormComponent,
+    CommentListComponent,
+    StarRatingComponent,
     RatingSummaryComponent
   ]
 })

@@ -1,23 +1,22 @@
-<div class="trending-list">
+<div class="latest-articles">
   
   <div *ngIf="loading" class="loading-state">
     <div class="loader"></div>
-    <p>Loading top rated articles...</p>
+    <p>Loading latest articles...</p>
   </div>
   
   <div *ngIf="error" class="error-state">
     <p>{{ error }}</p>
-    <button (click)="loadTopArticles()">Try Again</button>
+    <button (click)="loadLatestArticles()">Try Again</button>
   </div>
   
   <div *ngIf="!loading && !error">
-    <div *ngIf="topArticles.length === 0" class="empty-state">
-      <p>No trending articles available yet.</p>
+    <div *ngIf="latestArticles.length === 0" class="empty-state">
+      <p>No recent articles available yet.</p>
     </div>
     
-    <div class="trending-grid" *ngIf="topArticles.length > 0">
-      <div *ngFor="let article of topArticles; let i = index" class="article-card" [routerLink]="['/discover', article.id]">
-        <div class="rank-badge">{{ i + 1 }}</div>
+    <div class="latest-grid" *ngIf="latestArticles.length > 0">
+      <div *ngFor="let article of latestArticles" class="article-card" [routerLink]="['/discover', article.id]">
         <div class="cover-image" [style.background-image]="article.articleCover ? 'url(' + article.articleCover + ')' : 'none'">
           <div class="domain-badge">{{article.domain?.name}}</div>
         </div>
@@ -28,17 +27,7 @@
           <div class="article-footer">
             <div class="metadata">
               <div class="date">{{article.createdDate | date:'mediumDate'}}</div>
-              <div class="rating">
-                <div class="rating-label">Average Rating:</div>
-                <div class="stars">
-                  <span *ngFor="let star of getRatingStars(getArticleRating(article))" class="star">
-                    <i *ngIf="star === 1" class="fas fa-star"></i>
-                    <i *ngIf="star === 0.5" class="fas fa-star-half-alt"></i>
-                    <i *ngIf="star === 0" class="far fa-star"></i>
-                  </span>
-                </div>
-                <span class="rating-value">{{getArticleRating(article) | number:'1.1-1'}}</span>
-              </div>
+              <div class="label">New</div>
             </div>
             <button class="read-more">
               <span>Read</span>

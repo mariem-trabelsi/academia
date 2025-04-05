@@ -6,6 +6,7 @@ import com.academia.academia.repositories.ArticleRepository;
 import com.academia.academia.repositories.DomainRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,5 +69,14 @@ public class ArticleService {
         return "No domain assigned";
     }
 
+    // Get latest 5 approved articles
+    public List<Article> getLatest5Articles() {
+        return articleRepository.findLatest5ApprovedArticles(PageRequest.of(0, 5));
+    }
+    
+    // Get top 5 articles with best average feedback ratings
+    public List<Article> getTop5ArticlesByRating() {
+        return articleRepository.findTop5ArticlesByAverageRating(PageRequest.of(0, 5));
+    }
 
 }

@@ -1,3 +1,65 @@
+.latest-articles {
+  width: 100%;
+  
+  .loading-state, .error-state, .empty-state {
+    padding: 20px;
+    text-align: center;
+    
+    button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      
+      &:hover {
+        background-color: #303f9f;
+      }
+    }
+  }
+  
+  .loader {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #3f51b5;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 10px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+.latest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  // Staggered entrance animation for items
+  .article-card {
+    opacity: 0;
+    animation: fade-in 0.5s ease-out forwards;
+    
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+
 .article-card {
   display: flex;
   flex-direction: column;
@@ -39,7 +101,7 @@
     left: 0;
     width: 100%;
     height: 3px;
-    background: linear-gradient(to right, #3498db, #9b59b6);
+    background: linear-gradient(to right, #27ae60, #2ecc71);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -78,7 +140,7 @@
       font-family: 'Font Awesome 5 Free';
       font-weight: 400;
       font-size: 3.5rem;
-      color: rgba(52, 152, 219, 0.2);
+      color: rgba(39, 174, 96, 0.2);
       animation: float 3s ease-in-out infinite;
     }
   }
@@ -151,7 +213,7 @@
   transition: color 0.2s ease;
   
   .article-card:hover & {
-    color: #3498db;
+    color: #27ae60;
   }
 }
 
@@ -195,14 +257,16 @@
 
 .metadata {
   flex-grow: 1;
+  display: flex;
+  align-items: center;
 }
 
 .date {
   font-size: 0.8rem;
   color: #95a5a6;
-  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
+  margin-right: 1rem;
   
   &::before {
     content: '\f073';
@@ -214,50 +278,23 @@
   }
 }
 
-.rating {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
-  
-  .rating-label {
-    font-size: 0.8rem;
-    color: #7f8c8d;
-    margin-right: 0.5rem;
-    font-weight: 500;
-  }
-  
-  .stars {
-    display: flex;
-    color: #f1c40f;
-    margin-right: 0.5rem;
-    
-    .star {
-      margin-right: 2px;
-      font-size: 0.8rem;
-      transition: transform 0.2s ease;
-      
-      &:hover {
-        transform: scale(1.2);
-      }
-    }
-  }
-  
-  .rating-value {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #34495e;
-    background-color: rgba(241, 196, 15, 0.15);
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-  }
+.label {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background-color: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
 }
 
 .read-more {
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  background-color: #3498db;
+  background-color: #27ae60;
   color: white;
   border: none;
   border-radius: 20px;
@@ -267,7 +304,7 @@
   transition: all 0.3s ease;
   opacity: 0.9;
   transform: translateX(10px);
-  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
   
   span {
     margin-right: 0.5rem;
@@ -278,8 +315,8 @@
   }
   
   &:hover {
-    background-color: #2980b9;
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+    background-color: #219653;
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
     
     i {
       transform: translateX(3px);
@@ -287,13 +324,7 @@
   }
 }
 
-// Entrance animations for cards
-:host {
-  animation: card-entrance 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-@keyframes card-entrance {
+@keyframes fade-in {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -302,4 +333,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
+} 

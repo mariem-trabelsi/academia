@@ -64,4 +64,18 @@ public class ArticleController {
         String domainName = articleService.getDomainNameByArticleId(id);
         return ResponseEntity.ok(domainName);
     }
+    
+    // Get latest 5 articles
+    @GetMapping("/latest5")
+    public ResponseEntity<List<Article>> getLatest5Articles() {
+        List<Article> latestArticles = articleService.getLatest5Articles();
+        return ResponseEntity.ok(latestArticles);
+    }
+    
+    // Get top 5 articles by feedback rating
+    @GetMapping("/top5")
+    public ResponseEntity<List<Article>> getTop5ArticlesByRating() {
+        List<Article> topArticles = articleService.getTop5ArticlesByRating();
+        return ResponseEntity.ok(topArticles);
+    }
 }

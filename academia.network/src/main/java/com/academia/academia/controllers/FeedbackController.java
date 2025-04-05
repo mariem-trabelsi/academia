@@ -30,4 +30,14 @@ public class FeedbackController {
         Page<Feedback> feedbacks = feedbackService.getFeedbacksByArticleId(articleId, pageable);
         return ResponseEntity.ok(feedbacks);
     }
+    
+    // Create a new feedback for an article
+    @PostMapping("/article/{articleId}")
+    public ResponseEntity<Feedback> createFeedback(
+            @PathVariable Long articleId,
+            @RequestBody Feedback feedback) {
+        
+        Feedback createdFeedback = feedbackService.createFeedback(feedback, articleId);
+        return ResponseEntity.ok(createdFeedback);
+    }
 }

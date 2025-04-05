@@ -15,5 +15,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByDomain(Domain domain);
     Optional<Article> findById(Long id);
     public List<Article> findByApprovedTrueOrderByCreatedDateDesc();
-
+    
+    // Find the latest 5 approved articles
+    @Query("SELECT a FROM Article a WHERE a.approved = true ORDER BY a.createdDate DESC")
+    List<Article> findLatest5ApprovedArticles(Pageable pageable);
+    
+    // Find top 5 articles with best feedback rating average
+    @Query("SELECT a FROM Article a JOIN a.feedbacks f WHERE a.approved = true GROUP BY a ORDER BY AVG(f.note) DESC")
+    List<Article> findTop5ArticlesByAverageRating(Pageable pageable);
 }

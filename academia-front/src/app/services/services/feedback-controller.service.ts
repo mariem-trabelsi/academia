@@ -14,6 +14,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { getFeedbacksByArticleId } from '../fn/feedback-controller/get-feedbacks-by-article-id';
 import { GetFeedbacksByArticleId$Params } from '../fn/feedback-controller/get-feedbacks-by-article-id';
 import { PageFeedback } from '../models/page-feedback';
+import { createFeedback } from '../fn/feedback-controller/create-feedback';
+import { CreateFeedback$Params } from '../fn/feedback-controller/create-feedback';
+import { Feedback } from '../models/feedback';
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackControllerService extends BaseService {
@@ -43,6 +46,31 @@ export class FeedbackControllerService extends BaseService {
   getFeedbacksByArticleId(params: GetFeedbacksByArticleId$Params, context?: HttpContext): Observable<PageFeedback> {
     return this.getFeedbacksByArticleId$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageFeedback>): PageFeedback => r.body)
+    );
+  }
+
+  /** Path part for operation `createFeedback()` */
+  static readonly CreateFeedbackPath = '/feedbacks/article/{articleId}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createFeedback()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createFeedback$Response(params: CreateFeedback$Params, context?: HttpContext): Observable<StrictHttpResponse<Feedback>> {
+    return createFeedback(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createFeedback$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createFeedback(params: CreateFeedback$Params, context?: HttpContext): Observable<Feedback> {
+    return this.createFeedback$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Feedback>): Feedback => r.body)
     );
   }
 

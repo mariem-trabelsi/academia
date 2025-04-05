@@ -28,6 +28,10 @@ import { getDomainName } from '../fn/article-controller/get-domain-name';
 import { GetDomainName$Params } from '../fn/article-controller/get-domain-name';
 import { getMyArticles } from '../fn/article-controller/get-my-articles';
 import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
+import { getLatest5Articles } from '../fn/article-controller/get-latest5-articles';
+import { GetLatest5Articles$Params } from '../fn/article-controller/get-latest5-articles';
+import { getTop5Articles } from '../fn/article-controller/get-top5-articles';
+import { GetTop5Articles$Params } from '../fn/article-controller/get-top5-articles';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleControllerService extends BaseService {
@@ -231,6 +235,56 @@ export class ArticleControllerService extends BaseService {
    */
   getApprovedArticles(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getApprovedArticles$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  /** Path part for operation `getLatest5Articles()` */
+  static readonly GetLatest5ArticlesPath = '/articles/latest5';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getLatest5Articles()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getLatest5Articles$Response(params?: GetLatest5Articles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getLatest5Articles(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getLatest5Articles$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getLatest5Articles(params?: GetLatest5Articles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getLatest5Articles$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  /** Path part for operation `getTop5Articles()` */
+  static readonly GetTop5ArticlesPath = '/articles/top5';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getTop5Articles()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getTop5Articles$Response(params?: GetTop5Articles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getTop5Articles(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getTop5Articles$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getTop5Articles(params?: GetTop5Articles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getTop5Articles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }

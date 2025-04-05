@@ -10,12 +10,25 @@ import { Article } from 'src/app/services/models';
 export class RecommendedPaperComponent {
   @Input() article!: Article;
 
-  getRatingStars(): number[] {
-    /*
-    if (!this.paper.rating) return [0, 0, 0, 0, 0];
+  getArticleRating(): number {
+    // Check if article has feedbacks
+    if (!this.article.feedbacks || this.article.feedbacks.length === 0) {
+      return 0;
+    }
+    
+    // Calculate average rating from feedbacks
+    const totalRating = this.article.feedbacks.reduce((sum, feedback) => {
+      return sum + (feedback.note || 0);
+    }, 0);
+    
+    return totalRating / this.article.feedbacks.length;
+  }
 
-    const fullStars = Math.floor(this.paper.rating);
-    const hasHalfStar = this.paper.rating - fullStars >= 0.5;
+  getRatingStars(): number[] {
+    const rating = this.getArticleRating();
+    
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.5;
 
     const stars = [];
 
@@ -32,11 +45,8 @@ export class RecommendedPaperComponent {
     // Fill the rest with empty stars
     while (stars.length < 5) {
       stars.push(0);
-    }*/
+    }
 
-    return [0,0,0,0,0];
+    return stars;
   }
-
-
-
 }

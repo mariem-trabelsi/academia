@@ -1,4 +1,13 @@
 <div class="comment-form" @formAnimation>
+  <div *ngIf="isFeedback" class="rating-container">
+    <p class="rating-label">Your rating:</p>
+    <app-star-rating 
+      [currentRating]="rating" 
+      [readOnly]="false" 
+      (ratingChange)="setRating($event)">
+    </app-star-rating>
+  </div>
+  
   <div class="form-control">
     <textarea 
       [(ngModel)]="commentContent"

@@ -1,11 +1,11 @@
 <div class="discovery-container">
   <div class="discovery-header">
     <h1>Discover Research</h1>
-    <p class="subtitle">Find the latest research papers in your field of interest</p>
+    <p class="subtitle">Find the latest research articles in your field of interest</p>
     <div class="action-links">
       <a routerLink="/papers" class="manage-papers-link">
         <i class="fas fa-folder"></i>
-        My Papers
+        My Articles
       </a>
       <a routerLink="/network" class="network-link">
         <i class="fas fa-users"></i>
@@ -63,26 +63,20 @@
       </div>
 
       <div class="tab-content" *ngIf="activeSection === 'trending'">
-        <h2>Trending Papers</h2>
-        <p class="section-description">Popular papers being read right now</p>
-        <app-trending-list [articles]="articles" (paperClick)="viewPaper($event)"></app-trending-list>
+        <h2>Top Rated Articles</h2>
+        <p class="section-description">Articles with the highest ratings from the community</p>
+        <app-trending-list></app-trending-list>
       </div>
 
       <div class="tab-content" *ngIf="activeSection === 'latest'">
-        <h2>Latest Research</h2>
-        <p class="section-description">Recently published papers</p>
-        <div class="paper-grid">
-          <app-recommended-paper
-            *ngFor="let article of articles"
-            [article]="article"
-            (click)="viewPaper(article.id)">
-          </app-recommended-paper>
-        </div>
+        <h2>Latest Research Articles</h2>
+        <p class="section-description">Recently published articles</p>
+        <app-latest-articles></app-latest-articles>
       </div>
 
       <div class="tab-content" *ngIf="activeSection === 'related'">
         <h2>Related to Your Research</h2>
-        <p class="section-description">Papers related to your research interests</p>
+        <p class="section-description">Articles related to your research interests</p>
         <div class="paper-grid">
           <app-recommended-paper
             *ngFor="let article of articles"

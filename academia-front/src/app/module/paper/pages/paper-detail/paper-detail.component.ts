@@ -5,6 +5,7 @@ import { PaperService } from '../../services/paper.service';
 import { DiscussionService } from '../../../discussion-feedback/services/discussion.service';
 import { Comment, CommentFilter } from '../../../discussion-feedback/models/comment.model';
 import { Rating } from '../../../discussion-feedback/models/rating.model';
+import { Feedback } from 'src/app/services/models/feedback';
 
 @Component({
   selector: 'app-paper-detail',
@@ -172,5 +173,18 @@ export class PaperDetailComponent implements OnInit {
         document.body.style.overflow = ''; // Restore scrolling
       }
     });
+  }
+
+  onFeedbackSubmitted(feedback: Feedback): void {
+    // Refresh feedback ratings or display success message
+    console.log('Feedback submitted:', feedback);
+    
+    // You could show a notification
+    this.isRatingSubmitted = true;
+    
+    // Optionally refresh paper data to show updated ratings
+    setTimeout(() => {
+      this.loadPaper();
+    }, 1000);
   }
 }
