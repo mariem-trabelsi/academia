@@ -193,6 +193,15 @@
         }
       }
       
+      .comment-rating {
+        margin-bottom: 8px;
+        padding: 4px 0;
+        
+        app-star-rating {
+          display: flex;
+        }
+      }
+      
       .comment-text {
         font-size: 14px;
         line-height: 1.5;

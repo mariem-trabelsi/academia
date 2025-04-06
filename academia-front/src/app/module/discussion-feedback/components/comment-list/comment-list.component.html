@@ -71,6 +71,14 @@
           <div class="comment-time">{{ getRelativeTime(comment.createdDate) }}</div>
         </div>
         
+        <div class="comment-rating" *ngIf="comment.rating && comment.rating > 0">
+          <app-star-rating
+            [currentRating]="comment.rating"
+            [readOnly]="true"
+            [size]="'small'">
+          </app-star-rating>
+        </div>
+        
         <div class="comment-text">
           {{ comment.content }}
         </div>

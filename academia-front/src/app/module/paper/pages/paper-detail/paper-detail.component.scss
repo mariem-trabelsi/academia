@@ -302,6 +302,32 @@
     margin-bottom: 20px;
   }
   
+  .feedback-container {
+    margin-top: 20px;
+    
+    .feedback-already-submitted {
+      background-color: #e6f7f0;
+      border: 1px solid #99e1c9;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      i {
+        font-size: 24px;
+        color: #10b981;
+        margin-right: 16px;
+      }
+      
+      p {
+        margin: 0;
+        color: #065f46;
+        font-size: 15px;
+      }
+    }
+  }
+  
   .user-rating-container {
     background-color: #f9fafb;
     border-radius: 8px;

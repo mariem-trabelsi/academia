@@ -8,6 +8,7 @@ export interface Comment {
   parentId?: string | number; // For threaded comments/replies support
   likes?: number;
   isLikedByUser?: boolean; // For future implementation
+  rating?: number; // Numeric rating value (1-5)
 }
 
 export interface CommentFilter {

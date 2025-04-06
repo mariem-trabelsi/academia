@@ -10,6 +10,7 @@ import { FeedbackControllerService } from '../../../../services/services/feedbac
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
+import { KeycloakService } from 'src/app/services/keycloak/keycloak.service';
 
 @Component({
   selector: 'app-paper-detail',
@@ -31,13 +32,17 @@ export class PaperDetailComponent implements OnInit {
   isSubmittingComment = false;
   commentSortBy: 'newest' | 'oldest' | 'popular' = 'newest';
   
+  // Current user has already submitted feedback
+  hasSubmittedFeedback = false;
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private paperService: PaperService,
     private discussionService: DiscussionService,
     private feedbackService: FeedbackControllerService,
-    private titleService: Title
+    private titleService: Title,
+    private keycloakService: KeycloakService
   ) { }
 
   ngOnInit(): void {
@@ -116,6 +121,9 @@ export class PaperDetailComponent implements OnInit {
       // Store original feedbacks
       this.paperFeedbacks = feedbacks || [];
       
+      // Check if current user has already submitted feedback
+      this.checkCurrentUserFeedback();
+      
       // Create a Set to track unique feedback IDs to prevent duplicates
       const uniqueFeedbackIds = new Set<string>();
       
@@ -135,10 +143,10 @@ export class PaperDetailComponent implements OnInit {
           return true;
         })
         .map(feedback => {
-          // Create a formatted content that includes both rating and comment
-          let content = `Rating: ${feedback.note}/5`;
+          // Store the rating separately in the rating property instead of in content text
+          let content = '';
           if (feedback.comment && feedback.comment.trim().length > 0) {
-            content += `\n${feedback.comment}`;
+            content = feedback.comment;
           }
           
           return {
@@ -147,7 +155,8 @@ export class PaperDetailComponent implements OnInit {
             authorName: feedback.creatorFullName || feedback.createdBy || 'Anonymous User',
             content: content,
             createdDate: feedback.createdDate || new Date().toISOString(),
-            likes: 0
+            likes: 0,
+            rating: feedback.note || 0 // Store rating as a separate property
           };
         });
       
@@ -322,5 +331,43 @@ export class PaperDetailComponent implements OnInit {
         this.isLoadingComments = false;
       }
     });
+  }
+
+  /**
+   * Get the current authenticated user's ID from Keycloak
+   * This returns the user's subject ID which is a UUID
+   */
+  private getCurrentUserId(): string | undefined {
+    // Access the tokenParsed.sub property which contains the user's UUID
+    return this.keycloakService.keycloak.tokenParsed?.sub;
+  }
+
+  /**
+   * Check if the current authenticated user has already submitted feedback for this article
+   */
+  private checkCurrentUserFeedback(): void {
+    const currentUserId = this.getCurrentUserId();
+    console.log('Current user ID:', currentUserId);
+    
+    if (currentUserId && this.paperFeedbacks.length > 0) {
+      // Log feedback creator IDs for debugging
+      this.paperFeedbacks.forEach(feedback => {
+        console.log('Feedback created by:', feedback.createdBy);
+      });
+      
+      // Check if current user's ID matches any feedback creator ID
+      this.hasSubmittedFeedback = this.paperFeedbacks.some(feedback => 
+        feedback.createdBy === currentUserId
+      );
+      
+      console.log('Current user has submitted feedback:', this.hasSubmittedFeedback);
+    }
+  }
+  
+  /**
+   * Returns true if the current user has already submitted feedback for this article
+   */
+  hasUserAlreadySubmittedFeedback(): boolean {
+    return this.hasSubmittedFeedback;
   }
 }

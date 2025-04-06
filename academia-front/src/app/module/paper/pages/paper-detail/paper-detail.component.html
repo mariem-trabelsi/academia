@@ -91,7 +91,16 @@
         
         <div class="feedback-container">
           <h3>Leave your feedback</h3>
+          
+          <!-- Show this message when user has already submitted feedback -->
+          <div class="feedback-already-submitted" *ngIf="hasUserAlreadySubmittedFeedback()">
+            <i class="fas fa-check-circle"></i>
+            <p>You have already submitted your feedback for this paper. Thank you for your contribution!</p>
+          </div>
+          
+          <!-- Only show the form when user hasn't submitted feedback yet -->
           <app-comment-form 
+            *ngIf="!hasUserAlreadySubmittedFeedback()"
             [contentId]="paper.id!.toString()"
             [articleId]="paper.id!"
             [placeholder]="'Share your thoughts on this paper...'"
