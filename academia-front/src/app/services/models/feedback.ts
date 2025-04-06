@@ -8,6 +8,7 @@ export interface Feedback {
   comment?: string;
   createdBy?: string;
   createdDate?: string;
+  creatorFullName?: string;
   id?: number;
   lastModifiedBy?: string;
   lastModifiedDate?: string;

@@ -19,6 +19,7 @@ public class Feedback extends BaseEntity {
 
     private Double note;
     private String comment;
+    private String creatorFullName;
     @ManyToOne
     @JoinColumn(name = "article_id")
     @JsonBackReference

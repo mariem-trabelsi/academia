@@ -123,7 +123,7 @@ export class PaperDetailComponent implements OnInit {
       this.paperComments = (feedbacks || [])
         .filter(feedback => {
           // Generate a unique key for this feedback
-          const feedbackKey = `${feedback.id}-${feedback.createdBy}-${feedback.createdDate}`;
+          const feedbackKey = `${feedback.id}-${feedback.creatorFullName || feedback.createdBy}-${feedback.createdDate}`;
           
           // Only include this feedback if we haven't seen it before
           if (uniqueFeedbackIds.has(feedbackKey)) {
@@ -144,7 +144,7 @@ export class PaperDetailComponent implements OnInit {
           return {
             id: `f-${feedback.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, // Ensure truly unique IDs
             authorId: feedback.createdBy || 'anonymous',
-            authorName: feedback.createdBy || 'Anonymous User',
+            authorName: feedback.creatorFullName || feedback.createdBy || 'Anonymous User',
             content: content,
             createdDate: feedback.createdDate || new Date().toISOString(),
             likes: 0

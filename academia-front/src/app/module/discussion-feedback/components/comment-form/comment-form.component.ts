@@ -61,19 +61,9 @@ export class CommentFormComponent {
         note: this.rating
       };
       
-      this.feedbackService.createFeedback({
-        articleId: this.articleId,
-        body: feedback
-      }).subscribe({
-        next: (createdFeedback) => {
-          this.feedbackSubmit.emit(createdFeedback);
-          this.commentContent = '';
-          this.rating = 0;
-        },
-        error: (error) => {
-          console.error('Error creating feedback:', error);
-        }
-      });
+      this.feedbackSubmit.emit(feedback);
+      this.commentContent = '';
+      this.rating = 0;
     }
   }
   
