@@ -12,4 +12,5 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByCreatedBy(String createdBy);
     List<Article> findByDomain(Domain domain);
+    List<Article> findByArchived(boolean archived);
 }

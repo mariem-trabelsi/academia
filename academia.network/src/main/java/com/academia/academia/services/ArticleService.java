@@ -46,7 +46,15 @@ public class ArticleService {
     public List<Article> getArticlesByCreatedBy(String username) {
         return articleRepository.findByCreatedBy(username);
     }
-
+    public Article archiveArticle(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Article not found"));
+        article.setArchived(true);
+        return articleRepository.save(article);
+    }
+    public List<Article> getArchivedArticles() {
+        return articleRepository.findByArchived(true);
+    }
 
 
 }

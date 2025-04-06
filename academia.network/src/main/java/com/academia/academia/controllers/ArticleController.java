@@ -36,7 +36,16 @@ public class ArticleController {
     public void deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
     }
-
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<Article> archiveArticle(@PathVariable("id") Long id) {
+        Article updatedArticle = articleService.archiveArticle(id);  // Update the article status to archived
+        return ResponseEntity.ok(updatedArticle);
+    }
+    @GetMapping("/archived")
+    public ResponseEntity<List<Article>> getArchivedArticles() {
+        List<Article> archivedArticles = articleService.getArchivedArticles();  // Retrieve all archived articles
+        return ResponseEntity.ok(archivedArticles);
+    }
     @GetMapping("/my")
     public ResponseEntity<List<Article>> getMyArticles() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

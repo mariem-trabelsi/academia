@@ -24,6 +24,8 @@ public class Article extends BaseEntity {
     private String authorName;
     private String articleCover;
     private String affiliation;
+    @Column(columnDefinition = "boolean default false")
+    private boolean archived;
 
     private String filePath;
 
