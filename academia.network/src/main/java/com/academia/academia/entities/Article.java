@@ -20,9 +20,10 @@ public class Article extends BaseEntity {
 
     @Column(name = "abstract", length = 1000)
     private String abstract_;
-
+    private String authorAffiliation;
     private String isbn;
     private String authorName;
+    @Column(name = "article_cover", length = 100000)
     private String articleCover;
     private String affiliation;
 

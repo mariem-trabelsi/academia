@@ -11,12 +11,12 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { getFeedbacksByArticleId } from '../fn/feedback-controller/get-feedbacks-by-article-id';
-import { GetFeedbacksByArticleId$Params } from '../fn/feedback-controller/get-feedbacks-by-article-id';
-import { PageFeedback } from '../models/page-feedback';
 import { createFeedback } from '../fn/feedback-controller/create-feedback';
 import { CreateFeedback$Params } from '../fn/feedback-controller/create-feedback';
 import { Feedback } from '../models/feedback';
+import { getFeedbacksByArticleId } from '../fn/feedback-controller/get-feedbacks-by-article-id';
+import { GetFeedbacksByArticleId$Params } from '../fn/feedback-controller/get-feedbacks-by-article-id';
+import { PageFeedback } from '../models/page-feedback';
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackControllerService extends BaseService {

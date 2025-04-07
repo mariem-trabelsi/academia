@@ -4,16 +4,12 @@
 
 import { Domain } from '../models/domain';
 import { Feedback } from '../models/feedback';
-
-/**
- * Adding additional properties that might be needed but 
- * are calculated in the frontend, not sent from backend
- */
 export interface Article {
   abstract_?: string;
   affiliation?: string;
   approved?: boolean;
   articleCover?: string;
+  authorAffiliation?: string;
   authorName?: string;
   createdBy?: string;
   createdDate?: string;
@@ -25,7 +21,4 @@ export interface Article {
   lastModifiedBy?: string;
   lastModifiedDate?: string;
   title?: string;
-  
-  // Frontend-calculated properties - not from API
-  averageRating?: number;
 }
