@@ -12,7 +12,7 @@ import { Feedback } from '../../models/feedback';
 
 export interface CreateFeedback$Params {
   articleId: number;
-  body: Feedback;
+      body: Feedback
 }
 
 export function createFeedback(http: HttpClient, rootUrl: string, params: CreateFeedback$Params, context?: HttpContext): Observable<StrictHttpResponse<Feedback>> {
@@ -32,4 +32,4 @@ export function createFeedback(http: HttpClient, rootUrl: string, params: Create
   );
 }
 
-createFeedback.PATH = '/feedbacks/article/{articleId}'; 
+createFeedback.PATH = '/feedbacks/article/{articleId}';

@@ -3,6 +3,11 @@
   margin: 0 auto;
   padding: 24px;
 }
+.cover-preview-img {
+  width: 200px;  /* Largeur de l'image */
+  height: 150px; /* Hauteur de l'image */
+  object-fit: cover;  /* Permet de couper l'image de manière proportionnelle */
+}
 
 // Loading indicator
 .loading-indicator {

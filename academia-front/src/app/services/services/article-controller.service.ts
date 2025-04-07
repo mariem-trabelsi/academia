@@ -32,6 +32,8 @@ import { getLatest5Articles } from '../fn/article-controller/get-latest5-article
 import { GetLatest5Articles$Params } from '../fn/article-controller/get-latest5-articles';
 import { getTop5Articles } from '../fn/article-controller/get-top5-articles';
 import { GetTop5Articles$Params } from '../fn/article-controller/get-top5-articles';
+import { uploadArticle } from '../fn/article-controller/upload-article';
+import { UploadArticle$Params } from '../fn/article-controller/upload-article';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleControllerService extends BaseService {
@@ -286,6 +288,32 @@ export class ArticleControllerService extends BaseService {
   getTop5Articles(params?: GetTop5Articles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getTop5Articles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  
+  /** Path part for operation `uploadArticle()` */
+  static readonly UploadArticlePath = '/articles/upload';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `uploadArticle()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadArticle$Response(params: UploadArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+    return uploadArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `uploadArticle$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadArticle(params: UploadArticle$Params, context?: HttpContext): Observable<Article> {
+    return this.uploadArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Article>): Article => r.body)
     );
   }
 

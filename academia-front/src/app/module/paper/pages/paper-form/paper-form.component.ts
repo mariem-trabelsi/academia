@@ -6,6 +6,8 @@ import { PaperService } from '../../services/paper.service';
 import {ArticleControllerService} from "../../../../services/services/article-controller.service";
 import {Article} from "../../../../services/models/article";
 import {KeycloakService} from "../../../../services/keycloak/keycloak.service";
+import { UploadArticle$Params } from 'src/app/services/fn/article-controller/upload-article';
+
 @Component({
   selector: 'app-paper-form',
   templateUrl: './paper-form.component.html',
@@ -31,11 +33,29 @@ export class PaperFormComponent implements OnInit {
   ) {
     this.paperForm = this.createForm();
   }
-
+/*
   ngOnInit(): void {
     this.loadDomains();
     this.checkEditMode();
   }
+*/
+ngOnInit(): void {
+  this.paperForm = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
+    isbn: ['', [Validators.required, Validators.minLength(8)]],
+    authorAffiliation: [''],
+    affiliation: [''],
+    abstract: ['', [Validators.required, Validators.minLength(50), Validators.maxLength(1000)]],
+    //content: ['', [Validators.required, Validators.minLength(100)]],
+    content: ['', [Validators.minLength(100)]],
+    domain: ['', Validators.required],
+    keywords: this.fb.array([]),
+    coverImage: ['']
+  });
+
+  this.domains = Object.values(PaperDomain);
+  this.loading = false;
+}
 
   createForm(): FormGroup {
     return this.fb.group({
@@ -50,6 +70,7 @@ export class PaperFormComponent implements OnInit {
     });
   }
 
+/*
   get keywordsFormArray(): FormArray {
     return this.paperForm.get('keywords') as FormArray;
   }
@@ -60,10 +81,26 @@ export class PaperFormComponent implements OnInit {
       this.newKeyword = '';
     }
   }
-
   removeKeyword(index: number): void {
     this.keywordsFormArray.removeAt(index);
+  }*/
+
+ get keywordsFormArray(): FormArray {
+  return this.paperForm.get('keywords') as FormArray;
+}
+
+addKeyword() {
+  const trimmedKeyword = this.newKeyword.trim();
+  if (trimmedKeyword && !this.keywordsFormArray.value.includes(trimmedKeyword)) {
+    this.keywordsFormArray.push(this.fb.control(trimmedKeyword));
+    this.newKeyword = '';
   }
+}
+
+removeKeyword(index: number) {
+  this.keywordsFormArray.removeAt(index);
+}
+
 
   loadDomains(): void {
     this.paperService.getPaperDomains().subscribe(domains => {
@@ -125,50 +162,113 @@ export class PaperFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.paperForm.invalid) {
-      this.markFormGroupTouched(this.paperForm);
-      return;
-    }
+selectedFile: File | null = null;
+fileError: string | null = null;
 
-    this.submitting = true;
-    const formData = this.paperForm.value;
-
-
-    if (!this.isEditMode) {
-      const article: Article = {
-        title: formData.title,
-        abstract_ : formData.abstract,
-        authorName: this.name,
-        articleCover: formData.coverImage,
-        isbn: formData.isbn,
-        affiliation: formData.affiliation,
-        filePath: formData.pdfUrl,
-        domain : formData.domain,
-
-      };
-
-      this.createArticle(article);
+onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+    if (file.type !== 'application/pdf') {
+      this.fileError = 'Only PDF files are allowed.';
+      this.selectedFile = null;
     } else {
-
-      const paper: Paper = {
-        title: formData.title,
-        abstract: formData.abstract,
-        content: formData.content,
-        authorName: this.name,
-        authorAffiliation: formData.authorAffiliation,
-        coverImage: formData.coverImage,
-        pdfUrl: formData.pdfUrl,
-        domain: formData.domain,
-        keywords: formData.keywords
-      };
-
-      if (this.paperId) {
-        paper.id = this.paperId;
-        this.updatePaper(paper);
-      }
+      this.fileError = null;
+      this.selectedFile = file;
     }
   }
+}
+
+onSubmit(): void {
+  if (!this.selectedFile) {
+    console.error('Aucun fichier sélectionné.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.selectedFile);
+  
+  // Ajoute les autres champs du formulaire dans le FormData ou directement dans `params`
+  formData.append('title', this.paperForm.value.title);
+  formData.append('abstract', this.paperForm.value.abstract);
+  formData.append('isbn', this.paperForm.value.isbn);
+  formData.append('coverImage', this.paperForm.value.coverImage);
+
+  // Préparer les paramètres pour l'appel API
+  const params: UploadArticle$Params = {
+    body: formData as any,  // Si tu veux passer un FormData, ou adapter si nécessaire
+    title: this.paperForm.value.title,
+    abstract_: this.paperForm.value.abstract,
+    isbn: this.paperForm.value.isbn,
+    coverImage: this.paperForm.value.coverImage,
+    authorAffiliation:this.paperForm.value.authorAffiliation,
+    affiliation:this.paperForm.value.affiliation,
+    //authorName: this.name,  // Assure-toi que c'est bien ce qu'il faut
+    // Ajoute d'autres propriétés nécessaires ici...
+  };
+
+  this.articleService.uploadArticle(params).subscribe({
+    next: (article: Article) => {
+      console.log('Article uploadé avec succès :', article);
+    },
+    error: (err) => {
+      console.error('Erreur lors de l\'upload :', err);
+    }
+  });
+}
+successMessage = '';
+
+onPublish() {
+  this.articleService.createArticle({ body: this.paperForm.value }).subscribe({
+    next: (res) => {
+      console.log(' Article publié', res);
+      this.successMessage = ' Article publié avec succès !';
+      this.paperForm.reset();
+      
+    },
+    error: (err) => {
+      console.error(' Erreur lors de la publication', err);
+      this.successMessage = ' Une erreur est survenue.';
+    }
+  });
+}
+
+
+/*
+onSubmit() {
+  if (this.paperForm.invalid) return;
+
+  this.submitting = true;
+  const formValue = this.paperForm.value;
+
+  const article: Article = {
+    title: formValue.title,
+    isbn: formValue.isbn,
+    authorAffiliation: formValue.authorAffiliation,
+    abstract: formValue.abstract,
+    content: formValue.content,
+    domain: formValue.domain,
+    keywords: formValue.keywords,
+    authorName: this.name
+  };
+
+ 
+  this.articleService.createArticle({ body: article }).subscribe({
+    next: () => {
+      this.submitting = false;
+      this.router.navigate(['/articles']);
+    },
+    error: (err) => {
+      this.submitting = false;
+      console.error('Failed to submit article:', err);
+    }
+  });
+}
+*/
+
+
+  
+
 
   createArticle(article: Article): void {
     this.articleService.createArticle({ body: article }).subscribe({
@@ -185,7 +285,7 @@ export class PaperFormComponent implements OnInit {
     });
   }
 
-
+  
   updatePaper(paper: Paper): void {
     this.paperService.updatePaper(paper).subscribe({
       next: (updatedPaper) => {

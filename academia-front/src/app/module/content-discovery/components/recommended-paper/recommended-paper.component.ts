@@ -12,7 +12,7 @@ export class RecommendedPaperComponent {
 
   getArticleRating(): number {
     // Check if article has feedbacks
-    if (!this.article.feedbacks || this.article.feedbacks.length === 0) {
+    if (!this.article.feedbacks || this.article.feedbacks.length === 0) {console.log("woooooowh",this.article.articleCover)
       return 0;
     }
     
@@ -22,6 +22,9 @@ export class RecommendedPaperComponent {
     }, 0);
     
     return totalRating / this.article.feedbacks.length;
+  }
+  encodeUrl(url: string): string {
+    return encodeURIComponent(url);
   }
 
   getRatingStars(): number[] {
