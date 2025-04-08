@@ -21,8 +21,8 @@ export class TrendingListComponent implements OnInit {
   loadTopArticles(): void {
     this.loading = true;
     this.error = null;
-    
-    this.articleService.getTop5Articles().subscribe({
+
+    this.articleService.getTop5ArticlesByRating().subscribe({
       next: (articles) => {
         this.topArticles = articles;
         this.loading = false;
@@ -34,18 +34,18 @@ export class TrendingListComponent implements OnInit {
       }
     });
   }
-  
+
   getArticleRating(article: Article): number {
     // Check if article has feedbacks
     if (!article.feedbacks || article.feedbacks.length === 0) {
       return 0;
     }
-    
+
     // Calculate average rating from feedbacks
     const totalRating = article.feedbacks.reduce((sum, feedback) => {
       return sum + (feedback.note || 0);
     }, 0);
-    
+
     return totalRating / article.feedbacks.length;
   }
 

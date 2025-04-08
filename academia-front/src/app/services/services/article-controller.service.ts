@@ -26,12 +26,12 @@ import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
 import { getDomainName } from '../fn/article-controller/get-domain-name';
 import { GetDomainName$Params } from '../fn/article-controller/get-domain-name';
+import { getLatest5Articles } from '../fn/article-controller/get-latest-5-articles';
+import { GetLatest5Articles$Params } from '../fn/article-controller/get-latest-5-articles';
 import { getMyArticles } from '../fn/article-controller/get-my-articles';
 import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
-import { getLatest5Articles } from '../fn/article-controller/get-latest5-articles';
-import { GetLatest5Articles$Params } from '../fn/article-controller/get-latest5-articles';
-import { getTop5Articles } from '../fn/article-controller/get-top5-articles';
-import { GetTop5Articles$Params } from '../fn/article-controller/get-top5-articles';
+import { getTop5ArticlesByRating } from '../fn/article-controller/get-top-5-articles-by-rating';
+import { GetTop5ArticlesByRating$Params } from '../fn/article-controller/get-top-5-articles-by-rating';
 import { uploadArticle } from '../fn/article-controller/upload-article';
 import { UploadArticle$Params } from '../fn/article-controller/upload-article';
 
@@ -116,6 +116,31 @@ export class ArticleControllerService extends BaseService {
     );
   }
 
+  /** Path part for operation `uploadArticle()` */
+  static readonly UploadArticlePath = '/articles/upload';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `uploadArticle()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadArticle$Response(params: UploadArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+    return uploadArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `uploadArticle$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadArticle(params: UploadArticle$Params, context?: HttpContext): Observable<Article> {
+    return this.uploadArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Article>): Article => r.body)
+    );
+  }
+
   /** Path part for operation `getArticleById()` */
   static readonly GetArticleByIdPath = '/articles/{id}';
 
@@ -150,7 +175,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteArticle$Response(params?: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  deleteArticle$Response(params: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return deleteArticle(this.http, this.rootUrl, params, context);
   }
 
@@ -160,7 +185,7 @@ export class ArticleControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  deleteArticle(params?: DeleteArticle$Params, context?: HttpContext): Observable<void> {
+  deleteArticle(params: DeleteArticle$Params, context?: HttpContext): Observable<void> {
     return this.deleteArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
@@ -191,6 +216,31 @@ export class ArticleControllerService extends BaseService {
     );
   }
 
+  /** Path part for operation `getTop5ArticlesByRating()` */
+  static readonly GetTop5ArticlesByRatingPath = '/articles/top5';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getTop5ArticlesByRating()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getTop5ArticlesByRating$Response(params?: GetTop5ArticlesByRating$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getTop5ArticlesByRating(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getTop5ArticlesByRating$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getTop5ArticlesByRating(params?: GetTop5ArticlesByRating$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getTop5ArticlesByRating$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
   /** Path part for operation `getMyArticles()` */
   static readonly GetMyArticlesPath = '/articles/my';
 
@@ -212,31 +262,6 @@ export class ArticleControllerService extends BaseService {
    */
   getMyArticles(params?: GetMyArticles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getMyArticles$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
-    );
-  }
-
-  /** Path part for operation `getApprovedArticles()` */
-  static readonly GetApprovedArticlesPath = '/articles/approved';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getApprovedArticles()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getApprovedArticles$Response(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
-    return getApprovedArticles(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getApprovedArticles$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getApprovedArticles(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
-    return this.getApprovedArticles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }
@@ -266,54 +291,28 @@ export class ArticleControllerService extends BaseService {
     );
   }
 
-  /** Path part for operation `getTop5Articles()` */
-  static readonly GetTop5ArticlesPath = '/articles/top5';
+  /** Path part for operation `getApprovedArticles()` */
+  static readonly GetApprovedArticlesPath = '/articles/approved';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getTop5Articles()` instead.
+   * To access only the response body, use `getApprovedArticles()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getTop5Articles$Response(params?: GetTop5Articles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
-    return getTop5Articles(this.http, this.rootUrl, params, context);
+  getApprovedArticles$Response(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getApprovedArticles(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getTop5Articles$Response()` instead.
+   * To access the full response (for headers, for example), `getApprovedArticles$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getTop5Articles(params?: GetTop5Articles$Params, context?: HttpContext): Observable<Array<Article>> {
-    return this.getTop5Articles$Response(params, context).pipe(
+  getApprovedArticles(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getApprovedArticles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
-    );
-  }
-
-  
-  /** Path part for operation `uploadArticle()` */
-  static readonly UploadArticlePath = '/articles/upload';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `uploadArticle()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  uploadArticle$Response(params: UploadArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
-    return uploadArticle(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `uploadArticle$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  uploadArticle(params: UploadArticle$Params, context?: HttpContext): Observable<Article> {
-    return this.uploadArticle$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Article>): Article => r.body)
     );
   }
 

@@ -35,7 +35,7 @@ public class ArticleService {
     }
 
     public List<Article> getAllArticles() {
-        return articleRepository.findAll();
+        return articleRepository.findByArchivedFalse();
     }
 
     public Article getArticleById(Long id) {
@@ -51,7 +51,7 @@ public class ArticleService {
     }
 
     public List<Article> getArticlesByCreatedBy(String username) {
-        return articleRepository.findByCreatedBy(username);
+        return articleRepository.findByCreatedByAndArchivedFalse(username);
     }
 
     public Article approveArticle(Long id) {
@@ -60,6 +60,15 @@ public class ArticleService {
 
         article.setApproved(true);
         return articleRepository.save(article);
+    }
+    public Article archiveArticle(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Article not found"));
+        article.setArchived(true);
+        return articleRepository.save(article);
+    }
+    public List<Article> getArchivedArticles() {
+        return articleRepository.findByArchived(true);
     }
 
     public List<Article> getArticlesApproved() {

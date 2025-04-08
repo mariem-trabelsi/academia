@@ -12,23 +12,23 @@
       </button>
     </div>
   </div>
-  
+
   <app-paper-filter [filter]="filter" (filterChange)="onFilterChange($event)"></app-paper-filter>
-  
+
   <div class="loading-indicator" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading papers...</p>
   </div>
-  
-  <div class="no-papers" *ngIf="!loading && papers.length === 0">
+
+  <div class="no-papers" *ngIf="!loading && articles.length === 0">
     <i class="fas fa-file-alt no-papers-icon"></i>
     <h3>No papers found</h3>
     <p>Try adjusting your filters or adding a new paper.</p>
   </div>
-  
-  <div class="papers-grid" *ngIf="!loading && papers.length > 0">
-    <div class="paper-card-wrapper" *ngFor="let paper of papers">
-      <app-paper-card [paper]="paper" (deleteRequest)="onDeleteRequest($event)"></app-paper-card>
+
+  <div class="papers-grid" *ngIf="!loading && articles.length > 0">
+    <div class="paper-card-wrapper" *ngFor="let article of articles">
+      <app-paper-card [article]="article" (deleteRequest)="onDeleteRequest($event)"></app-paper-card>
     </div>
   </div>
 </div>

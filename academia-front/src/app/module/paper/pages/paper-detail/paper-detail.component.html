@@ -3,20 +3,20 @@
     <div class="spinner"></div>
     <p>Loading paper details...</p>
   </div>
-  
-  <div class="paper-not-found" *ngIf="!isLoading && !paper">
+
+  <div class="paper-not-found" *ngIf="!isLoading && !article">
     <h2>Paper Not Found</h2>
     <p>The requested paper could not be found or has been removed.</p>
     <button class="btn-back" (click)="navigateToList()">Back to Discovery</button>
   </div>
-  
-  <div class="paper-detail" *ngIf="!isLoading && paper">
+
+  <div class="paper-detail" *ngIf="!isLoading && article">
     <div class="paper-header">
       <div class="back-button" (click)="navigateToList()">
         <i class="fas fa-arrow-left"></i>
         <span>Back to Discovery</span>
       </div>
-      
+
       <div class="paper-actions">
         <button class="btn-edit" (click)="editPaper()">
           <i class="fas fa-edit"></i>
@@ -28,81 +28,82 @@
         </button>
       </div>
     </div>
-    
-    <div class="paper-cover" *ngIf="paper.coverImage" [style.background-image]="'url(' + paper.coverImage + ')'">
-      <div class="paper-domain">{{paper.domain}}</div>
+
+    <div class="paper-cover" *ngIf="article.articleCover" [style.background-image]="'url(' + article.articleCover + ')'">
+      <div class="paper-domain">{{article.domain}}</div>
     </div>
-    
+
     <div class="paper-content">
-      <h1 class="paper-title">{{paper.title}}</h1>
-      
+      <h1 class="paper-title">{{article.title}}</h1>
+
       <div class="paper-meta">
         <div class="author-info">
           <span class="author-label">Author:</span>
-          <a [routerLink]="['/network/researcher', 1]" class="author-name">{{paper.authorName}}</a>
-          <span class="author-affiliation" *ngIf="paper.authorAffiliation">({{paper.authorAffiliation}})</span>
+          <a [routerLink]="['/network/researcher', 1]" class="author-name">{{article.authorName}}</a>
+          <span class="author-affiliation" *ngIf="article.authorAffiliation">({{article.authorAffiliation}})</span>
         </div>
-        
+
         <div class="date-info">
           <span class="date-label">Published:</span>
-          <span class="date-value">{{paper.createdDate | date:'mediumDate'}}</span>
+          <span class="date-value">{{article.createdDate | date:'mediumDate'}}</span>
         </div>
       </div>
-      
-      <div class="paper-keywords">
+
+    <!--  <div class="paper-keywords">
         <span class="keyword" *ngFor="let keyword of paper.keywords">{{keyword}}</span>
-      </div>
-      
+      </div>-->
+
       <div class="paper-abstract">
         <h2>Abstract</h2>
-        <p>{{paper.abstract}}</p>
+        <p>{{article.abstract_}}</p>
       </div>
-      
+
       <div class="paper-full-content">
         <h2>Content</h2>
-        <div [innerHTML]="paper.content"></div>
+        <div [innerHTML]="article.authorAffiliation"></div>
       </div>
-      
-      <div class="paper-attachments" *ngIf="paper.attachments && paper.attachments.length > 0">
+
+    <!--  <div class="paper-attachments" *ngIf="article.attachments && paper.attachments.length > 0">
         <h2>Attachments</h2>
         <div class="attachment-list">
-          <a *ngFor="let attachment of paper.attachments" 
-             [href]="attachment.fileUrl" 
-             class="attachment-item" 
+          <a *ngFor="let attachment of paper.attachments"
+             [href]="attachment.fileUrl"
+             class="attachment-item"
              target="_blank">
             <i class="fas fa-paperclip"></i>
             <span class="attachment-name">{{attachment.name}}</span>
             <span class="attachment-type">{{attachment.fileType}}</span>
           </a>
         </div>
-      </div>
-      
-      <div class="paper-pdf" *ngIf="paper.pdfUrl">
+      </div>-->
+
+      <div class="paper-pdf" *ngIf="article.filePath">
         <h2>Paper PDF</h2>
-        <a [href]="paper.pdfUrl" class="pdf-link" target="_blank">
-          <i class="fas fa-file-pdf"></i>
-          <span>Download PDF</span>
-        </a>
+        <div *ngIf="filePath">
+          <iframe [src]="filePath"  width="100%" height="600px">
+          </iframe>
+          <div *ngIf="isLoading">Loading PDF...</div>
+        </div>
       </div>
-      
+
       <div class="paper-rating">
         <h2>Rate this Paper</h2>
         <app-rating-summary [rating]="paperRating" *ngIf="paperRating"></app-rating-summary>
-        
+
         <div class="feedback-container">
           <h3>Leave your feedback</h3>
-          
+
           <!-- Show this message when user has already submitted feedback -->
           <div class="feedback-already-submitted" *ngIf="hasUserAlreadySubmittedFeedback()">
             <i class="fas fa-check-circle"></i>
             <p>You have already submitted your feedback for this paper. Thank you for your contribution!</p>
           </div>
-          
+
           <!-- Only show the form when user hasn't submitted feedback yet -->
-          <app-comment-form 
+          <app-comment-form
             *ngIf="!hasUserAlreadySubmittedFeedback()"
-            [contentId]="paper.id!.toString()"
-            [articleId]="paper.id!"
+            [contentId]="article.id!.toString()"
+            [articleId]="article.id!"
             [placeholder]="'Share your thoughts on this paper...'"
             [isSubmitting]="isSubmittingComment"
             [isFeedback]="true"
@@ -111,12 +112,12 @@
           </app-comment-form>
         </div>
       </div>
-      
+
       <div class="paper-comments">
         <h2>Feedbacks</h2>
-        
-        <app-comment-list 
-          [comments]="paperComments" 
+
+        <app-comment-list
+          [comments]="paperComments"
           [loading]="isLoadingComments"
           [sortBy]="commentSortBy"
           (sortChange)="onCommentSortChange($event)">

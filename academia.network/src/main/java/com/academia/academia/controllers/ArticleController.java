@@ -2,20 +2,17 @@ package com.academia.academia.controllers;
 
 import com.academia.academia.entities.Article;
 import com.academia.academia.services.ArticleService;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import java.util.List;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/articles")
@@ -90,10 +87,19 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Article found"),
+            @ApiResponse(responseCode = "404", description = "Article not found")
+    })
     public ResponseEntity<Article> getArticleById(@PathVariable("id") Long id) {
         Article article = articleService.getArticleById(id);
+        if (article == null || article.isArchived()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(article);
     }
+
+
 
 
     @PostMapping
@@ -144,6 +150,16 @@ public class ArticleController {
     public ResponseEntity<List<Article>> getTop5ArticlesByRating() {
         List<Article> topArticles = articleService.getTop5ArticlesByRating();
         return ResponseEntity.ok(topArticles);
+    }
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<Article> archiveArticle(@PathVariable("id") Long id) {
+        Article updatedArticle = articleService.archiveArticle(id);
+        return ResponseEntity.ok(updatedArticle);
+    }
+    @GetMapping("/archived")
+    public ResponseEntity<List<Article>> getArchivedArticles() {
+        List<Article> archivedArticles = articleService.getArchivedArticles();
+        return ResponseEntity.ok(archivedArticles);
     }
 
 

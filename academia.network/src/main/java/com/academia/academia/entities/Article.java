@@ -31,7 +31,8 @@ public class Article extends BaseEntity {
 
     @Column(columnDefinition = "boolean default false")
     private boolean approved;
-
+    @Column(columnDefinition = "boolean default false")
+    private boolean archived;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

@@ -15,7 +15,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByDomain(Domain domain);
     Optional<Article> findById(Long id);
     public List<Article> findByApprovedTrueOrderByCreatedDateDesc();
-    
+    List<Article> findByArchived(boolean archived);
+    List<Article> findByArchivedFalse();
+    List<Article> findByCreatedByAndArchivedFalse(String createdBy);
     // Find the latest 5 approved articles
     @Query("SELECT a FROM Article a WHERE a.approved = true ORDER BY a.createdDate DESC")
     List<Article> findLatest5ApprovedArticles(Pageable pageable);

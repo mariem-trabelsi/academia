@@ -9,8 +9,10 @@ import { Feedback } from 'src/app/services/models/feedback';
 import { FeedbackControllerService } from '../../../../services/services/feedback-controller.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Title } from '@angular/platform-browser';
+import {DomSanitizer, SafeResourceUrl, Title} from '@angular/platform-browser';
 import { KeycloakService } from 'src/app/services/keycloak/keycloak.service';
+import {Article} from "../../../../services/models/article";
+import {ArticleControllerService} from "../../../../services/services/article-controller.service";
 
 @Component({
   selector: 'app-paper-detail',
@@ -21,7 +23,7 @@ export class PaperDetailComponent implements OnInit {
   paper: Paper | undefined;
   isLoading = true;
   showDeleteConfirmation = false;
-  
+
   // New Discussion & Feedback properties
   paperRating: Rating | undefined;
   paperComments: Comment[] = [];
@@ -31,10 +33,11 @@ export class PaperDetailComponent implements OnInit {
   isLoadingComments = false;
   isSubmittingComment = false;
   commentSortBy: 'newest' | 'oldest' | 'popular' = 'newest';
-  
+  article: Article | undefined;
+  filePath: SafeResourceUrl | undefined;
   // Current user has already submitted feedback
   hasSubmittedFeedback = false;
-  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -42,7 +45,9 @@ export class PaperDetailComponent implements OnInit {
     private discussionService: DiscussionService,
     private feedbackService: FeedbackControllerService,
     private titleService: Title,
-    private keycloakService: KeycloakService
+    private keycloakService: KeycloakService,
+    private articleService: ArticleControllerService,
+    private sanitizer: DomSanitizer,
   ) { }
 
   ngOnInit(): void {
@@ -56,28 +61,33 @@ export class PaperDetailComponent implements OnInit {
       this.navigateToList();
       return;
     }
-    
+
     this.isLoading = true;
-    
-    this.paperService.getPaperById(id).subscribe({
-      next: (paper) => {
-        this.paper = paper;
+
+    this.articleService.getArticleById({ id }).subscribe({
+      next: (article: Article) => {
+        const fullPath = article.filePath;
+        // @ts-ignore
+        const fileName = fullPath.split(/[/\\]/).pop();
+        this.article = article;
+        const filePath = `assets/uploads/pdf/${fileName}`;
+        this.filePath = this.sanitizer.bypassSecurityTrustResourceUrl(filePath);
         this.isLoading = false;
-        
+
         // Always reload comments when paper is loaded
-        if (paper?.id) {
-          const paperId = paper.id.toString();
+        if (article?.id) {
+          const paperId = article.id.toString();
           this.loadCommentsAndFeedbacks(paperId, { sortBy: this.commentSortBy });
-          
+
           // Update the page title
-          document.title = `${paper.title} | Academia Network`;
+          document.title = `${article.title} | Academia Network`;
         }
       },
       error: (error) => {
         console.error('Error loading paper:', error);
         this.isLoading = false;
         this.isLoadingComments = false;
-        
+
         if (error.status === 404) {
           this.router.navigate(['/not-found']);
         } else {
@@ -86,7 +96,7 @@ export class PaperDetailComponent implements OnInit {
       }
     });
   }
-  
+
   loadDiscussionData(paperId: string): void {
     // Load rating data
     this.discussionService.getRating(paperId).subscribe({
@@ -96,11 +106,11 @@ export class PaperDetailComponent implements OnInit {
         this.isRatingSubmitted = rating.value > 0;
       }
     });
-    
+
     // Load both comments and feedbacks
     this.loadCommentsAndFeedbacks(paperId);
   }
-  
+
   // Helper method to get feedbacks for an article and handle pagination
   getArticleFeedbacks(articleId: number) {
     return this.feedbackService.getFeedbacksByArticleId({ articleId }).pipe(
@@ -110,7 +120,7 @@ export class PaperDetailComponent implements OnInit {
 
   loadCommentsAndFeedbacks(paperId: string, filter?: CommentFilter): void {
     this.isLoadingComments = true;
-    
+
     // Load only feedbacks from the API - no need for mock comments
     this.getArticleFeedbacks(Number(paperId)).pipe(
       catchError(error => {
@@ -120,24 +130,24 @@ export class PaperDetailComponent implements OnInit {
     ).subscribe(feedbacks => {
       // Store original feedbacks
       this.paperFeedbacks = feedbacks || [];
-      
+
       // Check if current user has already submitted feedback
       this.checkCurrentUserFeedback();
-      
+
       // Create a Set to track unique feedback IDs to prevent duplicates
       const uniqueFeedbackIds = new Set<string>();
-      
+
       // Convert feedbacks to comment format for display
       this.paperComments = (feedbacks || [])
         .filter(feedback => {
           // Generate a unique key for this feedback
           const feedbackKey = `${feedback.id}-${feedback.creatorFullName || feedback.createdBy}-${feedback.createdDate}`;
-          
+
           // Only include this feedback if we haven't seen it before
           if (uniqueFeedbackIds.has(feedbackKey)) {
             return false;
           }
-          
+
           // Add this feedback to our set of seen IDs
           uniqueFeedbackIds.add(feedbackKey);
           return true;
@@ -148,7 +158,7 @@ export class PaperDetailComponent implements OnInit {
           if (feedback.comment && feedback.comment.trim().length > 0) {
             content = feedback.comment;
           }
-          
+
           return {
             id: `f-${feedback.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, // Ensure truly unique IDs
             authorId: feedback.createdBy || 'anonymous',
@@ -159,42 +169,42 @@ export class PaperDetailComponent implements OnInit {
             rating: feedback.note || 0 // Store rating as a separate property
           };
         });
-      
+
       // Remove content duplicates (different ID but same content and author)
       this.paperComments = this.removeDuplicatesByContent(this.paperComments);
-      
+
       // Sort the comments
       this.sortComments(filter);
-      
+
       this.isLoadingComments = false;
     });
   }
-  
+
   /**
    * Remove duplicate comments that have the same content and author
    * This helps prevent visual duplicates even if they have different IDs
    */
   private removeDuplicatesByContent(comments: Comment[]): Comment[] {
     const contentMap = new Map<string, Comment>();
-    
+
     // Keep track of unique content+author combinations
     // If we find duplicates, keep the most recent one
     comments.forEach(comment => {
       const key = `${comment.authorId}-${comment.content}`;
-      
-      if (!contentMap.has(key) || 
-          new Date(comment.createdDate).getTime() > 
+
+      if (!contentMap.has(key) ||
+          new Date(comment.createdDate).getTime() >
           new Date(contentMap.get(key)!.createdDate).getTime()) {
         contentMap.set(key, comment);
       }
     });
-    
+
     return Array.from(contentMap.values());
   }
-  
+
   sortComments(filter?: CommentFilter): void {
     const sortBy = filter?.sortBy || this.commentSortBy;
-    
+
     this.paperComments.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
@@ -218,14 +228,14 @@ export class PaperDetailComponent implements OnInit {
   navigateToList(): void {
     this.router.navigate(['/discover']);
   }
-  
+
   setRating(rating: number): void {
     this.newRating = rating;
   }
 
   submitRating(): void {
     if (!this.paper || this.newRating === 0 || this.isRatingSubmitted) return;
-    
+
     this.discussionService.submitRating(this.paper.id!.toString(), this.newRating).subscribe({
       next: (updatedRating) => {
         this.paperRating = updatedRating;
@@ -239,7 +249,7 @@ export class PaperDetailComponent implements OnInit {
 
   submitComment(comment: Omit<Comment, 'id' | 'createdDate'>): void {
     if (!this.paper) return;
-    
+
     this.isSubmittingComment = true;
     this.discussionService.addComment(this.paper.id!.toString(), comment).subscribe({
       next: () => {
@@ -253,7 +263,7 @@ export class PaperDetailComponent implements OnInit {
       }
     });
   }
-  
+
   onCommentSortChange(filter: CommentFilter): void {
     if (!this.paper) return;
     this.commentSortBy = filter.sortBy || 'newest';
@@ -279,7 +289,7 @@ export class PaperDetailComponent implements OnInit {
 
   deletePaper(): void {
     if (!this.paper) return;
-    
+
     this.paperService.deletePaper(this.paper.id!).subscribe({
       next: (success) => {
         if (success) {
@@ -301,28 +311,28 @@ export class PaperDetailComponent implements OnInit {
 
   onFeedbackSubmitted(feedback: Feedback): void {
     if (!this.paper?.id) return;
-    
+
     console.log('Feedback being submitted:', feedback);
-    
+
     // Create API-compatible feedback object
     const feedbackRequest = {
       comment: feedback.comment,
       note: feedback.note
     };
-    
+
     // Show loading state while submitting
     this.isLoadingComments = true;
-    
+
     this.feedbackService.createFeedback({
       articleId: this.paper.id,
       body: feedbackRequest
     }).subscribe({
       next: (createdFeedback) => {
         console.log('Feedback submitted successfully:', createdFeedback);
-        
+
         // Refresh data
         this.isRatingSubmitted = true;
-        
+
         // Reload comments to get fresh data without reloading the entire paper
         this.loadCommentsAndFeedbacks(this.paper!.id!.toString(), { sortBy: this.commentSortBy });
       },
@@ -348,22 +358,22 @@ export class PaperDetailComponent implements OnInit {
   private checkCurrentUserFeedback(): void {
     const currentUserId = this.getCurrentUserId();
     console.log('Current user ID:', currentUserId);
-    
+
     if (currentUserId && this.paperFeedbacks.length > 0) {
       // Log feedback creator IDs for debugging
       this.paperFeedbacks.forEach(feedback => {
         console.log('Feedback created by:', feedback.createdBy);
       });
-      
+
       // Check if current user's ID matches any feedback creator ID
-      this.hasSubmittedFeedback = this.paperFeedbacks.some(feedback => 
+      this.hasSubmittedFeedback = this.paperFeedbacks.some(feedback =>
         feedback.createdBy === currentUserId
       );
-      
+
       console.log('Current user has submitted feedback:', this.hasSubmittedFeedback);
     }
   }
-  
+
   /**
    * Returns true if the current user has already submitted feedback for this article
    */
