@@ -10,13 +10,12 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface DeleteArticle$Params {
-  id: number;
+
 }
 
 export function deleteArticle(http: HttpClient, rootUrl: string, params?: DeleteArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, deleteArticle.PATH, 'delete');
   if (params) {
-    rb.path('id', params.id);
   }
 
   return http.request(

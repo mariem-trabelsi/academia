@@ -11,13 +11,11 @@ import { RequestBuilder } from '../../request-builder';
 import { Article } from '../../models/article';
 
 export interface GetArticleById$Params {
-  id: number;
 }
 
 export function getArticleById(http: HttpClient, rootUrl: string, params?: GetArticleById$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
   const rb = new RequestBuilder(rootUrl, getArticleById.PATH, 'get');
   if (params) {
-    rb.path('id', params.id);
   }
 
   return http.request(
