@@ -17,20 +17,21 @@
   </div>
 
   <div class="admin-content-wrapper">
-    <app-admin-sidebar 
+    <app-admin-sidebar
       [collapsed]="sidebarCollapsed"
       (sectionChange)="handleSectionChange($event)"
     ></app-admin-sidebar>
-    
+
     <div class="admin-content" @slideIn>
       <!-- Render content based on activeSection -->
       <app-admin-dashboard *ngIf="activeSection === 'dashboard'"></app-admin-dashboard>
       <app-paper-approval-queue *ngIf="activeSection === 'approval'"></app-paper-approval-queue>
+      <app-archived-papers *ngIf="activeSection === 'archived'"></app-archived-papers>
       <app-user-management *ngIf="activeSection === 'users'"></app-user-management>
       <app-domain-management *ngIf="activeSection === 'domains'"></app-domain-management>
       <app-content-moderation *ngIf="activeSection === 'moderation'"></app-content-moderation>
       <app-system-statistics *ngIf="activeSection === 'statistics'"></app-system-statistics>
-      
+
       <div *ngIf="activeSection === 'settings'" class="settings-placeholder">
         <h2>Settings</h2>
         <p>Settings panel would be implemented here.</p>

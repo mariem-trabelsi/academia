@@ -22,13 +22,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
 })
 export class AdminLayoutComponent {
   sidebarCollapsed = false;
-  activeSection: 'dashboard' | 'approval' | 'users' | 'domains' | 'moderation' | 'statistics' | 'settings' = 'dashboard';
+  activeSection: 'dashboard' | 'approval' |'archived'| 'users' | 'domains' | 'moderation' | 'statistics' | 'settings' = 'dashboard';
 
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
-  
+
   handleSectionChange(section: string): void {
-    this.activeSection = section as 'dashboard' | 'approval' | 'users' | 'domains' | 'moderation' | 'statistics' | 'settings';
+    this.activeSection = section as 'dashboard' | 'approval' |'archived'| 'users' | 'domains' | 'moderation' | 'statistics' | 'settings';
   }
 }

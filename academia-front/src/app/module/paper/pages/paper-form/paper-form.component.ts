@@ -187,7 +187,7 @@ onSubmit(): void {
 
   const formData = new FormData();
   formData.append('file', this.selectedFile);
-  
+
   // Ajoute les autres champs du formulaire dans le FormData ou directement dans `params`
   formData.append('title', this.paperForm.value.title);
   formData.append('abstract', this.paperForm.value.abstract);
@@ -209,7 +209,9 @@ onSubmit(): void {
 
   this.articleService.uploadArticle(params).subscribe({
     next: (article: Article) => {
+      this.router.navigate(['/papers']);
       console.log('Article uploadé avec succès :', article);
+
     },
     error: (err) => {
       console.error('Erreur lors de l\'upload :', err);
@@ -224,7 +226,7 @@ onPublish() {
       console.log(' Article publié', res);
       this.successMessage = ' Article publié avec succès !';
       this.paperForm.reset();
-      
+
     },
     error: (err) => {
       console.error(' Erreur lors de la publication', err);
@@ -252,7 +254,7 @@ onSubmit() {
     authorName: this.name
   };
 
- 
+
   this.articleService.createArticle({ body: article }).subscribe({
     next: () => {
       this.submitting = false;
@@ -267,7 +269,7 @@ onSubmit() {
 */
 
 
-  
+
 
 
   createArticle(article: Article): void {
@@ -285,7 +287,7 @@ onSubmit() {
     });
   }
 
-  
+
   updatePaper(paper: Paper): void {
     this.paperService.updatePaper(paper).subscribe({
       next: (updatedPaper) => {

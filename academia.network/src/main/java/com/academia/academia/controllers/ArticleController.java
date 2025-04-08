@@ -151,6 +151,11 @@ public class ArticleController {
         List<Article> topArticles = articleService.getTop5ArticlesByRating();
         return ResponseEntity.ok(topArticles);
     }
+    @PutMapping("/articles/{id}/unarchive")
+    public ResponseEntity<Article> unarchiveArticle(@PathVariable Long id) {
+        Article updated = articleService.unarchiveArticle(id);
+        return ResponseEntity.ok(updated);
+    }
     @PutMapping("/{id}/archive")
     public ResponseEntity<Article> archiveArticle(@PathVariable("id") Long id) {
         Article updatedArticle = articleService.archiveArticle(id);

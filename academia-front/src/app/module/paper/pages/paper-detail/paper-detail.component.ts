@@ -33,7 +33,7 @@ export class PaperDetailComponent implements OnInit {
   isLoadingComments = false;
   isSubmittingComment = false;
   commentSortBy: 'newest' | 'oldest' | 'popular' = 'newest';
-  article: Article | undefined;
+  article!: Article ;
   filePath: SafeResourceUrl | undefined;
   // Current user has already submitted feedback
   hasSubmittedFeedback = false;
@@ -70,7 +70,7 @@ export class PaperDetailComponent implements OnInit {
         // @ts-ignore
         const fileName = fullPath.split(/[/\\]/).pop();
         this.article = article;
-        const filePath = `assets/uploads/pdf/${fileName}`;
+        const filePath = `http://localhost:8088/uploads/pdf/${fileName}`;
         this.filePath = this.sanitizer.bypassSecurityTrustResourceUrl(filePath);
         this.isLoading = false;
 
@@ -288,21 +288,21 @@ export class PaperDetailComponent implements OnInit {
   }
 
   deletePaper(): void {
-    if (!this.paper) return;
+    if (!this.article) return;
 
-    this.paperService.deletePaper(this.paper.id!).subscribe({
+    this.articleService.archiveArticle({ id: this.article.id! }).subscribe({
       next: (success) => {
         if (success) {
           this.showDeleteConfirmation = false;
           document.body.style.overflow = ''; // Restore scrolling
-          this.navigateToList();
+          this.navigateToList(); // Redirect to list after archiving
         } else {
           this.showDeleteConfirmation = false;
           document.body.style.overflow = ''; // Restore scrolling
         }
       },
       error: (error) => {
-        console.error('Error deleting paper:', error);
+        console.error('Error archiving paper:', error);
         this.showDeleteConfirmation = false;
         document.body.style.overflow = ''; // Restore scrolling
       }

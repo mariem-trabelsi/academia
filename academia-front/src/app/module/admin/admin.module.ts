@@ -11,6 +11,7 @@ import { SystemStatisticsComponent } from './components/system-statistics/system
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
 import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
 import { DomainManagementComponent } from './components/domain-management/domain-management.component';
+import { ArchivedPapersComponent } from './components/archived-papers/archived-papers.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { DomainManagementComponent } from './components/domain-management/domain
     SystemStatisticsComponent,
     AdminLayoutComponent,
     AdminSidebarComponent,
-    DomainManagementComponent
+    DomainManagementComponent,
+    ArchivedPapersComponent
   ],
   imports: [
     CommonModule,

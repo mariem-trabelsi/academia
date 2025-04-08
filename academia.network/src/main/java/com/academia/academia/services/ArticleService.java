@@ -67,6 +67,12 @@ public class ArticleService {
         article.setArchived(true);
         return articleRepository.save(article);
     }
+    public Article unarchiveArticle(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Article not found"));
+        article.setArchived(false);
+        return articleRepository.save(article);
+    }
     public List<Article> getArchivedArticles() {
         return articleRepository.findByArchived(true);
     }
@@ -97,18 +103,22 @@ public class ArticleService {
     //private static final String UPLOAD_DIR_images = System.getProperty("user.dir") + File.separator + "uploads/images" + File.separator;
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
 
-    public Article createArticleWithFile(MultipartFile file, String title,String abstract_ , String isbn, String authorAffiliation, String coverImage ,String affiliation) {
+    public Article createArticleWithFile(MultipartFile file, String title, String abstract_, String isbn,
+                                         String authorAffiliation, String coverImage, String affiliation) {
         try {
-            // Vérifier et créer le dossier si besoin
-            File uploadDir = new File(UPLOAD_DIR);
+            // Define the upload directory relative to your application path
+            File uploadDir = new File("src/main/resources/static/uploads");
+
+            // Create the directory if it doesn't exist
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
 
-            // Sauvegarde du fichier
-            Path filePath = Paths.get(UPLOAD_DIR + file.getOriginalFilename());
+            // Save the file in the uploads folder
+            Path filePath = Paths.get(uploadDir + File.separator + file.getOriginalFilename());
             Files.write(filePath, file.getBytes());
-            // Création de l'article
+
+            // Create and save the article entity
             Article article = new Article();
             article.setTitle(title);
             article.setAbstract_(abstract_);
@@ -116,13 +126,14 @@ public class ArticleService {
             article.setAuthorAffiliation(authorAffiliation);
             article.setAffiliation(affiliation);
             article.setArticleCover(coverImage);
-            article.setFilePath(filePath.toString()); // Sauvegarde du chemin
+            article.setFilePath(filePath.toString()); // Save the file path in the database
 
             return articleRepository.save(article);
         } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement du fichier", e);
+            throw new RuntimeException("Error while saving the file", e);
         }
     }
+
 /*
     public Article createArticleWithFile(MultipartFile file, String title,String abstract_ , String isbn, String authorAffiliation, String coverImage ,String affiliation) {
         try {

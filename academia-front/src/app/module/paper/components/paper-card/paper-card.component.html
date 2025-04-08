@@ -11,7 +11,7 @@
     <p class="paper-abstract">
       {{ (article.abstract_ || '') | slice:0:150 }}{{ (article.abstract_?.length ?? 0) > 150 ? '...' : '' }}
     </p>    <div class="paper-footer">
-    <!--    <div class="rating">
+     <!-- <div class="rating">
          <div class="stars">
            <span *ngFor="let star of getRatingStars()" class="star">
              <i *ngIf="star === 1" class="fas fa-star"></i>

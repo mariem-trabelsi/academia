@@ -8,6 +8,7 @@ export interface Article {
   abstract_?: string;
   affiliation?: string;
   approved?: boolean;
+  archived?: boolean;
   articleCover?: string;
   authorAffiliation?: string;
   authorName?: string;

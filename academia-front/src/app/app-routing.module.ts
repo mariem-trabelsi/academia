@@ -5,7 +5,7 @@ import { authGuardGuard } from './services/guard/auth-guard.guard';
 
 const routes: Routes = [
 
- 
+
   {
     path: 'admin',
     loadChildren: () => import('./module/admin/admin.module').then(m => m.AdminModule),
@@ -16,7 +16,7 @@ const routes: Routes = [
   path: '',
   component: AppLayoutComponent,
   children: [
-  
+
     {
       path: 'papers',
       loadChildren: () => import('./module/paper/paper.module').then(m => m.PaperModule)
@@ -32,6 +32,7 @@ const routes: Routes = [
       loadChildren: () => import('./module/social-network/social-network.module').then(m => m.SocialNetworkModule)
     },
 
+
     {
       path: 'notifications',
       loadChildren: () => import('./module/notifications/notifications.module').then(m => m.NotificationsModule)
@@ -41,7 +42,7 @@ const routes: Routes = [
       path: 'feedback',
       loadChildren: () => import('./module/discussion-feedback/discussion-feedback.module').then(m => m.DiscussionFeedbackModule)
     },
-    
+
     {
       path: '',
       redirectTo: 'discover',

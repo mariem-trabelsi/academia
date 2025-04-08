@@ -13,6 +13,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { approveArticle } from '../fn/article-controller/approve-article';
 import { ApproveArticle$Params } from '../fn/article-controller/approve-article';
+import { archiveArticle } from '../fn/article-controller/archive-article';
+import { ArchiveArticle$Params } from '../fn/article-controller/archive-article';
 import { Article } from '../models/article';
 import { createArticle } from '../fn/article-controller/create-article';
 import { CreateArticle$Params } from '../fn/article-controller/create-article';
@@ -22,6 +24,8 @@ import { getAllArticles } from '../fn/article-controller/get-all-articles';
 import { GetAllArticles$Params } from '../fn/article-controller/get-all-articles';
 import { getApprovedArticles } from '../fn/article-controller/get-approved-articles';
 import { GetApprovedArticles$Params } from '../fn/article-controller/get-approved-articles';
+import { getArchivedArticles } from '../fn/article-controller/get-archived-articles';
+import { GetArchivedArticles$Params } from '../fn/article-controller/get-archived-articles';
 import { getArticleById } from '../fn/article-controller/get-article-by-id';
 import { GetArticleById$Params } from '../fn/article-controller/get-article-by-id';
 import { getDomainName } from '../fn/article-controller/get-domain-name';
@@ -32,6 +36,8 @@ import { getMyArticles } from '../fn/article-controller/get-my-articles';
 import { GetMyArticles$Params } from '../fn/article-controller/get-my-articles';
 import { getTop5ArticlesByRating } from '../fn/article-controller/get-top-5-articles-by-rating';
 import { GetTop5ArticlesByRating$Params } from '../fn/article-controller/get-top-5-articles-by-rating';
+import { unarchiveArticle } from '../fn/article-controller/unarchive-article';
+import { UnarchiveArticle$Params } from '../fn/article-controller/unarchive-article';
 import { uploadArticle } from '../fn/article-controller/upload-article';
 import { UploadArticle$Params } from '../fn/article-controller/upload-article';
 
@@ -39,6 +45,31 @@ import { UploadArticle$Params } from '../fn/article-controller/upload-article';
 export class ArticleControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `archiveArticle()` */
+  static readonly ArchiveArticlePath = '/articles/{id}/archive';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `archiveArticle()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  archiveArticle$Response(params: ArchiveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+    return archiveArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `archiveArticle$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  archiveArticle(params: ArchiveArticle$Params, context?: HttpContext): Observable<Article> {
+    return this.archiveArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Article>): Article => r.body)
+    );
   }
 
   /** Path part for operation `approveArticle()` */
@@ -62,6 +93,31 @@ export class ArticleControllerService extends BaseService {
    */
   approveArticle(params: ApproveArticle$Params, context?: HttpContext): Observable<Article> {
     return this.approveArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Article>): Article => r.body)
+    );
+  }
+
+  /** Path part for operation `unarchiveArticle()` */
+  static readonly UnarchiveArticlePath = '/articles/articles/{id}/unarchive';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `unarchiveArticle()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  unarchiveArticle$Response(params: UnarchiveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
+    return unarchiveArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `unarchiveArticle$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  unarchiveArticle(params: UnarchiveArticle$Params, context?: HttpContext): Observable<Article> {
+    return this.unarchiveArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<Article>): Article => r.body)
     );
   }
@@ -287,6 +343,31 @@ export class ArticleControllerService extends BaseService {
    */
   getLatest5Articles(params?: GetLatest5Articles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getLatest5Articles$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  /** Path part for operation `getArchivedArticles()` */
+  static readonly GetArchivedArticlesPath = '/articles/archived';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getArchivedArticles()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getArchivedArticles$Response(params?: GetArchivedArticles$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Article>>> {
+    return getArchivedArticles(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getArchivedArticles$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getArchivedArticles(params?: GetArchivedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
+    return this.getArchivedArticles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }

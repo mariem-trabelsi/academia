@@ -29,8 +29,10 @@ export class PaperListComponent implements OnInit {
 
   loadPapers(): void {
     this.loading = true;
-    this.articleService.getAllArticles(this.filter).subscribe({
+
+    this.articleService.getMyArticles(this.filter).subscribe({
       next: (data: Article[]) => {
+        console.log('Articles after archiving: ', this.articles);
         this.articles = data;
         this.loading = false;
       },
@@ -59,7 +61,7 @@ export class PaperListComponent implements OnInit {
       // Send request to archive the article instead of deleting it
       this.articleService.archiveArticle({ id: this.confirmingDeleteId }).subscribe({
         next: (updatedArticle) => {
-          // Update the local list to reflect the article being archived
+          this.loadPapers();
           this.articles = this.articles.map(article =>
             article.id === this.confirmingDeleteId ? { ...article, archived: true } : article
           );
