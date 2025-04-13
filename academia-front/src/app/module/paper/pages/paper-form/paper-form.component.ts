@@ -4,7 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Paper, PaperDomain } from '../../models/paper';
 import { PaperService } from '../../services/paper.service';
 import {ArticleControllerService} from "../../../../services/services/article-controller.service";
+
+import {DomainControllerService} from "../../../../services/services/domain-controller.service";
 import {Article} from "../../../../services/models/article";
+import {Domain} from "../../../../services/models/domain";
 import {KeycloakService} from "../../../../services/keycloak/keycloak.service";
 import { UploadArticle$Params } from 'src/app/services/fn/article-controller/upload-article';
 
@@ -29,33 +32,166 @@ export class PaperFormComponent implements OnInit {
     private router: Router,
     private paperService: PaperService,
     private articleService: ArticleControllerService,
+    private domainService : DomainControllerService,
     private keycloackService : KeycloakService
   ) {
     this.paperForm = this.createForm();
   }
-/*
-  ngOnInit(): void {
-    this.loadDomains();
-    this.checkEditMode();
-  }
-*/
-ngOnInit(): void {
-  this.paperForm = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
-    isbn: ['', [Validators.required, Validators.minLength(8)]],
-    authorAffiliation: [''],
-    affiliation: [''],
-    abstract: ['', [Validators.required, Validators.minLength(50), Validators.maxLength(1000)]],
-    //content: ['', [Validators.required, Validators.minLength(100)]],
-    content: ['', [Validators.minLength(100)]],
-    domain: ['', Validators.required],
-    keywords: this.fb.array([]),
-    coverImage: ['']
-  });
 
-  this.domains = Object.values(PaperDomain);
+  loadDomains(): void {
+    this.domainService.getAllDomains().subscribe({
+      next: (domains: Domain[]) => {
+        this.domains = domains.map(d => d.name ?? '');
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading domains', err);
+        this.domains = []; // Fallback empty array
+        this.loading = false;
+      }
+    });} 
+    selectedDomainName: string | null = null;
+    /*
+  onSubmit(): void {
+    if (!this.selectedFile) {
+      console.error('No file selected.');
+      return;
+    }
+  
+    // Prepare the parameters according to the generated interface
+    const params: UploadArticle$Params = {
+      title: this.paperForm.value.title,
+      abstract_: this.paperForm.value.abstract,
+      isbn: this.paperForm.value.isbn,
+      coverImage: this.paperForm.value.coverImage,
+      authorAffiliation: this.paperForm.value.authorAffiliation,
+      affiliation: this.paperForm.value.affiliation,
+       // Add domain name
+       domaineName : this.paperForm.value.domain,
+      body: {
+        file: this.selectedFile
+      }
+    };
+  
+    this.articleService.uploadArticle(params).subscribe({
+      next: (article: Article) => {  // Directly receive the Article object
+        this.router.navigate(['/papers']);
+        console.log('Article uploaded successfully:', article);
+      },
+      error: (err) => {
+        console.error('Error during upload:', err);
+      }
+    });
+  }  
+*/
+  ngOnInit(): void {
+    this.paperForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
+      isbn: ['', [Validators.required, Validators.minLength(8)]],
+      authorAffiliation: [''],
+      affiliation: [''],
+      abstract: ['', [Validators.required, Validators.minLength(50), Validators.maxLength(1000)]],
+      //content: ['', [Validators.required, Validators.minLength(100)]],
+      content: ['', [Validators.minLength(100)]],
+      domain: ['', Validators.required],
+      keywords: this.fb.array([]),
+      coverImage: ['']
+      
+    });
+
+ // this.domains = Object.values(PaperDomain);
   this.loading = false;
+  this.loadDomains();
+   // Track domain selection changes
+   this.paperForm.get('domain')?.valueChanges.subscribe(domainName => {
+    this.selectedDomainName = domainName;
+    console.log('Selected domain:', domainName); // Debug
+  });
+  
 }
+
+
+
+
+  
+
+  /*ngOnInit(): void {
+    this.loadDomains();
+    this.paperForm = this.fb.group({
+      // Other form controls...
+      domain: ['', Validators.required]
+    });
+
+    // Track domain selection changes
+    this.paperForm.get('domain')?.valueChanges.subscribe(domainName => {
+      this.selectedDomainName = domainName;
+    });
+  }*/
+
+    onSubmit(): void {
+      // Mark all fields as touched to trigger validation messages
+      this.markFormGroupTouched(this.paperForm);
+    
+      // Check form validity and required files
+      if (this.paperForm.invalid) {
+        console.error('Form is invalid. Please check all required fields.');
+        return;
+      }
+    
+      if (!this.selectedFile) {
+        this.fileError = 'Please select a PDF file to upload.';
+        console.error('No file selected');
+        return;
+      }
+    
+      if (!this.selectedDomainName) {
+        console.error('No domain selected');
+        return;
+      }
+    
+      // Prepare form data
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      formData.append('title', this.paperForm.value.title);
+      formData.append('abstract_', this.paperForm.value.abstract);
+      formData.append('isbn', this.paperForm.value.isbn || '');
+      formData.append('coverImage', this.paperForm.value.coverImage || '');
+      formData.append('authorAffiliation', this.paperForm.value.authorAffiliation || '');
+      formData.append('affiliation', this.paperForm.value.affiliation || '');
+      formData.append('domainName', this.selectedDomainName);
+    
+      // Prepare params for API call
+      const params: UploadArticle$Params = {
+        title: this.paperForm.value.title,
+        abstract_: this.paperForm.value.abstract,
+        isbn: this.paperForm.value.isbn || '',
+        coverImage: this.paperForm.value.coverImage || '',
+        authorAffiliation: this.paperForm.value.authorAffiliation || '',
+        affiliation: this.paperForm.value.affiliation || '',
+        domainName: this.selectedDomainName,
+        body: {
+          file: this.selectedFile
+        }
+      };
+    
+      console.log('Submitting with params:', params); // Debug log
+    
+      this.submitting = true;
+      this.articleService.uploadArticle(params).subscribe({
+        next: (article) => {
+          this.submitting = false;
+          this.router.navigate(['/papers']);
+          console.log('Article uploaded successfully:', article);
+        },
+        error: (err) => {
+          this.submitting = false;
+          console.error('Upload failed', err);
+          // Show user-friendly error message
+          this.fileError = 'Upload failed. Please try again.';
+        }
+      });
+    }
+
 
   createForm(): FormGroup {
     return this.fb.group({
@@ -70,20 +206,7 @@ ngOnInit(): void {
     });
   }
 
-/*
-  get keywordsFormArray(): FormArray {
-    return this.paperForm.get('keywords') as FormArray;
-  }
 
-  addKeyword(): void {
-    if (this.newKeyword.trim() && !this.keywordsFormArray.value.includes(this.newKeyword.trim())) {
-      this.keywordsFormArray.push(this.fb.control(this.newKeyword.trim()));
-      this.newKeyword = '';
-    }
-  }
-  removeKeyword(index: number): void {
-    this.keywordsFormArray.removeAt(index);
-  }*/
 
  get keywordsFormArray(): FormArray {
   return this.paperForm.get('keywords') as FormArray;
@@ -101,12 +224,6 @@ removeKeyword(index: number) {
   this.keywordsFormArray.removeAt(index);
 }
 
-
-  loadDomains(): void {
-    this.paperService.getPaperDomains().subscribe(domains => {
-      this.domains = domains;
-    });
-  }
 
   checkEditMode(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -178,7 +295,7 @@ onFileSelected(event: Event): void {
     }
   }
 }
-
+/*
 onSubmit(): void {
   if (!this.selectedFile) {
     console.error('Aucun fichier sélectionné.');
@@ -217,7 +334,8 @@ onSubmit(): void {
       console.error('Erreur lors de l\'upload :', err);
     }
   });
-}
+}*/
+
 successMessage = '';
 
 onPublish() {

@@ -8,43 +8,45 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Article } from '../../models/article';
 
-export interface UploadArticle$Params {
+export interface UpdateArticle$Params {
+  id: number;
   title: string;
   abstract_: string;
   isbn: string;
   coverImage: string;
   authorAffiliation: string;
-  domainName: string;
   affiliation: string;
+  domainName: string;
       body?: {
-'file': Blob;
+'file'?: Blob;
 }
 }
 
-export function uploadArticle(http: HttpClient, rootUrl: string, params: UploadArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
-  const rb = new RequestBuilder(rootUrl, uploadArticle.PATH, 'post');
+export function updateArticle(http: HttpClient, rootUrl: string, params: UpdateArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+  const rb = new RequestBuilder(rootUrl, updateArticle.PATH, 'put');
   if (params) {
+    rb.path('id', params.id, {});
     rb.query('title', params.title, {});
     rb.query('abstract_', params.abstract_, {});
     rb.query('isbn', params.isbn, {});
     rb.query('coverImage', params.coverImage, {});
     rb.query('authorAffiliation', params.authorAffiliation, {});
     rb.query('affiliation', params.affiliation, {});
-    rb.query('domainName',params.domainName);
-    rb.body(params.body, 'multipart/form-data');
+    rb.query('domainName', params.domainName, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'multipart/form-data', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Article>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-
-uploadArticle.PATH = '/articles/upload';
+updateArticle.PATH = '/articles/update/{id}';

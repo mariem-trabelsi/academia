@@ -38,6 +38,8 @@ import { getTop5ArticlesByRating } from '../fn/article-controller/get-top-5-arti
 import { GetTop5ArticlesByRating$Params } from '../fn/article-controller/get-top-5-articles-by-rating';
 import { unarchiveArticle } from '../fn/article-controller/unarchive-article';
 import { UnarchiveArticle$Params } from '../fn/article-controller/unarchive-article';
+import { updateArticle } from '../fn/article-controller/update-article';
+import { UpdateArticle$Params } from '../fn/article-controller/update-article';
 import { uploadArticle } from '../fn/article-controller/upload-article';
 import { UploadArticle$Params } from '../fn/article-controller/upload-article';
 
@@ -71,7 +73,7 @@ export class ArticleControllerService extends BaseService {
       map((r: StrictHttpResponse<Article>): Article => r.body)
     );
   }
-
+  
   /** Path part for operation `approveArticle()` */
   static readonly ApproveArticlePath = '/articles/{id}/approve';
 
@@ -84,6 +86,7 @@ export class ArticleControllerService extends BaseService {
   approveArticle$Response(params: ApproveArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<Article>> {
     return approveArticle(this.http, this.rootUrl, params, context);
   }
+  
 
   /**
    * This method provides access only to the response body.
@@ -94,6 +97,35 @@ export class ArticleControllerService extends BaseService {
   approveArticle(params: ApproveArticle$Params, context?: HttpContext): Observable<Article> {
     return this.approveArticle$Response(params, context).pipe(
       map((r: StrictHttpResponse<Article>): Article => r.body)
+    );
+  }
+
+  /** Path part for operation `updateArticle()` */
+  static readonly UpdateArticlePath = '/articles/update/{id}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateArticle()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateArticle$Response(params: UpdateArticle$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+    return updateArticle(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateArticle$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateArticle(params: UpdateArticle$Params, context?: HttpContext): Observable<{
+}> {
+    return this.updateArticle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 
@@ -185,6 +217,7 @@ export class ArticleControllerService extends BaseService {
     return uploadArticle(this.http, this.rootUrl, params, context);
   }
 
+
   /**
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `uploadArticle$Response()` instead.
@@ -196,6 +229,7 @@ export class ArticleControllerService extends BaseService {
       map((r: StrictHttpResponse<Article>): Article => r.body)
     );
   }
+  
 
   /** Path part for operation `getArticleById()` */
   static readonly GetArticleByIdPath = '/articles/{id}';
@@ -396,5 +430,34 @@ export class ArticleControllerService extends BaseService {
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
     );
   }
+  /**
+ * Custom upload method that properly handles multipart form data
+ */
+  
+uploadArticleWithFile(params: {
+  file: File,
+  title: string,
+  abstract_: string,
+  isbn: string,
+  coverImage: string,
+  authorAffiliation: string,
+  affiliation: string,
+  domainName: string
+}): Observable<Article> {
+  const formData = new FormData();
+  
+  // Append all fields exactly as expected by backend
+  formData.append('file', params.file);
+  formData.append('title', params.title);
+  formData.append('abstract_', params.abstract_);
+  formData.append('isbn', params.isbn);
+  formData.append('coverImage', params.coverImage);
+  formData.append('authorAffiliation', params.authorAffiliation);
+  formData.append('affiliation', params.affiliation);
+  formData.append('domainName', params.domainName);
+
+  // Create a custom request since the generated one doesn't support FormData
+  return this.http.post<Article>(`${this.rootUrl}/upload`, formData);
+}
 
 }

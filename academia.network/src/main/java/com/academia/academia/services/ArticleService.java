@@ -4,10 +4,8 @@ import com.academia.academia.entities.Article;
 import com.academia.academia.entities.Domain;
 import com.academia.academia.repositories.ArticleRepository;
 import com.academia.academia.repositories.DomainRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 
@@ -104,15 +100,17 @@ public class ArticleService {
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
 
     public Article createArticleWithFile(MultipartFile file, String title, String abstract_, String isbn,
-                                         String authorAffiliation, String coverImage, String affiliation) {
+                                         String authorAffiliation, String coverImage, String affiliation, Domain domain) {
         try {
             // Define the upload directory relative to your application path
-            File uploadDir = new File("src/main/resources/static/uploads");
+            //File uploadDir = new File("src/main/resources/static/uploads");
+            File uploadDir = new File("C:/Users/User/IdeaProjects/academia/academia-front/src/assets/uploads");
 
             // Create the directory if it doesn't exist
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
+
 
             // Save the file in the uploads folder
             Path filePath = Paths.get(uploadDir + File.separator + file.getOriginalFilename());
@@ -127,12 +125,65 @@ public class ArticleService {
             article.setAffiliation(affiliation);
             article.setArticleCover(coverImage);
             article.setFilePath(filePath.toString()); // Save the file path in the database
-
+            article.setDomain(domain);
             return articleRepository.save(article);
         } catch (IOException e) {
             throw new RuntimeException("Error while saving the file", e);
         }
     }
+
+
+
+
+
+
+    public Article updateArticleWithFile(Long articleId, MultipartFile file, String title, String abstract_,
+                                         String isbn, String authorAffiliation, String coverImage,
+                                         String affiliation, Domain domain) {
+        try {
+            Article existingArticle = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new RuntimeException("Article not found"));
+
+            // Update fields
+            existingArticle.setTitle(title);
+            existingArticle.setAbstract_(abstract_);
+            existingArticle.setIsbn(isbn);
+            existingArticle.setAuthorAffiliation(authorAffiliation);
+            existingArticle.setAffiliation(affiliation);
+            existingArticle.setArticleCover(coverImage);
+            existingArticle.setDomain(domain);
+
+            // Handle file update if provided
+            if (file != null && !file.isEmpty()) {
+                File uploadDir = new File("C:/Users/User/IdeaProjects/academia/academia-front/src/assets/uploads");
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+
+                // Delete old file if exists
+                if (existingArticle.getFilePath() != null) {
+                    Files.deleteIfExists(Paths.get(existingArticle.getFilePath()));
+                }
+
+                // Save new file
+                Path filePath = Paths.get(uploadDir + File.separator + file.getOriginalFilename());
+                Files.write(filePath, file.getBytes());
+                existingArticle.setFilePath(filePath.toString());
+            }
+
+            return articleRepository.save(existingArticle);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while updating the article", e);
+        }
+    }
+
+
+
+
+
+
+
+
 
 /*
     public Article createArticleWithFile(MultipartFile file, String title,String abstract_ , String isbn, String authorAffiliation, String coverImage ,String affiliation) {

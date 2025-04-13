@@ -78,6 +78,11 @@ public class DomainService {
             throw new RuntimeException("Domain not found");
         }
     }
+    public Domain findByName(String domainName) {
+        return domainRepository.findByName(domainName);
+    }
 
-
+    public Domain saveDomain(Domain domain) {
+        return domainRepository.save(domain);
+    }
 }

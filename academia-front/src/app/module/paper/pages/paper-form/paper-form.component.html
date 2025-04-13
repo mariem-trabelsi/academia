@@ -123,16 +123,15 @@
       <!-- Domain -->
       <div class="form-group">
         <label for="domain" class="required">Domain/Field</label>
-        <select
-          id="domain"
-          formControlName="domain"
-          [class.invalid]="paperForm.get('domain')?.invalid && paperForm.get('domain')?.touched">
-          <option [ngValue]="''">Select a domain</option>
-          <option *ngFor="let domain of domains" [ngValue]="domain">{{ domain }}</option>
-        </select>
-        <div class="error-message" *ngIf="paperForm.get('domain')?.invalid && paperForm.get('domain')?.touched">
-          <span *ngIf="paperForm.get('domain')?.errors?.['required']">Domain is required</span>
-        </div>
+       <div class="form-group">
+    <label for="domain">Domain/Field</label>
+    <select id="domain" formControlName="domain" class="form-control">
+      <option value="">Select a domain</option>
+      <option *ngIf="domains.length === 0" disabled>Loading domains...</option>
+      <option *ngFor="let domain of domains" [value]="domain">{{ domain }}</option>
+    </select>
+  </div>
+        
       </div>
 
       <!-- Keywords -->

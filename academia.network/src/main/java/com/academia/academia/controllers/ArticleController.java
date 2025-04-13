@@ -1,7 +1,9 @@
 package com.academia.academia.controllers;
 
 import com.academia.academia.entities.Article;
+import com.academia.academia.entities.Domain;
 import com.academia.academia.services.ArticleService;
+import com.academia.academia.services.DomainService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,13 @@ import java.util.List;
 @RequestMapping("/articles")
 public class ArticleController {
     private final ArticleService articleService;
+    private final DomainService domainService;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, DomainService domainService) {
         this.articleService = articleService;
+        this.domainService = domainService;
     }
+    /*
     @PostMapping("/upload")
     public ResponseEntity<Article> uploadArticle(
             @RequestParam("file") MultipartFile file,
@@ -30,10 +35,97 @@ public class ArticleController {
             @RequestParam("isbn") String isbn,
             @RequestParam("coverImage") String coverImage,
             @RequestParam("authorAffiliation") String authorAffiliation,
-            @RequestParam("affiliation") String affiliation) {
-        Article article = articleService.createArticleWithFile(file, title, abstract_ , isbn, authorAffiliation ,coverImage , affiliation);
+            @RequestParam("affiliation") String affiliation,
+            @RequestParam("domainName") String domainName)
+
+    {   Domain domain = domainService.findByName(domainName);
+
+        if (domain == null) {
+            // Handle the case where the domain is not found (optional)
+            return ResponseEntity.badRequest().body(null); // Return bad request or an appropriate message
+        }
+        Article article = articleService.createArticleWithFile(file, title, abstract_ , isbn, authorAffiliation ,coverImage , affiliation, domain);
         return ResponseEntity.ok(article);
+    }*/
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateArticle(
+            @PathVariable Long id,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam("abstract_") String abstract_,
+            @RequestParam("isbn") String isbn,
+            @RequestParam("coverImage") String coverImage,
+            @RequestParam("authorAffiliation") String authorAffiliation,
+            @RequestParam("affiliation") String affiliation,
+            @RequestParam("domainName") String domainName) {
+
+        try {
+            Domain domain = domainService.findByName(domainName);
+            if (domain == null) {
+                domain = new Domain();
+                domain.setName(domainName);
+                domain = domainService.saveDomain(domain);
+            }
+
+            Article updatedArticle = articleService.updateArticleWithFile(
+                    id,
+                    file,
+                    title,
+                    abstract_,
+                    isbn,
+                    authorAffiliation,
+                    coverImage,
+                    affiliation,
+                    domain
+            );
+
+            return ResponseEntity.ok(updatedArticle);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating article: " + e.getMessage());
+        }
     }
+
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadArticle(
+
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam("abstract_") String abstract_,
+            @RequestParam("isbn") String isbn,
+            @RequestParam("coverImage") String coverImage,
+            @RequestParam("authorAffiliation") String authorAffiliation,
+            @RequestParam("affiliation") String affiliation,
+            @RequestParam("domainName") String domainName) {
+
+        try {
+            Domain domain = domainService.findByName(domainName);
+            if (domain == null) {
+                // Create new domain if not found (or return error)
+                domain = new Domain();
+                domain.setName(domainName);
+                domain = domainService.saveDomain(domain); // You'll need this method in DomainService
+            }
+
+            Article article = articleService.createArticleWithFile(
+                    file,
+                    title,
+                    abstract_,
+                    isbn,
+                    authorAffiliation,
+                    coverImage,
+                    affiliation,
+                    domain
+            );
+
+            return ResponseEntity.ok(article);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error uploading article: " + e.getMessage());
+        }
+    }
+
+
     /*
     @PostMapping("/upload")
     public ResponseEntity<Article> uploadArticle(
