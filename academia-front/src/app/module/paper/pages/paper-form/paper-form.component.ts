@@ -108,6 +108,7 @@ export class PaperFormComponent implements OnInit {
     console.log('Selected domain:', domainName); // Debug
   });
   
+  
 }
 
 

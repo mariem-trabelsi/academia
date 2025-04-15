@@ -13,7 +13,8 @@ import {DomSanitizer, SafeResourceUrl, Title} from '@angular/platform-browser';
 import { KeycloakService } from 'src/app/services/keycloak/keycloak.service';
 import {Article} from "../../../../services/models/article";
 import {ArticleControllerService} from "../../../../services/services/article-controller.service";
-
+import { UpdateArticle$Params } from '../../../../services/fn/article-controller/update-article';
+import { ViewChild, ElementRef } from '@angular/core';
 @Component({
   selector: 'app-paper-detail',
   templateUrl: './paper-detail.component.html',
@@ -22,8 +23,11 @@ import {ArticleControllerService} from "../../../../services/services/article-co
 export class PaperDetailComponent implements OnInit {
   paper: Paper | undefined;
   isLoading = true;
+  article!: Article;
+  filePath: SafeResourceUrl | null = null;
+  isEditing = false;
+  editedArticle: any = {};
   showDeleteConfirmation = false;
-
   // New Discussion & Feedback properties
   paperRating: Rating | undefined;
   paperComments: Comment[] = [];
@@ -33,11 +37,10 @@ export class PaperDetailComponent implements OnInit {
   isLoadingComments = false;
   isSubmittingComment = false;
   commentSortBy: 'newest' | 'oldest' | 'popular' = 'newest';
-  article!: Article ;
-  filePath: SafeResourceUrl | undefined;
+  
   // Current user has already submitted feedback
   hasSubmittedFeedback = false;
-
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -45,33 +48,85 @@ export class PaperDetailComponent implements OnInit {
     private discussionService: DiscussionService,
     private feedbackService: FeedbackControllerService,
     private titleService: Title,
-    private keycloakService: KeycloakService,
+    private keycloakService: KeycloakService,    
     private articleService: ArticleControllerService,
     private sanitizer: DomSanitizer,
+
   ) { }
 
   ngOnInit(): void {
     this.loadPaper();
+  
   }
+ /* onPdfFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedPdfFile = file;
+      this.previewPdf(file);
+    }
+  }*/
+ 
+  onPdfFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedPdfFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.pdfPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  pdfPreviewUrl: SafeResourceUrl | null = null;
+selectedPdfFile: File | null = null;
 
+  clearPdfSelection(): void {
+    this.selectedPdfFile = null;
+    this.pdfPreviewUrl = null;
+  }
+  
+  getSafePdfUrl(fullPath: string): SafeResourceUrl {
+    const fileName = fullPath.split(/[\\/]/).pop() || '';
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+        `assets/uploads/${fileName}`
+    );
+}
+getSafePdfUrlOrDefault(): SafeResourceUrl {
+  return this.article?.filePath 
+      ? this.getSafePdfUrl(this.article.filePath)
+      : this.sanitizer.bypassSecurityTrustResourceUrl('');
+}
+  getFileName(fullPath: string): string {
+    // Handle both Unix (/) and Windows (\) paths
+    return fullPath.split(/[\\/]/).pop() || ''; // Returns "ACP.pdf"
+  }
+  previewPdf(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+     // this.pdfPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(e.target.result);
+      // Assuming your backend is running on http://localhost:8080
+        this.pdfPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:8088/uploads/${this.article.filePath}`
+);
+    };
+    reader.readAsDataURL(file);
+  }
+  
   loadPaper(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (isNaN(id)) {
-      console.error('Invalid paper ID:', this.route.snapshot.paramMap.get('id'));
       this.navigateToList();
       return;
     }
 
     this.isLoading = true;
-
     this.articleService.getArticleById({ id }).subscribe({
       next: (article: Article) => {
-        const fullPath = article.filePath;
-        // @ts-ignore
-        const fileName = fullPath.split(/[/\\]/).pop();
         this.article = article;
-        const filePath = `http://localhost:8088/uploads/pdf/${fileName}`;
-        this.filePath = this.sanitizer.bypassSecurityTrustResourceUrl(filePath);
+        if (article.filePath) {
+          this.filePath = this.sanitizer.bypassSecurityTrustResourceUrl(article.filePath);
+         
+         
+        }
         this.isLoading = false;
 
         // Always reload comments when paper is loaded
@@ -91,12 +146,82 @@ export class PaperDetailComponent implements OnInit {
         if (error.status === 404) {
           this.router.navigate(['/not-found']);
         } else {
-          this.navigateToList();
+        this.navigateToList();
         }
       }
     });
   }
+  startEditing(): void {
+    this.isEditing = true;
+    this.editedArticle = {
+      title: this.article.title || '',
+      abstract_: this.article.abstract_ || '',
+      isbn: this.article.isbn || '',
+      articleCover: this.article.articleCover || '',
+      authorAffiliation: this.article.authorAffiliation || '',
+      affiliation: this.article.affiliation || ''
+    };
+  }
+  previewCoverImage(): string {
+    return this.isEditing && this.editedArticle.articleCover 
+      ? this.editedArticle.articleCover 
+      : this.article?.articleCover || '';
+  }
+  selectedFile: File | null = null;
+  saveChanges(): void {
+    const updateParams: UpdateArticle$Params = {
+      id: this.article.id!,
+      title: this.editedArticle.title,
+      abstract_: this.editedArticle.abstract_,
+      isbn: this.editedArticle.isbn,
+      authorAffiliation: this.editedArticle.authorAffiliation,
+      affiliation: this.editedArticle.affiliation,
+      coverImage: this.editedArticle.articleCover || '',
+      domainName: this.article.domain?.name || '',
+      body: { 
+        file: this.selectedFile !== null ? this.selectedFile : undefined  }
+    };
 
+    this.articleService.updateArticle(updateParams).subscribe({
+      next: (updatedArticle) => {
+        this.article = { ...this.article, ...updatedArticle };
+        this.isEditing = false;
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+      }
+    });
+  }
+ 
+  /*previewPdf(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.pdfPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        e.target.result
+      );
+    };
+    reader.readAsDataURL(file);
+  }
+*/
+ 
+
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file.type !== 'application/pdf') {
+        
+        this.selectedFile = null;
+      } else {
+        
+        this.selectedFile = file;
+      }
+    }
+  }
+  cancelEdit(): void {
+    this.isEditing = false;
+  }
   loadDiscussionData(paperId: string): void {
     // Load rating data
     this.discussionService.getRating(paperId).subscribe({
@@ -110,7 +235,7 @@ export class PaperDetailComponent implements OnInit {
     // Load both comments and feedbacks
     this.loadCommentsAndFeedbacks(paperId);
   }
-
+  @ViewChild('pdfInput') pdfInput!: ElementRef;
   // Helper method to get feedbacks for an article and handle pagination
   getArticleFeedbacks(articleId: number) {
     return this.feedbackService.getFeedbacksByArticleId({ articleId }).pipe(
@@ -241,8 +366,8 @@ export class PaperDetailComponent implements OnInit {
         this.paperRating = updatedRating;
         this.isRatingSubmitted = true;
       },
-      error: (error) => {
-        console.error('Error submitting rating:', error);
+      error: (err) => {
+        console.error('Update failed:', err);
       }
     });
   }
@@ -260,7 +385,7 @@ export class PaperDetailComponent implements OnInit {
       error: (error) => {
         console.error('Error adding comment:', error);
         this.isSubmittingComment = false;
-      }
+  }
     });
   }
 
@@ -269,22 +394,12 @@ export class PaperDetailComponent implements OnInit {
     this.commentSortBy = filter.sortBy || 'newest';
     this.loadCommentsAndFeedbacks(this.paper.id!.toString(), filter);
   }
-
-  editPaper(): void {
-    if (this.paper) {
-      this.router.navigate(['/papers/edit', this.paper.id]);
-    }
-  }
-
   confirmDelete(): void {
-    console.log('Confirm delete called, showing modal');
     this.showDeleteConfirmation = true;
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   }
 
   cancelDelete(): void {
     this.showDeleteConfirmation = false;
-    document.body.style.overflow = ''; // Restore scrolling
   }
 
   deletePaper(): void {
@@ -336,9 +451,8 @@ export class PaperDetailComponent implements OnInit {
         // Reload comments to get fresh data without reloading the entire paper
         this.loadCommentsAndFeedbacks(this.paper!.id!.toString(), { sortBy: this.commentSortBy });
       },
-      error: (error) => {
-        console.error('Error submitting feedback:', error);
-        this.isLoadingComments = false;
+      error: (err) => {
+        console.error('Error archiving paper:', err);
       }
     });
   }
@@ -371,8 +485,8 @@ export class PaperDetailComponent implements OnInit {
       );
 
       console.log('Current user has submitted feedback:', this.hasSubmittedFeedback);
-    }
   }
+}
 
   /**
    * Returns true if the current user has already submitted feedback for this article

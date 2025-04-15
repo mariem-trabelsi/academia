@@ -3,7 +3,7 @@
     <div class="spinner"></div>
     <p>Loading paper details...</p>
   </div>
-
+  
   <div class="paper-not-found" *ngIf="!isLoading && !article">
     <h2>Paper Not Found</h2>
     <p>The requested paper could not be found or has been removed.</p>
@@ -18,29 +18,85 @@
       </div>
 
       <div class="paper-actions">
-        <button class="btn-edit" (click)="editPaper()">
+        <button *ngIf="!isEditing" class="btn-edit" (click)="startEditing()">
           <i class="fas fa-edit"></i>
           <span>Edit</span>
         </button>
-        <button class="btn-delete" (click)="confirmDelete()">
+        <button *ngIf="!isEditing" class="btn-delete" (click)="confirmDelete()">
           <i class="fas fa-trash-alt"></i>
           <span>Delete</span>
+        </button>
+        <button *ngIf="isEditing" class="btn-save" (click)="saveChanges()">
+          <i class="fas fa-save"></i>
+          <span>Save</span>
+        </button>
+        <button *ngIf="isEditing" class="btn-cancel" (click)="cancelEdit()">
+          <i class="fas fa-times"></i>
+          <span>Cancel</span>
         </button>
       </div>
     </div>
 
-    <div class="paper-cover" *ngIf="article.articleCover" [style.background-image]="'url(' + article.articleCover + ')'">
+    <div>
+    <div class="paper-cover" *ngIf="!isEditing && article.articleCover" [style.background-image]="'url(' + article.articleCover + ')'">
       <div class="paper-domain">{{article.domain}}</div>
     </div>
+    
+  </div>
+  
+  
+  
+    <!--adding edit img-->
 
     <div class="paper-content">
-      <h1 class="paper-title">{{article.title}}</h1>
+
+
+
+
+
+
+
+
+
+      <div *ngIf="isEditing" class="form-group">
+        <label for="coverImage">Cover Image URL</label>
+        <input
+          type="text"
+          id="coverImage"
+          [(ngModel)]="editedArticle.articleCover"
+          name="coverImage"
+          placeholder="Enter image URL (e.g., https://...jpg)" />
+        
+        <div class="image-preview" *ngIf="editedArticle.articleCover">
+          <p>Preview:</p>
+          <img
+            [src]="editedArticle.articleCover"
+            alt="Cover Preview"
+            class="cover-preview-img"
+            onerror="this.style.display='none'" />
+        </div>
+      </div>
+
+
+
+
+      <!-- Title - Editable -->
+
+      <div class="field-group">
+
+        <h1 *ngIf="!isEditing">{{article.title}}</h1>
+        <h3 *ngIf="isEditing">Title</h3>
+        <input *ngIf="isEditing" [(ngModel)]="editedArticle.title" class="edit-input">
+      </div>
+      
 
       <div class="paper-meta">
         <div class="author-info">
           <span class="author-label">Author:</span>
           <a [routerLink]="['/network/researcher', 1]" class="author-name">{{article.authorName}}</a>
-          <span class="author-affiliation" *ngIf="article.authorAffiliation">({{article.authorAffiliation}})</span>
+          <span class="author-affiliation" *ngIf="!isEditing && article.authorAffiliation">({{article.authorAffiliation}})</span>
+          <input *ngIf="isEditing" [(ngModel)]="editedArticle.authorAffiliation" 
+                placeholder="Author " class="edit-input">
         </div>
 
         <div class="date-info">
@@ -49,57 +105,91 @@
         </div>
       </div>
 
-    <!--  <div class="paper-keywords">
-        <span class="keyword" *ngFor="let keyword of paper.keywords">{{keyword}}</span>
-      </div>-->
-
+      <!-- Abstract - Editable -->
       <div class="paper-abstract">
         <h2>Abstract</h2>
-        <p>{{article.abstract_}}</p>
+        <div *ngIf="!isEditing">
+          <p>{{article.abstract_}}</p>
+        </div>
+        <textarea *ngIf="isEditing" [(ngModel)]="editedArticle.abstract_" class="edit-textarea"></textarea>
       </div>
+      
 
+      <!-- Content - Editable -->
       <div class="paper-full-content">
         <h2>Content</h2>
-        <div [innerHTML]="article.authorAffiliation"></div>
+        <div *ngIf="!isEditing" [innerHTML]="article.authorAffiliation"></div>
+        <textarea *ngIf="isEditing" [(ngModel)]="editedArticle.affiliation" class="edit-textarea"></textarea>
       </div>
 
-    <!--  <div class="paper-attachments" *ngIf="article.attachments && paper.attachments.length > 0">
-        <h2>Attachments</h2>
-        <div class="attachment-list">
-          <a *ngFor="let attachment of paper.attachments"
-             [href]="attachment.fileUrl"
-             class="attachment-item"
-             target="_blank">
-            <i class="fas fa-paperclip"></i>
-            <span class="attachment-name">{{attachment.name}}</span>
-            <span class="attachment-type">{{attachment.fileType}}</span>
-          </a>
-        </div>
-      </div>-->
-
-      <div class="paper-pdf" *ngIf="article.filePath">
+      <div class="paper-pdf" *ngIf="article.filePath && !isEditing">
         <h2>Paper PDF</h2>
-        <div *ngIf="filePath">
-          <iframe [src]="filePath"  width="100%" height="600px">
-          </iframe>
-          <div *ngIf="isLoading">Loading PDF...</div>
+        <div class="paper-pdf">          
+        <iframe 
+        [src]="getSafePdfUrlOrDefault()" 
+        width="100%" 
+        height="600px">
+      </iframe>
         </div>
       </div>
+      <div *ngIf="isEditing" class="form-group">
+        <div class="paper-pdf">          
+          <iframe 
+          [src]="getSafePdfUrlOrDefault()" 
+          width="100%" 
+          height="600px">
+        </iframe>
+          </div>
+      </div>
+      <div class="new-pdf" *ngIf="selectedPdfFile && isEditing">
+        <h4>New PDF Preview:</h4>
+        <iframe 
+          [src]="pdfPreviewUrl" 
+          width="100%" 
+          height="600px"
+          style="border: 1px solid #4CAF50; margin-bottom: 15px;">
+        </iframe>
+      </div>
 
-      <div class="paper-rating">
+      
+      <div *ngIf="isEditing" class="form-group">
+        <label for="fileUpload" class="required">Upload PDF</label>
+
+        <input
+          type="file"
+          id="fileUpload"
+          (change)="onFileSelected($event)"
+          accept=".pdf"
+          class="file-input" />
+        
+      </div>
+      
+
+     
+      
+      <div *ngIf="(!article.filePath || selectedPdfFile) && isEditing">
+        <input #pdfInput type="file" accept=".pdf" (change)="onPdfFileChange($event)" hidden>
+        <button class="btn-upload" (click)="pdfInput.click()">
+          <i class="fas fa-upload"></i> 
+          {{ article.filePath ? 'Replace PDF' : 'Upload PDF' }}
+        </button>
+      </div>
+
+
+      
+
+      <div class="paper-rating" *ngIf="!isEditing">
         <h2>Rate this Paper</h2>
         <app-rating-summary [rating]="paperRating" *ngIf="paperRating"></app-rating-summary>
 
         <div class="feedback-container">
           <h3>Leave your feedback</h3>
 
-          <!-- Show this message when user has already submitted feedback -->
           <div class="feedback-already-submitted" *ngIf="hasUserAlreadySubmittedFeedback()">
             <i class="fas fa-check-circle"></i>
             <p>You have already submitted your feedback for this paper. Thank you for your contribution!</p>
           </div>
 
-          <!-- Only show the form when user hasn't submitted feedback yet -->
           <app-comment-form
             *ngIf="!hasUserAlreadySubmittedFeedback()"
             [contentId]="article.id!.toString()"
@@ -113,9 +203,8 @@
         </div>
       </div>
 
-      <div class="paper-comments">
+      <div class="paper-comments" *ngIf="!isEditing">
         <h2>Feedbacks</h2>
-
         <app-comment-list
           [comments]="paperComments"
           [loading]="isLoadingComments"
@@ -127,7 +216,7 @@
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- Single Delete Confirmation Modal -->
 <div class="modal-overlay" *ngIf="showDeleteConfirmation">
   <div class="modal-dialog">
     <div class="modal-content">

@@ -122,17 +122,15 @@
 
       <!-- Domain -->
       <div class="form-group">
-        <label for="domain" class="required">Domain/Field</label>
-       <div class="form-group">
-    <label for="domain">Domain/Field</label>
-    <select id="domain" formControlName="domain" class="form-control">
-      <option value="">Select a domain</option>
-      <option *ngIf="domains.length === 0" disabled>Loading domains...</option>
-      <option *ngFor="let domain of domains" [value]="domain">{{ domain }}</option>
-    </select>
-  </div>
-        
+        <label for="domain">Domain/Field</label>
+        <select id="domain" formControlName="domain" class="form-control">
+          <option value="">Select a domain</option>
+          <option *ngIf="domains.length === 0" disabled>Loading domains...</option>
+          <option *ngFor="let domain of domains" [value]="domain">{{ domain }}</option>
+        </select>
       </div>
+        
+      
 
       <!-- Keywords -->
       <div class="form-group">

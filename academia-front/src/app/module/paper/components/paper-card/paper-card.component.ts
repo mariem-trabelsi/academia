@@ -21,7 +21,6 @@ export class PaperCardComponent {
     event.stopPropagation();
     this.deleteRequest.emit(this.article.id);
   }
-  
   viewPaper(): void {
     this.router.navigate(['/papers', this.paper.id]);
   }
