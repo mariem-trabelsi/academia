@@ -89,17 +89,16 @@
 
       <!-- Abstract -->
       <div class="form-group">
-        <label for="abstract" class="required">Abstract</label>
+        <label for="abstract">Abstract</label>
         <textarea
           id="abstract"
           formControlName="abstract"
-          rows="4"
-          placeholder="Enter paper abstract"
-          [class.invalid]="paperForm.get('abstract')?.invalid && paperForm.get('abstract')?.touched"></textarea>
+          rows="5"
+          placeholder="Provide a brief summary of your paper"></textarea>
         <div class="error-message" *ngIf="paperForm.get('abstract')?.invalid && paperForm.get('abstract')?.touched">
           <span *ngIf="paperForm.get('abstract')?.errors?.['required']">Abstract is required</span>
-          <span *ngIf="paperForm.get('abstract')?.errors?.['minlength']">At least 5 characters</span>
-          <span *ngIf="paperForm.get('abstract')?.errors?.['maxlength']">Max 100 characters</span>
+          <span *ngIf="paperForm.get('abstract')?.errors?.['minlength']">Abstract must be at least 50 characters</span>
+          <span *ngIf="paperForm.get('abstract')?.errors?.['maxlength']">Abstract cannot exceed 1000 characters</span>
         </div>
       </div>
 
@@ -180,13 +179,30 @@
       <!-- Bottom Buttons -->
       <div class="form-actions-bottom">
         <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        
+        <!-- Verification Button (moved here) -->
+        <button type="button" class="btn-verify" (click)="verifyContent()" [disabled]="isVerifying || !paperForm.get('abstract')?.valid">
+          <i class="fas" [ngClass]="{'fa-check-circle': !isVerifying, 'fa-spinner fa-spin': isVerifying}"></i>
+          Verify Content
+        </button>
+        
         <button
           type="submit"
           class="btn-submit"
           [disabled]="paperForm.invalid || submitting">
           <i class="fas" [class.fa-save]="!submitting" [class.fa-spinner]="submitting" [class.fa-spin]="submitting"  (click)="onSubmit()"></i>
-          {{ isEditMode ? 'Update Paper' : 'Publish Paper' }}
+          {{ isEditMode ? 'Update Article' : 'Publish Article' }}
         </button>
+      </div>
+      
+      <!-- Verification Result (placed below the buttons) -->
+      <div class="verification-result" *ngIf="verificationMessage" [ngClass]="verificationStatus">
+        <i class="fas" [ngClass]="{
+          'fa-check-circle': verificationStatus === 'success',
+          'fa-exclamation-circle': verificationStatus === 'warning',
+          'fa-times-circle': verificationStatus === 'error'
+        }"></i>
+        <span>{{ verificationMessage }}</span>
       </div>
     </form>
   </div>
