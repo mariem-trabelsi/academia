@@ -234,9 +234,9 @@ export class PaperDetailComponent implements OnInit {
   }
 
   submitRating(): void {
-    if (!this.paper || this.newRating === 0 || this.isRatingSubmitted) return;
+    if (!this.article || this.newRating === 0 || this.isRatingSubmitted) return;
 
-    this.discussionService.submitRating(this.paper.id!.toString(), this.newRating).subscribe({
+    this.discussionService.submitRating(this.article.id!.toString(), this.newRating).subscribe({
       next: (updatedRating) => {
         this.paperRating = updatedRating;
         this.isRatingSubmitted = true;
@@ -271,46 +271,36 @@ export class PaperDetailComponent implements OnInit {
   }
 
   editPaper(): void {
-    if (this.paper) {
-      this.router.navigate(['/papers/edit', this.paper.id]);
+    if (this.article?.id) {
+      this.router.navigate(['/papers/edit', this.article.id]);
     }
   }
 
   confirmDelete(): void {
-    console.log('Confirm delete called, showing modal');
     this.showDeleteConfirmation = true;
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   }
 
   cancelDelete(): void {
     this.showDeleteConfirmation = false;
-    document.body.style.overflow = ''; // Restore scrolling
   }
 
   deletePaper(): void {
-    if (!this.article) return;
+    if (!this.article?.id) return;
 
-    this.articleService.archiveArticle({ id: this.article.id! }).subscribe({
-      next: (success) => {
-        if (success) {
-          this.showDeleteConfirmation = false;
-          document.body.style.overflow = ''; // Restore scrolling
-          this.navigateToList(); // Redirect to list after archiving
-        } else {
-          this.showDeleteConfirmation = false;
-          document.body.style.overflow = ''; // Restore scrolling
-        }
+    this.articleService.deleteArticle({ id: this.article.id }).subscribe({
+      next: () => {
+        this.showDeleteConfirmation = false;
+        this.navigateToList();
       },
       error: (error) => {
-        console.error('Error archiving paper:', error);
+        console.error('Error deleting paper:', error);
         this.showDeleteConfirmation = false;
-        document.body.style.overflow = ''; // Restore scrolling
       }
     });
   }
 
   onFeedbackSubmitted(feedback: Feedback): void {
-    if (!this.paper?.id) return;
+    if (!this.article?.id) return;
 
     console.log('Feedback being submitted:', feedback);
 
@@ -324,7 +314,7 @@ export class PaperDetailComponent implements OnInit {
     this.isLoadingComments = true;
 
     this.feedbackService.createFeedback({
-      articleId: this.paper.id,
+      articleId: this.article.id,
       body: feedbackRequest
     }).subscribe({
       next: (createdFeedback) => {
@@ -334,7 +324,7 @@ export class PaperDetailComponent implements OnInit {
         this.isRatingSubmitted = true;
 
         // Reload comments to get fresh data without reloading the entire paper
-        this.loadCommentsAndFeedbacks(this.paper!.id!.toString(), { sortBy: this.commentSortBy });
+        this.loadCommentsAndFeedbacks(this.article!.id!.toString(), { sortBy: this.commentSortBy });
       },
       error: (error) => {
         console.error('Error submitting feedback:', error);
