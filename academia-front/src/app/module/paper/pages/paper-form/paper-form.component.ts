@@ -353,20 +353,15 @@ onSubmit() {
         console.log('Verification response:', response);
         this.verificationMessage = response.message;
         
-        // Determine status based on message content
-        if (response.message.toLowerCase().includes('great') || 
-            response.message.toLowerCase().includes('looks good') ||
-            response.message.toLowerCase().includes('no grammar') || 
-            response.message.toLowerCase().includes('no issues') ||
-            response.message.toLowerCase().includes('well-written')) {
-          this.verificationStatus = 'success';
-        } else if (response.message.toLowerCase().includes('warning') || 
-                  response.message.toLowerCase().includes('inappropriate') ||
-                  response.message.toLowerCase().includes('toxic') ||
-                  response.message.toLowerCase().includes('offensive')) {
+        // Check for hasIssue in the response
+        // We're using type assertion to access the property that may not be in the interface
+        const responseObj = response as any;
+        const hasIssue = responseObj.hasIssue === 'true';
+        
+        if (hasIssue) {
           this.verificationStatus = 'error';
         } else {
-          this.verificationStatus = 'warning';
+          this.verificationStatus = 'success';
         }
         
         this.isVerifying = false;

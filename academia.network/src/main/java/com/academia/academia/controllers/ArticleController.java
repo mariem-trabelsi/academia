@@ -180,6 +180,7 @@ public class ArticleController {
             if (content == null || content.isEmpty()) {
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "No content provided for verification");
+                response.put("hasIssue", "true");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -240,6 +241,16 @@ public class ArticleController {
                 
                 Map<String, String> response = new HashMap<>();
                 response.put("message", verificationMessage);
+                
+                // Check if the message contains any indicators of issues
+                boolean hasIssue = !(verificationMessage.toLowerCase().contains("great") || 
+                                   verificationMessage.toLowerCase().contains("looks good") ||
+                                   verificationMessage.toLowerCase().contains("no grammar issues") ||
+                                   verificationMessage.toLowerCase().contains("no issues") ||
+                                   verificationMessage.toLowerCase().contains("well-written") ||
+                                   verificationMessage.toLowerCase().contains("perfect"));
+                
+                response.put("hasIssue", Boolean.toString(hasIssue));
                 return ResponseEntity.ok(response);
             } catch (Exception apiException) {
                 System.err.println("Error calling Azure OpenAI API: " + apiException.getMessage());
@@ -256,10 +267,13 @@ public class ArticleController {
                 
                 if (hasProfanity) {
                     fallbackResponse.put("message", "Warning: Your content may contain inappropriate language. Please review before publishing.");
+                    fallbackResponse.put("hasIssue", "true");
                 } else if (content.length() < 50) {
                     fallbackResponse.put("message", "Your content is quite short. Consider adding more detail before publishing.");
+                    fallbackResponse.put("hasIssue", "true");
                 } else {
                     fallbackResponse.put("message", "Your content has been reviewed. It appears to be appropriate for publishing.");
+                    fallbackResponse.put("hasIssue", "false");
                 }
                 
                 return ResponseEntity.ok(fallbackResponse);
@@ -271,6 +285,7 @@ public class ArticleController {
             
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Error verifying content: " + e.getMessage());
+            errorResponse.put("hasIssue", "true");
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
