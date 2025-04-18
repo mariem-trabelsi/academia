@@ -255,6 +255,13 @@ public class ArticleController {
             } catch (Exception apiException) {
                 System.err.println("Error calling Azure OpenAI API: " + apiException.getMessage());
                 
+                // Check if the error is related to content filtering
+                String errorMessage = apiException.getMessage();
+                boolean isContentFiltered = errorMessage != null && 
+                                          (errorMessage.contains("content_filter") || 
+                                           errorMessage.contains("ResponsibleAIPolicyViolation") ||
+                                           errorMessage.contains("filtered"));
+                
                 // Since we have an API error, let's generate a simple response ourselves
                 Map<String, String> fallbackResponse = new HashMap<>();
                 
@@ -265,8 +272,8 @@ public class ArticleController {
                                       lowercaseContent.contains("damn") ||
                                       lowercaseContent.contains("bitch");
                 
-                if (hasProfanity) {
-                    fallbackResponse.put("message", "Warning: Your content may contain inappropriate language. Please review before publishing.");
+                if (isContentFiltered || hasProfanity) {
+                    fallbackResponse.put("message", "Warning: Your content may contain inappropriate language that violates content policies. Please review and modify your content before publishing.");
                     fallbackResponse.put("hasIssue", "true");
                 } else if (content.length() < 50) {
                     fallbackResponse.put("message", "Your content is quite short. Consider adding more detail before publishing.");
