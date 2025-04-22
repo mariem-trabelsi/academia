@@ -22,6 +22,11 @@ export class PaperFormComponent implements OnInit {
   domains: string[] = [];
   newKeyword = '';
   name = this.keycloackService.profile?.firstName+' '+this.keycloackService.profile?.lastName;
+  
+  // Verification properties
+  isVerifying = false;
+  verificationMessage = '';
+  verificationStatus: 'none' | 'success' | 'warning' | 'error' = 'none';
 
   constructor(
     private fb: FormBuilder,
@@ -316,6 +321,63 @@ onSubmit() {
 
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
+      }
+    });
+  }
+
+  /**
+   * Verify the content of the article using the OpenAI API
+   */
+  verifyContent(): void {
+    // Use both abstract and content for verification if available
+    const abstract = this.paperForm.get('abstract')?.value || '';
+    const content = this.paperForm.get('content')?.value || '';
+    
+    // Combine abstract and content for verification
+    const textToVerify = abstract + (content ? '\n\n' + content : '');
+    
+    if (!textToVerify.trim()) {
+      this.verificationMessage = 'Please add some content before verification';
+      this.verificationStatus = 'warning';
+      return;
+    }
+
+    this.isVerifying = true;
+    this.verificationStatus = 'none';
+    this.verificationMessage = '';
+
+    console.log('Verifying content, length:', textToVerify.length);
+    
+    this.articleService.verifyContent(textToVerify).subscribe({
+      next: (response) => {
+        console.log('Verification response:', response);
+        this.verificationMessage = response.message;
+        
+        // Check for hasIssue in the response
+        // We're using type assertion to access the property that may not be in the interface
+        const responseObj = response as any;
+        const hasIssue = responseObj.hasIssue === 'true';
+        
+        if (hasIssue) {
+          this.verificationStatus = 'error';
+        } else {
+          this.verificationStatus = 'success';
+        }
+        
+        this.isVerifying = false;
+      },
+      error: (error) => {
+        console.error('Error verifying content:', error);
+        // Provide a more helpful error message
+        if (error.status === 0) {
+          this.verificationMessage = 'Cannot connect to the server. Please check your internet connection.';
+        } else if (error.status === 500) {
+          this.verificationMessage = 'The server encountered an error while verifying content. Try with a shorter text.';
+        } else {
+          this.verificationMessage = 'Error verifying content. Please try again later.';
+        }
+        this.verificationStatus = 'error';
+        this.isVerifying = false;
       }
     });
   }

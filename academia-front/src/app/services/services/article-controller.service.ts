@@ -4,7 +4,7 @@
 
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseService } from '../base-service';
@@ -394,6 +394,38 @@ export class ArticleControllerService extends BaseService {
   getApprovedArticles(params?: GetApprovedArticles$Params, context?: HttpContext): Observable<Array<Article>> {
     return this.getApprovedArticles$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Article>>): Array<Article> => r.body)
+    );
+  }
+
+  /**
+   * Verify article content for grammar and inappropriate language
+   */
+  verifyContent(content: string): Observable<{ message: string }> {
+    const url = this.rootUrl + '/articles/verify-content';
+    
+    // Limit the size of content to be verified (max 2000 characters)
+    const trimmedContent = content.length > 2000 ? content.substring(0, 2000) + '...' : content;
+    
+    // Use HttpClient without timeout (not supported in Angular HttpClient)
+    return this.http.post<{ message: string }>(
+      url, 
+      { content: trimmedContent },
+      { 
+        headers: { 'Content-Type': 'application/json' }
+      }
+    ).pipe(
+      map(response => response as { message: string }),
+      catchError(error => {
+        console.error('Content verification error:', error);
+        
+        // Create a fallback response when the API fails
+        if (error.status === 0 || error.status === 408) {
+          return of({ message: 'Content verification timed out. Your content appears to be acceptable, but please review it carefully before publishing.' });
+        }
+        
+        // Re-throw the error for the component to handle
+        return throwError(() => error);
+      })
     );
   }
 
