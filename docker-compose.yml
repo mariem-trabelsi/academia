@@ -25,6 +25,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
     volumes:
       - ./keycloak/realm/academia-realm.json:/opt/keycloak/data/import/academia-realm.json
+      - ./keycloak/themes:/opt/keycloak/themes
     command: "start-dev --import-realm"
     networks:
       - spring-demo
